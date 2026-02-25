@@ -4,14 +4,9 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
         <!-- Brand Column -->
         <div class="flex flex-col gap-4">
-          <NuxtLink :to="localePath('/')" class="flex items-center gap-2">
-            <div class="size-6 bg-primary rounded-md flex items-center justify-center text-white">
-              <svg class="size-4" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 10V3L4 14H11V21L20 10H13Z" stroke="currentColor" stroke-linecap="round"
-                  stroke-linejoin="round" stroke-width="2" />
-              </svg>
-            </div>
-            <span class="font-bold text-lg text-slate-900 dark:text-white">Naradev</span>
+          <NuxtLink :to="localePath('/')" class="inline-flex items-center gap-2">
+            <img src="/logo.png" alt="Naradev Logo" class="h-7 w-auto object-contain" />
+            <span class="font-bold text-lg text-slate-900 dark:text-white uppercase">Naradev</span>
           </NuxtLink>
           <p class="text-slate-500 text-sm leading-relaxed">
             {{ $t('footer.description') }}

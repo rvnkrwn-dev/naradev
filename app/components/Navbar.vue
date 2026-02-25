@@ -12,14 +12,10 @@
 
                 <!-- Logo -->
                 <NuxtLink :to="localePath('/')" class="flex items-center gap-2.5 shrink-0 group" @click="closeAll">
-                    <div
-                        class="size-9 bg-primary rounded-xl flex items-center justify-center text-white shadow-md shadow-primary/20 group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300 group-hover:scale-105">
-                        <svg class="size-5" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M13 10V3L4 14H11V21L20 10H13Z" stroke="currentColor" stroke-linecap="round"
-                                stroke-linejoin="round" stroke-width="2" />
-                        </svg>
-                    </div>
-                    <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Naradev</span>
+                    <img src="/logo.png" alt="Naradev Logo"
+                        class="h-8 sm:h-9 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-sm" />
+                    <span
+                        class="text-xl font-bold tracking-tight text-slate-900 dark:text-white uppercase">Naradev</span>
                 </NuxtLink>
 
                 <!-- Desktop Navigation -->
@@ -284,7 +280,7 @@
                     <button @click="toggleDarkMode" class="action-btn" :aria-label="$t('nav.toggle_dark_mode')">
                         <span class="material-symbols-outlined" style="font-size: 22px;">{{ isDark ? 'light_mode' :
                             'dark_mode'
-                            }}</span>
+                        }}</span>
                     </button>
                     <button @click="switchLocale" class="action-btn" :aria-label="$t('nav.switch_language')">
                         <span class="material-symbols-outlined" style="font-size: 22px;">translate</span>
