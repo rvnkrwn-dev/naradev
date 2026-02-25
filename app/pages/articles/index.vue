@@ -68,6 +68,43 @@
           </div>
         </Transition>
       </div>
+
+      <!-- Sort Dropdown -->
+      <div class="relative" ref="sortDropdownRef">
+        <button @click="sortDropdownOpen = !sortDropdownOpen"
+          class="inline-flex items-center gap-2 py-2.5 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-slate-200 hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors sm:w-48 w-full"
+          :class="{ 'border-primary ring-2 ring-primary/40': sortDropdownOpen }">
+          <span class="material-symbols-outlined text-slate-400" style="font-size: 18px;">sort</span>
+          <span class="flex-1 text-left truncate">
+            {{ sortBy === 'popular' ? $t('articles.sort_popular') : $t('articles.sort_latest') }}
+          </span>
+          <svg class="size-4 text-slate-400 transition-transform duration-200"
+            :class="{ 'rotate-180': sortDropdownOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <Transition enter-active-class="transition duration-150 ease-out"
+          leave-active-class="transition duration-100 ease-in" enter-from-class="opacity-0 translate-y-1 scale-95"
+          enter-to-class="opacity-100 translate-y-0 scale-100" leave-from-class="opacity-100 translate-y-0 scale-100"
+          leave-to-class="opacity-0 translate-y-1 scale-95">
+          <div v-if="sortDropdownOpen"
+            class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl shadow-slate-200/50 dark:shadow-black/30 border border-slate-200 dark:border-slate-800 z-30 overflow-hidden">
+            <div class="py-1">
+              <button @click="applySort('latest')"
+                class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                :class="{ 'text-primary font-semibold bg-primary/5 dark:bg-primary/10': sortBy !== 'popular' }">
+                {{ $t('articles.sort_latest') }}
+              </button>
+              <button @click="applySort('popular')"
+                class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                :class="{ 'text-primary font-semibold bg-primary/5 dark:bg-primary/10': sortBy === 'popular' }">
+                {{ $t('articles.sort_popular') }}
+              </button>
+            </div>
+          </div>
+        </Transition>
+      </div>
     </div>
 
     <!-- Active Filters -->
@@ -81,7 +118,7 @@
       <span v-if="sortBy"
         class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold">
         {{ sortBy === 'latest' ? $t('articles.sort_latest') : sortBy === 'popular' ? $t('articles.sort_popular') :
-        sortBy }}
+          sortBy }}
         <button @click="sortBy = ''; applyTagFilter()" class="hover:text-primary">&times;</button>
       </span>
       <button v-if="appliedTags.length > 1" @click="clearAllFilters"
@@ -156,6 +193,8 @@ const selectedTags = ref<string[]>(initialTag ? [initialTag] : [])
 const appliedTags = ref<string[]>(initialTag ? [initialTag] : [])
 const tagDropdownOpen = ref(false)
 const tagDropdownRef = ref<HTMLElement | null>(null)
+const sortDropdownOpen = ref(false)
+const sortDropdownRef = ref<HTMLElement | null>(null)
 
 watch(() => route.query, (q) => {
   if (q.q !== undefined && q.q !== searchQuery.value) searchQuery.value = q.q as string
@@ -204,6 +243,11 @@ const filteredArticles = computed(() => {
       lowerTags.every(tag => a.tags?.some((t: string) => t.toLowerCase() === tag))
     )
   }
+  if (sortBy.value === 'popular') {
+    result = [...result].sort((a: any, b: any) => (b.stats?.views || 0) - (a.stats?.views || 0))
+  } else {
+    result = [...result].sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  }
   return result
 })
 
@@ -223,6 +267,15 @@ function handleClickOutside(e: MouseEvent) {
   if (tagDropdownRef.value && !tagDropdownRef.value.contains(e.target as Node)) {
     tagDropdownOpen.value = false
   }
+  if (sortDropdownRef.value && !sortDropdownRef.value.contains(e.target as Node)) {
+    sortDropdownOpen.value = false
+  }
+}
+
+const applySort = (sort: string) => {
+  sortBy.value = sort
+  sortDropdownOpen.value = false
+  page.value = 1
 }
 
 let searchTimeout: ReturnType<typeof setTimeout>
