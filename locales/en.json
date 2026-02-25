@@ -286,7 +286,16 @@
         "joined": "Joined {date}",
         "empty_title": "No Authors Yet",
         "empty_description": "Be the first to join! Create an account and start writing.",
-        "empty_cta": "Join Naradev"
+        "empty_cta": "Join Naradev",
+        "not_found": "Author Not Found",
+        "not_found_desc": "The author you're looking for doesn't exist.",
+        "back_to_authors": "Back to Authors",
+        "article": "article",
+        "articles_count": "articles",
+        "articles_by": "Articles by {name}",
+        "no_articles": "No Articles Yet",
+        "no_articles_desc": "This author hasn't published any articles yet.",
+        "seo_desc": "{name} has published {count} articles on Naradev."
     },
     "validation": {
         "USERNAME_MIN_LENGTH": "Username must be at least 3 characters",

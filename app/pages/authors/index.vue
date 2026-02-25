@@ -41,8 +41,7 @@
         <!-- Authors Grid -->
         <div v-else-if="filteredAuthors.length"
             class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 min-h-[40vh] content-start">
-            <NuxtLink v-for="author in filteredAuthors" :key="author.id"
-                :to="localePath(`/articles?authorId=${author.id}`)"
+            <NuxtLink v-for="author in filteredAuthors" :key="author.id" :to="localePath(`/authors/${author.id}`)"
                 class="group bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
                 <div class="flex items-center gap-4">
                     <div

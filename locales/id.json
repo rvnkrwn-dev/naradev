@@ -286,7 +286,16 @@
         "joined": "Bergabung {date}",
         "empty_title": "Belum Ada Penulis",
         "empty_description": "Jadilah yang pertama bergabung! Buat akun dan mulai menulis.",
-        "empty_cta": "Gabung Naradev"
+        "empty_cta": "Gabung Naradev",
+        "not_found": "Penulis Tidak Ditemukan",
+        "not_found_desc": "Penulis yang Anda cari tidak ada.",
+        "back_to_authors": "Kembali ke Penulis",
+        "article": "artikel",
+        "articles_count": "artikel",
+        "articles_by": "Artikel oleh {name}",
+        "no_articles": "Belum Ada Artikel",
+        "no_articles_desc": "Penulis ini belum mempublikasikan artikel.",
+        "seo_desc": "{name} telah mempublikasikan {count} artikel di Naradev."
     },
     "validation": {
         "USERNAME_MIN_LENGTH": "Username minimal 3 karakter",
