@@ -1,0 +1,42 @@
+[
+  {
+    "id": "usr_0056bb11",
+    "username": "testuser",
+    "name": "Test Author",
+    "email": "test@example.com",
+    "role": "author",
+    "passwordHash": "$2b$12$./sSg1xY5LMHv4wIZSEP/.6fts3oZl1rGOKIU9HQF35tgOftpFcP.",
+    "createdAt": "2026-02-24T11:54:17.031Z",
+    "updatedAt": "2026-02-24T11:54:17.031Z"
+  },
+  {
+    "id": "usr_74107943",
+    "username": "rvnkrwn",
+    "name": "Revan Kurniawan",
+    "email": "rvnkrwn@gmail.com",
+    "role": "author",
+    "passwordHash": "$2b$12$d0xWVeCc3QMAhaOOT/n.XeXzY9nRU5r2k13GKzzmb9RlsG2VK6EGG",
+    "createdAt": "2026-02-24T21:25:35.420Z",
+    "updatedAt": "2026-02-24T21:25:35.420Z"
+  },
+  {
+    "id": "usr_8de497a0",
+    "username": "testuser123",
+    "name": "Test User OneTwoThree",
+    "email": "test123@example.com",
+    "role": "author",
+    "passwordHash": "$2b$12$VG/9cXoZEqW1O/tdvKp8zOmONdnsA0wk3/WJ9SVbdJ0KmFfsa/R9G",
+    "createdAt": "2026-02-25T02:32:45.808Z",
+    "updatedAt": "2026-02-25T02:32:45.808Z"
+  },
+  {
+    "id": "usr_69b5a11c",
+    "username": "tester123",
+    "name": "Test User",
+    "email": "testuser@example.com",
+    "role": "author",
+    "passwordHash": "$2b$12$po9vfPAMDVHxJBxNTbEizOXASGub2yTsO2Sjq..kxCAAeLldLY1v6",
+    "createdAt": "2026-02-25T05:00:02.464Z",
+    "updatedAt": "2026-02-25T05:00:02.464Z"
+  }
+]
