@@ -177,7 +177,6 @@ IMPORTANT:
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt },
                 ],
-                temperature: 0.7,
                 max_completion_tokens: 8000,
                 response_format: { type: 'json_object' },
             },
