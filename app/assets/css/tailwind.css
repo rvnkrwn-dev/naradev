@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-display antialiased bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 overflow-x-hidden;
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-primary dark:bg-primary/30 dark:text-white;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary-dark shadow-lg shadow-primary/25 focus:ring-primary;
+  }
+
+  .btn-secondary {
+    @apply btn bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700 focus:ring-slate-500;
+  }
+
+  .btn-ghost {
+    @apply btn text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary hover:bg-transparent;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600/10 text-red-500 hover:bg-red-600/20 border border-red-200 dark:border-red-600/20 focus:ring-red-500;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500;
+  }
+
+  .card {
+    @apply bg-background-light dark:bg-slate-900 rounded-2xl overflow-hidden transition-all duration-300 border border-slate-100 dark:border-slate-800;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-2xl hover:shadow-primary/5;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors duration-200;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary/10 text-primary;
+  }
+
+  .badge-tag {
+    @apply px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors cursor-pointer;
+  }
+}
