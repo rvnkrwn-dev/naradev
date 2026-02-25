@@ -165,7 +165,7 @@
               <span class="material-symbols-outlined" style="font-size: 20px;">{{ isSaved ? 'bookmark' :
                 'bookmark_border' }}</span>
               <span class="font-medium text-sm">{{ isSaved ? $t('reading_list.saved') : $t('reading_list.save')
-              }}</span>
+                }}</span>
             </button>
           </div>
         </div>
@@ -342,14 +342,14 @@ useHead({
         author: {
           '@type': 'Person',
           name: article.value.author?.name || 'Naradev Author',
-          url: `https://naradev.leci.app/authors/${article.value.author?.id}`
+          url: `${useRuntimeConfig().public.appUrl}/authors/${article.value.author?.id}`
         },
         publisher: {
           '@type': 'Organization',
           name: 'Naradev',
           logo: {
             '@type': 'ImageObject',
-            url: 'https://naradev.leci.app/logo.png'
+            url: `${useRuntimeConfig().public.appUrl}/logo.png`
           }
         }
       })

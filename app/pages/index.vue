@@ -280,7 +280,7 @@ useHead({
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         name: t('seo.home.title'),
-        url: 'https://naradev.leci.app',
+        url: useRuntimeConfig().public.appUrl,
         description: t('seo.home.description'),
       })
     }

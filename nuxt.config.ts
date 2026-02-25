@@ -13,10 +13,13 @@ export default defineNuxtConfig({
     githubRepo: process.env.GITHUB_REPO || '',
     githubBranch: process.env.GITHUB_BRANCH || 'main',
     openaiApiKey: process.env.OPENAI_API_KEY || '',
+    public: {
+      appUrl: process.env.APP_URL || 'http://localhost:3000',
+    }
   },
 
   site: {
-    url: 'https://naradev.leci.app', // Change to your actual domain
+    url: process.env.APP_URL || 'http://localhost:3000',
     name: 'Naradev',
   },
 
