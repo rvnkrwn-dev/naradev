@@ -20,6 +20,7 @@ export default defineEventHandler(async (event) => {
         q: query.q as string | undefined,
         status,
         authorId: query.authorId as string | undefined,
+        sort: query.sort as 'latest' | 'popular' | undefined,
     }
 
     const result = await getAllArticles(filters)
