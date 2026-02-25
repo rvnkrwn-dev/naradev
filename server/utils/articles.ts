@@ -1,6 +1,7 @@
 import { parseArticleContent, renderMarkdown, buildArticleFile, splitMultiLangContent } from './markdown'
 import { getPublicUserMap, type PublicUser } from './users'
 import { ghGetFile, ghListFiles, ghPutFile, ghDeleteFile, ghGetSha } from './github'
+import { readStats } from './stats'
 import type { ArticleFrontmatter } from './markdown'
 
 const ARTICLES_PATH = 'content/articles'
@@ -17,6 +18,7 @@ export interface ArticleIndex {
     authorId: string
     cover?: string
     author: PublicUser | null
+    stats?: { views: number; likes: number; likedBy?: string[] }
 }
 
 export interface ArticleDetail extends ArticleIndex {
@@ -36,6 +38,7 @@ export async function getAllArticles(filters?: {
     page?: number
     limit?: number
     authorId?: string
+    sort?: 'latest' | 'popular'
 }): Promise<{ articles: ArticleIndex[]; total: number; page: number; limit: number }> {
     let articles: ArticleIndex[]
 
@@ -74,8 +77,19 @@ export async function getAllArticles(filters?: {
         )
     }
 
-    // Sort by date descending
-    articles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    // Attach stats
+    const statsMap = await readStats()
+    articles = articles.map(a => ({
+        ...a,
+        stats: statsMap[a.slug] || { views: 0, likes: 0 }
+    }))
+
+    // Sort
+    if (filters?.sort === 'popular') {
+        articles.sort((a, b) => (b.stats?.views || 0) - (a.stats?.views || 0))
+    } else {
+        articles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    }
 
     const total = articles.length
     const page = filters?.page || 1
@@ -114,6 +128,10 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
         const descId = frontmatter.description_id || (frontmatter as any).description || ''
         const descEn = frontmatter.description_en || (frontmatter as any).description || ''
 
+        const statsMap = await readStats()
+        const articleSlug = frontmatter.slug || slug
+        const stats = statsMap[articleSlug] || { views: 0, likes: 0, likedBy: [] }
+
         return {
             title_id: titleId,
             title_en: titleEn,
@@ -130,6 +148,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
             html_en: htmlEn,
             markdown_id: markdownId,
             markdown_en: markdownEn,
+            stats,
         }
     } catch (err) {
         console.error(`[articles] Error reading article "${slug}":`, err)

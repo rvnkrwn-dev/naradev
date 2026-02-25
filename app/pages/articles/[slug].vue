@@ -82,6 +82,18 @@
               {{ $t('article.reading_time', { count: readingTime }) }}
             </span>
 
+            <span class="text-slate-300 dark:text-slate-700">·</span>
+            <span class="text-sm text-slate-500 flex items-center gap-1.5">
+              <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span>
+              {{ article.stats?.views || 0 }}
+            </span>
+
+            <span class="text-slate-300 dark:text-slate-700">·</span>
+            <span class="text-sm text-slate-500 flex items-center gap-1.5">
+              <span class="material-symbols-outlined" style="font-size: 16px;">favorite</span>
+              {{ article.stats?.likes || 0 }}
+            </span>
+
             <span v-if="article.status === 'draft'"
               class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400 text-xs font-semibold">
               <span class="material-symbols-outlined" style="font-size: 14px;">edit_note</span>
@@ -138,6 +150,16 @@
               #{{ tag }}
             </NuxtLink>
           </div>
+
+          <div class="mt-8 flex justify-center">
+            <button @click="handleLike" :disabled="isLiking"
+              class="flex items-center gap-2 px-6 py-3 rounded-full border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary transition-all shadow-sm"
+              :class="{ 'text-primary border-primary bg-primary/5': hasLiked }">
+              <span class="material-symbols-outlined" :class="{ 'fill-current text-primary': hasLiked }"
+                style="font-size: 20px;">favorite</span>
+              <span class="font-medium text-sm">{{ article.stats?.likes || 0 }} Likes</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -174,7 +196,54 @@ const route = useRoute()
 const slug = route.params.slug as string
 
 const { data, pending, error } = await useFetch(`/api/articles/${slug}`)
-const article = computed(() => data.value?.article)
+const article = ref(data.value?.article)
+
+const { user, isAuthenticated } = useAuth()
+const router = useRouter()
+
+const isLiking = ref(false)
+const hasLiked = computed(() => {
+  if (!isAuthenticated.value || !user.value || !article.value?.stats?.likedBy) return false
+  return article.value.stats.likedBy.includes(user.value.id)
+})
+
+onMounted(async () => {
+  if (article.value) {
+    // Check local storage for tracking views per device
+    const viewedKey = 'naradev_viewed_articles'
+    const viewedArticles = JSON.parse(localStorage.getItem(viewedKey) || '[]')
+
+    if (!viewedArticles.includes(slug)) {
+      try {
+        const res = await $fetch(`/api/articles/${slug}/view`, { method: 'POST' })
+        if (res.stats) {
+          article.value.stats = res.stats
+          viewedArticles.push(slug)
+          localStorage.setItem(viewedKey, JSON.stringify(viewedArticles))
+        }
+      } catch { } // Ignore errors
+    }
+  }
+})
+
+async function handleLike() {
+  if (!isAuthenticated.value) {
+    router.push(localePath('/login'))
+    return
+  }
+
+  if (!article.value || isLiking.value) return
+  isLiking.value = true
+
+  try {
+    const res = await $fetch(`/api/articles/${slug}/like`, { method: 'POST' })
+    if (res.stats) {
+      article.value.stats = res.stats
+    }
+  } catch { } finally {
+    isLiking.value = false
+  }
+}
 
 const localizedTitle = computed(() => {
   if (!article.value) return ''
