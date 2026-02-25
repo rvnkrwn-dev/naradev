@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="mb-10">
       <h1 class="text-3xl sm:text-4xl font-bold font-serif text-slate-900 dark:text-white mb-2">{{ $t('articles.title')
-      }}</h1>
+        }}</h1>
       <p class="text-slate-500 dark:text-slate-400">{{ $t('articles.subtitle') }}</p>
     </div>
 
@@ -42,7 +42,7 @@
             class="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-900 rounded-xl shadow-xl shadow-slate-200/50 dark:shadow-black/30 border border-slate-200 dark:border-slate-800 z-30 overflow-hidden">
             <div class="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ $t('articles.filter_label')
-              }}</span>
+                }}</span>
               <button v-if="selectedTags.length" @click="clearAllTags"
                 class="text-xs font-medium text-primary hover:text-primary-dark transition-colors">
                 {{ $t('common.clear_all') }}
@@ -221,11 +221,7 @@ watch(() => route.query, (q) => {
 }, { deep: true })
 
 const { data, pending } = await useFetch('/api/articles', {
-  query: computed(() => ({
-    limit: 100,
-    q: searchQuery.value || undefined,
-  })),
-  watch: false,
+  query: { limit: 100 },
 })
 
 const allArticles = computed(() => data.value?.articles || [])
@@ -248,12 +244,28 @@ const tagCounts = computed(() => {
 
 const filteredArticles = computed(() => {
   let result = allArticles.value as any[]
+
+  // 1. Text Search Filter
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase()
+    result = result.filter((a: any) =>
+      a.title_id?.toLowerCase().includes(q) ||
+      a.title_en?.toLowerCase().includes(q) ||
+      a.description_id?.toLowerCase().includes(q) ||
+      a.description_en?.toLowerCase().includes(q) ||
+      a.author?.name?.toLowerCase().includes(q)
+    )
+  }
+
+  // 2. Tag Filter
   if (appliedTags.value.length) {
     const lowerTags = appliedTags.value.map(t => t.toLowerCase())
     result = result.filter((a: any) =>
       lowerTags.every(tag => a.tags?.some((t: string) => t.toLowerCase() === tag))
     )
   }
+
+  // 3. Sort
   if (sortBy.value === 'popular') {
     result = [...result].sort((a: any, b: any) => (b.stats?.views || 0) - (a.stats?.views || 0))
   } else {
