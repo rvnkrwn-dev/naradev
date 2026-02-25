@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Engineering Insights Homepage</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Noto+Serif:wght@400;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1337ec",
+                        "primary-dark": "#0b26b0",
+                        "primary-light": "#eef2ff",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#101322",
+                        "slate-900": "#0f172a",
+                        "slate-600": "#475569",
+                        "slate-500": "#64748b",
+                        "slate-100": "#f1f5f9",
+                        "white": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "serif": ["Noto Serif", "serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display antialiased overflow-x-hidden">
+    <div class="flex flex-col min-h-screen">
+        <!-- Sticky Navbar -->
+        <header
+            class="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 dark:bg-background-dark/80 dark:border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-3">
+                        <div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+                            <svg class="size-5" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13 10V3L4 14H11V21L20 10H13Z" fill="none" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                        <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Indigo</h1>
+                    </div>
+                    <!-- Navigation Links -->
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary transition-colors"
+                            href="#">Home</a>
+                        <a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary transition-colors"
+                            href="#">Articles</a>
+                        <a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary transition-colors"
+                            href="#">Tags</a>
+                        <a class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-primary transition-colors"
+                            href="#">About</a>
+                    </nav>
+                    <!-- Actions -->
+                    <div class="flex items-center gap-3">
+                        <button
+                            class="p-2 text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">search</span>
+                        </button>
+                        <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
+                        <button
+                            class="hidden sm:flex items-center justify-center h-10 px-5 rounded-xl bg-slate-100 text-slate-900 text-sm font-semibold hover:bg-slate-200 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700 transition-colors">
+                            Login
+                        </button>
+                        <button
+                            class="flex items-center justify-center h-10 px-5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25">
+                            Register
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Hero Section -->
+        <main class="flex-grow">
+            <section class="relative py-20 lg:py-28 overflow-hidden">
+                <div class="absolute inset-0 -z-10">
+                    <div
+                        class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/5 rounded-full blur-3xl">
+                    </div>
+                </div>
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <span
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold tracking-wide uppercase mb-6">
+                        Editorial Platform
+                    </span>
+                    <h1
+                        class="text-4xl md:text-6xl lg:text-7xl font-bold font-serif text-slate-900 dark:text-white leading-tight mb-6">
+                        Insights, Tutorials, and <span class="text-primary relative inline-block">
+                            Engineering Stories
+                            <svg class="absolute w-full h-3 -bottom-1 left-0 text-primary/20" fill="none"
+                                viewbox="0 0 200 9" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.00025 6.99997C25.7501 9.76162 159.638 12.3363 200.002 2.00007"
+                                    stroke="currentColor" stroke-width="3"></path>
+                            </svg>
+                        </span>
+                    </h1>
+                    <p
+                        class="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+                        A modern, editorial full-stack article platform for developers and engineers built with Nuxt and
+                        Tailwind CSS. Deep dive into the code that powers the world.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <button
+                            class="w-full sm:w-auto h-12 px-8 rounded-xl bg-primary text-white text-base font-semibold hover:bg-primary-dark transition-colors shadow-xl shadow-primary/20 flex items-center justify-center gap-2">
+                            Explore Articles
+                            <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+                        </button>
+                        <button
+                            class="w-full sm:w-auto h-12 px-8 rounded-xl bg-white border border-slate-200 text-slate-900 text-base font-semibold hover:bg-slate-50 hover:border-slate-300 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">edit_square</span>
+                            Start Writing
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <!-- Featured Articles Grid -->
+            <section class="py-16 bg-white dark:bg-background-dark/50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between mb-10">
+                        <h2 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">verified</span>
+                            Featured Articles
+                        </h2>
+                        <a class="text-sm font-semibold text-primary hover:text-primary-dark flex items-center gap-1"
+                            href="#">
+                            View All <span class="material-symbols-outlined"
+                                style="font-size: 16px;">arrow_forward</span>
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Card 1 -->
+                        <article
+                            class="group flex flex-col h-full bg-background-light dark:bg-slate-900 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 border border-slate-100 dark:border-slate-800">
+                            <div class="relative aspect-video overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10">
+                                </div>
+                                <div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+                                    data-alt="Code editor screen showing TypeScript syntax"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCXIgmTQ9R2-NQvFbE2-x0VJxo6TbRaNEZiKF2TMeKjQ2doXtsNPsmgQ7RAH-rcvCIo6dgbc3Ex6NKgZZeSvpgCzcYoNrsa-ymBrNZPnQpowPc87aZSrikrCQWFHhG81VUfrcKBCnuQlxfAgpZQ0a8gdCRZiOuPSiGzIiUvIDm9yqw3dboKqTQOveuaV5C2ObTdsdIxRl9wmdk6Ou2K5FTwwnfYMYUr5hl79VU9NuhAdLBba1LmDhLTb92qPQgElM5FiVDQGwD-TJI');">
+                                </div>
+                                <span
+                                    class="absolute top-4 left-4 z-20 px-3 py-1 rounded-lg bg-blue-600/90 text-white text-xs font-bold backdrop-blur-sm">TypeScript</span>
+                            </div>
+                            <div class="flex flex-col flex-1 p-6">
+                                <h3
+                                    class="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                                    Mastering TypeScript Generics for Better Components
+                                </h3>
+                                <p class="text-slate-500 dark:text-slate-400 text-sm mb-6 flex-1 line-clamp-3">
+                                    Learn how to build flexible and reusable components with advanced generic patterns.
+                                    We dive deep into constraints and inference.
+                                </p>
+                                <div class="flex items-center gap-3 mt-auto">
+                                    <div class="size-8 rounded-full bg-slate-200 bg-cover bg-center"
+                                        data-alt="Portrait of the author"
+                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDk5qzMgRtckQ_8QEl7vMKyo_1-QxcGapu02aS0ZRvV3fX4reLx6Px6wTFNCu8kZxk0lN8QbvQNGFTObTvG7rC8dgt_zcxsErLGfZzYkFdyf2LO12LQBXQhdHOP7t976QeEHx-x4t-HD1TSAwwl3uyEyBh7Jl62DBslCozZHPJRYW_1hHBdD8wClZIV6JbUl8d5wP_4yE_Y0KEHe7gsbo8T5SQbV0Spj4GVxNfNxj7216qgjZ7i2EX5PFLiBHo8UxqIINZzrHm-yRQ');">
+                                    </div>
+                                    <div class="text-xs">
+                                        <p class="font-semibold text-slate-900 dark:text-white">Alex Morgan</p>
+                                        <p class="text-slate-500">Dec 12 · 8 min read</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <!-- Card 2 -->
+                        <article
+                            class="group flex flex-col h-full bg-background-light dark:bg-slate-900 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 border border-slate-100 dark:border-slate-800">
+                            <div class="relative aspect-video overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10">
+                                </div>
+                                <div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+                                    data-alt="Abstract green NuxtJS themed gradient"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDRJraJlIQGozG9SkagC84INMNyRN-GIZ_tUXo6g6s0pYKoIuV6ZAhNYYE8IkEGLtwa-4TADWmIJO7lFhDCP-NJjWOOAqiwCCwwG2vhstRwE49DaPFTf1Xnjlq6Cf1r1AzlySdNcUu-BfKyFi_7rrdz3msS060hS-9EI5VnOAPMENpfJ8mtNUe3ivCjZOM0J_cc2FHqex6cGoIolk6_r2Uec2QbXGhB6LVMJ8NGRnjybr00eRxCsuyK2Qdcg63oLuhBJ924t9Oc52U');">
+                                </div>
+                                <span
+                                    class="absolute top-4 left-4 z-20 px-3 py-1 rounded-lg bg-emerald-500/90 text-white text-xs font-bold backdrop-blur-sm">Nuxt</span>
+                            </div>
+                            <div class="flex flex-col flex-1 p-6">
+                                <h3
+                                    class="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                                    Building Performance First Apps with Nuxt 3
+                                </h3>
+                                <p class="text-slate-500 dark:text-slate-400 text-sm mb-6 flex-1 line-clamp-3">
+                                    A comprehensive guide to the latest features in the Vue meta-framework. Server
+                                    components, islands architecture, and more.
+                                </p>
+                                <div class="flex items-center gap-3 mt-auto">
+                                    <div class="size-8 rounded-full bg-slate-200 bg-cover bg-center"
+                                        data-alt="Portrait of the author"
+                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDi8aLdQ94_ftF9kmkAYAiVEG8HQfMwdtuIKznbZfknC7jC32WbhWx71D1BPlQEflEy4RwwGn8YqT7d8iIx0eijk2BuGg3fm6wzwRSCDsvkedAzRiYDgnMYk8wLB_LNFZCVIhl4Jz7owVkWUgOBTWslpd_ddZDraWv8qCi6wYGOTy5blqNFjjjN0SzJpGbBIw2Nr39q4pio_tYg0B1iz3EhlQpttL6ZodCc3eVjSigTGyAEV_Sd20EreHmXhsL0AwXVscfwhffpoBQ');">
+                                    </div>
+                                    <div class="text-xs">
+                                        <p class="font-semibold text-slate-900 dark:text-white">Sarah Jenkins</p>
+                                        <p class="text-slate-500">Dec 10 · 12 min read</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <!-- Card 3 -->
+                        <article
+                            class="group flex flex-col h-full bg-background-light dark:bg-slate-900 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 border border-slate-100 dark:border-slate-800">
+                            <div class="relative aspect-video overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10">
+                                </div>
+                                <div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+                                    data-alt="Abstract React blue atom structure"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAHcrAoAafm7XB9WA_3TZWqK-YysYiaaP0gixCiHS0sp9Ji_7lCBp0JjpSovciQ0EaySuL9jIjOLnF-YTL7RlcxYEwOduq3ljwGPq_Sw8pe9XWF7ERNayVqf2Y4gxcK2uO3GAC1sekKiGILOBH3a_sGKFj4rltnSgXfsPyi3HCXN6r98_DQbYb5ZMdmtdeq27Tc2HFvqknQsybElrComL8yGt5NUrLxoG5xku52oVF87PZD38uxEEXSQ-FElw-2nu5M8gTcPILynFI');">
+                                </div>
+                                <span
+                                    class="absolute top-4 left-4 z-20 px-3 py-1 rounded-lg bg-sky-500/90 text-white text-xs font-bold backdrop-blur-sm">React</span>
+                            </div>
+                            <div class="flex flex-col flex-1 p-6">
+                                <h3
+                                    class="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                                    The Future of React Server Components
+                                </h3>
+                                <p class="text-slate-500 dark:text-slate-400 text-sm mb-6 flex-1 line-clamp-3">
+                                    Understanding the paradigm shift in frontend development. How RSCs change the way we
+                                    fetch data and render UI.
+                                </p>
+                                <div class="flex items-center gap-3 mt-auto">
+                                    <div class="size-8 rounded-full bg-slate-200 bg-cover bg-center"
+                                        data-alt="Portrait of the author"
+                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAXeLOw0P4nNBihHspz-pGGL-GiDWo-siCHqiKUw0eoD_kHpi-GFxR_WyVpb_0CwlM0oCYNWBkB9Zvwtk_KFsiiMj09nUX7BqPS5py2tlIkdCJefAdoTbr7PnHzB0E-En18Tx4JzpSyXGrZh0LE7vkjIoB6nGLNFSY6uqkBw_Zxz1f1vew_jikuOvsyH98rALfNLNHqg8G-NTH-gbTafqCKQIAOEdAPSOTZ204bN0gw0zLiHMq9q8hkLAft4Od6cj0Q93l-_45VM0U');">
+                                    </div>
+                                    <div class="text-xs">
+                                        <p class="font-semibold text-slate-900 dark:text-white">David Chen</p>
+                                        <p class="text-slate-500">Dec 08 · 6 min read</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+            <!-- Latest Articles & Tags Layout -->
+            <section class="py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col lg:flex-row gap-12">
+                        <!-- Main Content: Latest Articles List -->
+                        <div class="lg:w-2/3">
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-8">Latest Articles</h2>
+                            <div class="flex flex-col gap-8">
+                                <!-- List Item 1 -->
+                                <article class="flex flex-col sm:flex-row gap-6 group cursor-pointer">
+                                    <div class="w-full sm:w-48 aspect-[4/3] sm:aspect-square rounded-xl bg-cover bg-center overflow-hidden shrink-0"
+                                        data-alt="Minimalist desk setup with laptop"
+                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCaivSC_ARCz4eDUVNyKKs183xioHWnU__J4o3kfN1JWsdggrLN1qvffFtgOMOdsWok7ozUT0vEPT_ygYej4zzQS7yqA7SZ467Gjr3xCnfhLVzFN_oNELwrl5RM5VSYb5xhKGKvT0tFkKkZpz8_K0Kss4nh8sip4JZwwSaaoxTTQ6kKqLvn4oblMeKx25K5sbx1WAzl7F7s39Po01ryyN_5KBU092KYge1Pt6tXkRWw0IuxZPRNqtTDmlm4XEjMpuHiZvZEoGL27Ao');">
+                                    </div>
+                                    <div
+                                        class="flex flex-col justify-center border-b border-slate-200 dark:border-slate-800 pb-8 w-full">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="text-xs font-bold text-primary uppercase tracking-wider">Design
+                                                Systems</span>
+                                            <span class="text-slate-400">·</span>
+                                            <span class="text-xs text-slate-500">Nov 28</span>
+                                        </div>
+                                        <h3
+                                            class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+                                            Scalable CSS Architecture for Large Teams
+                                        </h3>
+                                        <p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 mb-3">
+                                            Strategies for maintaining CSS at scale using utility classes and
+                                            component-driven development.
+                                        </p>
+                                        <div
+                                            class="flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-white">
+                                            <span>Read more</span>
+                                            <span
+                                                class="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                                        </div>
+                                    </div>
+                                </article>
+                                <!-- List Item 2 -->
+                                <article class="flex flex-col sm:flex-row gap-6 group cursor-pointer">
+                                    <div class="w-full sm:w-48 aspect-[4/3] sm:aspect-square rounded-xl bg-cover bg-center overflow-hidden shrink-0"
+                                        data-alt="Matrix code rain concept"
+                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEP1JD99hzqJtgpxHvjsIPhX1PXhsQb4zMk_2-Cc57D62sg6hgfxOUJ7qfHuZ7NuYZobjQYdjA3t4W9V7P1CFZEw1Cu7PzOV1E-DnIYwlus4thBDtD3mVsaealw7We8rtkDmEsjGXcfdqtwOuu3Ko-YiTJaanhyiYYoMDuqgLqA3vD1hTEvbB5c3jAQjDeW9hISNMgW6s5FU6afdiKzSWdf-apdkhGAiGS_cFUtuswRds9Gjl1_CW3PqgCg2KPBGWXXZodyy-NqR4');">
+                                    </div>
+                                    <div
+                                        class="flex flex-col justify-center border-b border-slate-200 dark:border-slate-800 pb-8 w-full">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span
+                                                class="text-xs font-bold text-primary uppercase tracking-wider">Security</span>
+                                            <span class="text-slate-400">·</span>
+                                            <span class="text-xs text-slate-500">Nov 25</span>
+                                        </div>
+                                        <h3
+                                            class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+                                            Web Security Essentials: XSS and CSRF
+                                        </h3>
+                                        <p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 mb-3">
+                                            Protecting your applications from common vulnerabilities. A practical guide
+                                            for frontend developers.
+                                        </p>
+                                        <div
+                                            class="flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-white">
+                                            <span>Read more</span>
+                                            <span
+                                                class="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                                        </div>
+                                    </div>
+                                </article>
+                                <!-- List Item 3 -->
+                                <article class="flex flex-col sm:flex-row gap-6 group cursor-pointer">
+                                    <div class="w-full sm:w-48 aspect-[4/3] sm:aspect-square rounded-xl bg-cover bg-center overflow-hidden shrink-0"
+                                        data-alt="Dashboard analytics charts"
+                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCdUp_OhUe9SDxvil9TKfDYAxulxAn0HFStTCEvJwMtZMUVWmQP5dGfKFomYch_ousP3xTeVcxPJgDQ7KsEylIeFZsoC94KuZRGcDALaJ0wSZ-ou6V-uMCzh67Zi5lq-FWNFzO-M88Yk7vNB4cuBO-Qp6KSqGZEghVma9L6WI3e8DIMiIBI9ERHPbOrHoWz6kNERywIhmSv66AvR5xq5faMvEJl1B1A0Th26wNNRjL-oQ-GGTIJ4YBtpov21dL-Nk2hY4fezS_6u_4');">
+                                    </div>
+                                    <div class="flex flex-col justify-center w-full">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span
+                                                class="text-xs font-bold text-primary uppercase tracking-wider">DevOps</span>
+                                            <span class="text-slate-400">·</span>
+                                            <span class="text-xs text-slate-500">Nov 22</span>
+                                        </div>
+                                        <h3
+                                            class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+                                            Optimizing CI/CD Pipelines for Speed
+                                        </h3>
+                                        <p class="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 mb-3">
+                                            Reduce build times and deploy faster with these optimization techniques for
+                                            GitHub Actions.
+                                        </p>
+                                        <div
+                                            class="flex items-center gap-2 text-sm font-medium text-slate-900 dark:text-white">
+                                            <span>Read more</span>
+                                            <span
+                                                class="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                        <!-- Sidebar: Popular Tags & Newsletter -->
+                        <div class="lg:w-1/3 flex flex-col gap-10">
+                            <!-- Popular Tags -->
+                            <div
+                                class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Popular Tags</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <a class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors"
+                                        href="#">React</a>
+                                    <a class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors"
+                                        href="#">Vue</a>
+                                    <a class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors"
+                                        href="#">DevOps</a>
+                                    <a class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors"
+                                        href="#">CSS</a>
+                                    <a class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors"
+                                        href="#">JavaScript</a>
+                                    <a class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors"
+                                        href="#">Architecture</a>
+                                    <a class="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-colors"
+                                        href="#">Career</a>
+                                </div>
+                            </div>
+                            <!-- Newsletter -->
+                            <div
+                                class="bg-primary p-6 rounded-2xl text-white shadow-xl shadow-primary/20 relative overflow-hidden">
+                                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl">
+                                </div>
+                                <div class="relative z-10">
+                                    <h3 class="text-xl font-bold mb-2">Weekly Digest</h3>
+                                    <p class="text-primary-light text-sm mb-4">Get the best engineering stories
+                                        delivered to your inbox every Monday.</p>
+                                    <form class="flex flex-col gap-3">
+                                        <input
+                                            class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 placeholder-white/60 text-white focus:outline-none focus:ring-2 focus:ring-white/50 text-sm"
+                                            placeholder="your@email.com" type="email" />
+                                        <button
+                                            class="w-full py-3 rounded-xl bg-white text-primary font-bold text-sm hover:bg-primary-light transition-colors"
+                                            type="button">Subscribe</button>
+                                    </form>
+                                    <p class="text-xs text-primary-light/60 mt-3 text-center">No spam, unsubscribe
+                                        anytime.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- Footer -->
+        <footer class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 pt-16 pb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                    <!-- Brand Column -->
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="size-6 bg-primary rounded-md flex items-center justify-center text-white">
+                                <svg class="size-4" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13 10V3L4 14H11V21L20 10H13Z" fill="none" stroke="currentColor"
+                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                                </svg>
+                            </div>
+                            <span class="font-bold text-lg text-slate-900 dark:text-white">Indigo</span>
+                        </div>
+                        <p class="text-slate-500 text-sm leading-relaxed">
+                            Empowering developers with in-depth insights, tutorials, and stories from the engineering
+                            world.
+                        </p>
+                    </div>
+                    <!-- Links Column 1 -->
+                    <div class="flex flex-col gap-4">
+                        <h4 class="font-bold text-slate-900 dark:text-white">Platform</h4>
+                        <ul class="flex flex-col gap-2">
+                            <li><a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Latest
+                                    Articles</a></li>
+                            <li><a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Popular
+                                    Tags</a></li>
+                            <li><a class="text-slate-500 hover:text-primary text-sm transition-colors"
+                                    href="#">Authors</a></li>
+                            <li><a class="text-slate-500 hover:text-primary text-sm transition-colors"
+                                    href="#">Sponsorships</a></li>
+                        </ul>
+                    </div>
+                    <!-- Links Column 2 -->
+                    <div class="flex flex-col gap-4">
+                        <h4 class="font-bold text-slate-900 dark:text-white">Company</h4>
+                        <ul class="flex flex-col gap-2">
+                            <li><a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">About
+                                    Us</a></li>
+                            <li><a class="text-slate-500 hover:text-primary text-sm transition-colors"
+                                    href="#">Careers</a></li>
+                            <li><a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Privacy
+                                    Policy</a></li>
+                            <li><a class="text-slate-500 hover:text-primary text-sm transition-colors" href="#">Terms of
+                                    Service</a></li>
+                        </ul>
+                    </div>
+                    <!-- Socials Column -->
+                    <div class="flex flex-col gap-4">
+                        <h4 class="font-bold text-slate-900 dark:text-white">Follow Us</h4>
+                        <div class="flex gap-4">
+                            <a class="size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all"
+                                href="#">
+                                <svg aria-hidden="true" class="size-5" fill="currentColor" viewbox="0 0 24 24">
+                                    <path
+                                        d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all"
+                                href="#">
+                                <svg aria-hidden="true" class="size-5" fill="currentColor" viewbox="0 0 24 24">
+                                    <path clip-rule="evenodd"
+                                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                            <a class="size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all"
+                                href="#">
+                                <svg aria-hidden="true" class="size-5" fill="currentColor" viewbox="0 0 24 24">
+                                    <path clip-rule="evenodd"
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.753 1.003-1.83 2.41-2.423 3.12-2.515.302-5.566 1.554-6.904 2.661-.875-1.595-1.346-3.411-1.446-5.325.024-.009.05-.017.076-.025.2.144.408.28.628.411zm1.181 6.556c1.425-1.112 4.417-2.327 6.842-2.628.983 2.72 1.444 5.414 1.517 5.86-2.52.887-5.367.65-7.576-1.127zm10.707 1.436c-.059-.47-.53-3.103-1.503-5.875 2.585-.694 5.385-.75 5.842-.74a8.618 8.618 0 01-4.339 6.615z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="border-t border-slate-100 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p class="text-sm text-slate-400">© 2024 Indigo Media. All rights reserved.</p>
+                    <div class="flex gap-6">
+                        <a class="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                            href="#">Privacy</a>
+                        <a class="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                            href="#">Cookies</a>
+                        <a class="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                            href="#">Accessibility</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
