@@ -68,7 +68,6 @@ jobs:
               '{
                 model: "gpt-5-nano",
                 messages: [{role: "system", content: $sys}, {role: "user", content: $usr}],
-                temperature: 0.7,
                 max_completion_tokens: 8000,
                 response_format: {type: "json_object"}
               }')")
