@@ -272,5 +272,16 @@ const formatDate = (dateStr: string) => {
 }
 
 useHead({ title: t('seo.home.title') })
-useSeoMeta({ title: t('seo.home.title'), description: t('seo.home.description') })
+useSeoMeta({
+  title: t('seo.home.title'),
+  description: t('seo.home.description'),
+  ogTitle: t('seo.home.title'),
+  ogDescription: t('seo.home.description'),
+  ogImage: '/logo.png',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: t('seo.home.title'),
+  twitterDescription: t('seo.home.description'),
+  twitterImage: '/logo.png',
+})
 </script>

@@ -98,7 +98,18 @@ const { t, locale } = useI18n()
 const localePath = useLocalePath()
 
 useHead({ title: t('seo.authors.title') })
-useSeoMeta({ title: t('seo.authors.title'), description: t('seo.authors.description') })
+useSeoMeta({
+    title: t('seo.authors.title'),
+    description: t('seo.authors.description'),
+    ogTitle: t('seo.authors.title'),
+    ogDescription: t('seo.authors.description'),
+    ogImage: '/logo.png',
+    ogType: 'website',
+    twitterCard: 'summary_large_image',
+    twitterTitle: t('seo.authors.title'),
+    twitterDescription: t('seo.authors.description'),
+    twitterImage: '/logo.png',
+})
 
 const { data, pending } = await useFetch<{ success: boolean; authors: any[] }>('/api/authors')
 

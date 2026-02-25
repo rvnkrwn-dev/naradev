@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="mb-10">
       <h1 class="text-3xl sm:text-4xl font-bold font-serif text-slate-900 dark:text-white mb-2">{{ $t('articles.title')
-        }}</h1>
+      }}</h1>
       <p class="text-slate-500 dark:text-slate-400">{{ $t('articles.subtitle') }}</p>
     </div>
 
@@ -42,7 +42,7 @@
             class="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-900 rounded-xl shadow-xl shadow-slate-200/50 dark:shadow-black/30 border border-slate-200 dark:border-slate-800 z-30 overflow-hidden">
             <div class="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ $t('articles.filter_label')
-                }}</span>
+              }}</span>
               <button v-if="selectedTags.length" @click="clearAllTags"
                 class="text-xs font-medium text-primary hover:text-primary-dark transition-colors">
                 {{ $t('common.clear_all') }}
@@ -180,7 +180,18 @@
 const { t } = useI18n()
 
 useHead({ title: t('seo.articles.title') })
-useSeoMeta({ title: t('seo.articles.title'), description: t('seo.articles.description') })
+useSeoMeta({
+  title: t('seo.articles.title'),
+  description: t('seo.articles.description'),
+  ogTitle: t('seo.articles.title'),
+  ogDescription: t('seo.articles.description'),
+  ogImage: '/logo.png',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: t('seo.articles.title'),
+  twitterDescription: t('seo.articles.description'),
+  twitterImage: '/logo.png',
+})
 
 const route = useRoute()
 const searchQuery = ref((route.query.q as string) || '')
