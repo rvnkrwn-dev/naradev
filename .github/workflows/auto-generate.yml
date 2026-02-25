@@ -1,0 +1,226 @@
+name: Auto Generate Article
+
+on:
+  schedule:
+    # Every 6 hours: 00:00, 06:00, 12:00, 18:00 UTC
+    - cron: '0 0,6,12,18 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Random delay (2-9 minutes)
+        run: |
+          DELAY=$((RANDOM % 8 + 2))
+          echo "Waiting ${DELAY} minutes..."
+          sleep ${DELAY}m
+
+      - name: Generate article via OpenAI
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPO: ${{ github.event.repository.name }}
+        run: |
+          set -e
+
+          # ──────────────────────────────────────
+          # 1. Pick a random AI author
+          # ──────────────────────────────────────
+          AUTHORS_JSON='[
+            {"id":"usr_ai_frontend","name":"Anya Pratiwi","focus":"Frontend Development & UI/UX","topics":["React hooks and patterns","Vue 3 composition API","CSS Grid vs Flexbox","Web accessibility best practices","Responsive design techniques","Tailwind CSS tips and tricks","State management patterns in Vue and React","Component design systems","Web animations with CSS and JavaScript","Progressive Web Apps guide","Frontend performance optimization","Modern JavaScript ES2024 features","TypeScript for frontend developers","Next.js vs Nuxt comparison","Form validation best practices"],"tags":["javascript","css","vue","react","ui-ux"]},
+            {"id":"usr_ai_backend","name":"Bima Nugroho","focus":"Backend Development & API Design","topics":["REST API design principles","Node.js performance tuning","Database indexing strategies","Authentication with JWT tokens","GraphQL vs REST comparison","Microservices architecture guide","Error handling patterns in Node.js","API rate limiting strategies","Caching strategies with Redis","SQL vs NoSQL databases","Serverless functions guide","WebSocket real-time communication","File upload handling best practices","API versioning strategies","ORM vs raw SQL queries"],"tags":["nodejs","nuxt","api","database","backend"]},
+            {"id":"usr_ai_devops","name":"Citra Wulandari","focus":"DevOps & Cloud Infrastructure","topics":["Docker containerization guide","CI/CD pipeline setup","Kubernetes basics for developers","GitHub Actions workflows","Nginx reverse proxy configuration","Linux server administration","Cloud deployment strategies","Infrastructure as Code with Terraform","Monitoring with Prometheus and Grafana","Log management best practices","SSL TLS certificate management","Automated testing in CI/CD pipelines","Blue-green deployment strategy","Container orchestration patterns","Cloud cost optimization tips"],"tags":["devops","docker","ci-cd","cloud","linux"]},
+            {"id":"usr_ai_mobile","name":"Dimas Saputra","focus":"Mobile App Development","topics":["Flutter widget lifecycle guide","React Native navigation patterns","Mobile app state management","Offline-first mobile applications","Push notification implementation","Mobile app performance optimization","Cross-platform development comparison","Mobile UI/UX design patterns","App store optimization ASO guide","Mobile testing strategies","Biometric authentication on mobile","Deep linking in mobile apps","Mobile database with SQLite","Responsive mobile layouts","Mobile app security best practices"],"tags":["flutter","react-native","mobile","android","ios"]},
+            {"id":"usr_ai_security","name":"Elsa Rahmawati","focus":"Cybersecurity & Best Practices","topics":["OWASP Top 10 explained","SQL injection prevention guide","XSS attack prevention techniques","Secure authentication patterns","API security best practices","CORS explained for developers","Content Security Policy CSP guide","Password hashing best practices","Two-factor authentication implementation","Security headers guide for web apps","Dependency vulnerability scanning","Secure file upload handling","Rate limiting and DDoS prevention","Data encryption at rest and in transit","Security audit checklist for web apps"],"tags":["security","authentication","testing","performance"]}
+          ]'
+
+          AUTHOR_INDEX=$((RANDOM % 5))
+          AUTHOR=$(echo "$AUTHORS_JSON" | jq ".[$AUTHOR_INDEX]")
+          AUTHOR_ID=$(echo "$AUTHOR" | jq -r '.id')
+          AUTHOR_NAME=$(echo "$AUTHOR" | jq -r '.name')
+          AUTHOR_FOCUS=$(echo "$AUTHOR" | jq -r '.focus')
+          TOPICS=$(echo "$AUTHOR" | jq -r '.topics[]')
+          DEFAULT_TAGS=$(echo "$AUTHOR" | jq -r '.tags')
+
+          # Pick random topic
+          TOPIC_COUNT=$(echo "$AUTHOR" | jq '.topics | length')
+          TOPIC_INDEX=$((RANDOM % TOPIC_COUNT))
+          TOPIC=$(echo "$AUTHOR" | jq -r ".topics[$TOPIC_INDEX]")
+
+          echo "Author: $AUTHOR_NAME ($AUTHOR_FOCUS)"
+          echo "Topic: $TOPIC"
+
+          # ──────────────────────────────────────
+          # 2. Generate article via GPT-5 nano
+          # ──────────────────────────────────────
+          SYSTEM_PROMPT="You are ${AUTHOR_NAME}, a professional tech writer specializing in ${AUTHOR_FOCUS}. You write in-depth, high-quality, SEO-optimized technical articles for the Naradev engineering blog.\n\nCRITICAL RULES:\n1. Write content in BOTH Indonesian (Bahasa Indonesia) AND English\n2. Each language version must be independently complete and natural\n3. Include practical code examples with syntax highlighting\n4. Use proper heading hierarchy (H1 for title, H2 for sections, H3 for subsections)\n5. Write at least 800-1200 words per language\n6. Include actionable tips and best practices\n7. Use engaging, conversational yet professional tone\n8. SEO: include relevant keywords naturally, use descriptive headings\n9. End with a conclusion and call-to-action"
+
+          USER_PROMPT="Generate a complete technical article about: \"${TOPIC}\"\n\nReturn a valid JSON object with this EXACT structure (no markdown wrapping, pure JSON):\n{\n  \"title_id\": \"Judul dalam Bahasa Indonesia\",\n  \"title_en\": \"Title in English\",\n  \"description_id\": \"Deskripsi SEO 120-160 karakter dalam Bahasa Indonesia\",\n  \"description_en\": \"SEO description 120-160 characters in English\",\n  \"tags\": [\"tag1\", \"tag2\", \"tag3\"],\n  \"body_id\": \"Full markdown content in Indonesian (without frontmatter, starting with # heading)\",\n  \"body_en\": \"Full markdown content in English (without frontmatter, starting with # heading)\"\n}\n\nIMPORTANT:\n- tags should be 3-5 lowercase single-word tags relevant to the topic\n- body_id and body_en must be complete standalone articles\n- Include code blocks with language specifiers\n- Use ## for main sections and ### for subsections\n- Include practical examples developers can immediately use"
+
+          RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg sys "$SYSTEM_PROMPT" \
+              --arg usr "$USER_PROMPT" \
+              '{
+                model: "gpt-5-nano",
+                messages: [{role: "system", content: $sys}, {role: "user", content: $usr}],
+                temperature: 0.7,
+                max_completion_tokens: 8000,
+                response_format: {type: "json_object"}
+              }')")
+
+          CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+          if [ -z "$CONTENT" ] || [ "$CONTENT" = "null" ]; then
+            echo "Error: Empty response from OpenAI"
+            echo "$RESPONSE" | jq .
+            exit 1
+          fi
+
+          TITLE_ID=$(echo "$CONTENT" | jq -r '.title_id')
+          TITLE_EN=$(echo "$CONTENT" | jq -r '.title_en')
+          DESC_ID=$(echo "$CONTENT" | jq -r '.description_id')
+          DESC_EN=$(echo "$CONTENT" | jq -r '.description_en')
+          TAGS=$(echo "$CONTENT" | jq -r '.tags')
+          BODY_ID=$(echo "$CONTENT" | jq -r '.body_id')
+          BODY_EN=$(echo "$CONTENT" | jq -r '.body_en')
+
+          # Generate slug from English title
+          SLUG=$(echo "$TITLE_EN" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 -]//g' | sed 's/ /-/g' | sed 's/--*/-/g' | cut -c1-60)
+          DATE=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+
+          # Merge tags
+          TAGS_YAML=$(echo "$CONTENT" | jq -r '.tags[:5][]' | head -5 | sed 's/^/  - /')
+
+          echo "Generated: $TITLE_EN (slug: $SLUG)"
+
+          # ──────────────────────────────────────
+          # 3. Generate cover image via gpt-image-1-mini
+          # ──────────────────────────────────────
+          COVER_URL=""
+          IMG_PROMPT="Create a modern, minimalist, professional blog cover image for a tech article titled \"${TITLE_EN}\". Style: Clean gradient background, subtle geometric shapes or abstract tech elements, no text overlay, no logos. Colors: Professional blues, teals, and purples. High quality, editorial style."
+
+          IMG_RESPONSE=$(curl -s https://api.openai.com/v1/images/generations \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg prompt "$IMG_PROMPT" '{
+              model: "gpt-image-1-mini",
+              prompt: $prompt,
+              n: 1,
+              size: "1536x1024",
+              quality: "low"
+            }')")
+
+          IMG_B64=$(echo "$IMG_RESPONSE" | jq -r '.data[0].b64_json // empty')
+
+          if [ -n "$IMG_B64" ]; then
+            COVER_PATH="public/covers/${SLUG}.png"
+            ENCODED_IMG=$(echo "$IMG_B64" | base64 -d | base64 | tr -d '\n')
+
+            # Check if cover already exists
+            EXISTING=$(curl -s -o /dev/null -w "%{http_code}" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}?ref=dev")
+
+            COVER_BODY=$(jq -n \
+              --arg content "$ENCODED_IMG" \
+              --arg message "Add cover: ${SLUG}" \
+              '{message: $message, content: $content, branch: "dev"}')
+
+            if [ "$EXISTING" = "200" ]; then
+              SHA=$(curl -s \
+                -H "Authorization: Bearer $GITHUB_TOKEN" \
+                "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}?ref=dev" | jq -r '.sha')
+              COVER_BODY=$(echo "$COVER_BODY" | jq --arg sha "$SHA" '. + {sha: $sha}')
+            fi
+
+            curl -s -X PUT \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}" \
+              -d "$COVER_BODY" > /dev/null
+
+            COVER_URL="https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/dev/${COVER_PATH}"
+            echo "Cover uploaded: $COVER_URL"
+          else
+            echo "Warning: No cover image generated, continuing without cover"
+          fi
+
+          # ──────────────────────────────────────
+          # 4. Build markdown file and push to GitHub
+          # ──────────────────────────────────────
+          # Build frontmatter
+          FRONTMATTER="---
+          title_id: \"$(echo "$TITLE_ID" | sed 's/"/\\"/g')\"
+          title_en: \"$(echo "$TITLE_EN" | sed 's/"/\\"/g')\"
+          slug: \"${SLUG}\"
+          date: \"${DATE}\"
+          description_id: \"$(echo "$DESC_ID" | sed 's/"/\\"/g')\"
+          description_en: \"$(echo "$DESC_EN" | sed 's/"/\\"/g')\"
+          tags:
+          ${TAGS_YAML}
+          status: \"published\"
+          authorId: \"${AUTHOR_ID}\""
+
+          if [ -n "$COVER_URL" ]; then
+            FRONTMATTER="${FRONTMATTER}
+          cover: \"${COVER_URL}\""
+          fi
+
+          FRONTMATTER="${FRONTMATTER}
+          ---"
+
+          # Remove leading spaces from heredoc
+          FRONTMATTER=$(echo "$FRONTMATTER" | sed 's/^          //')
+
+          ARTICLE_CONTENT="${FRONTMATTER}
+
+          <!-- lang:id -->
+          ${BODY_ID}
+
+          <!-- lang:en -->
+          ${BODY_EN}"
+
+          # Remove leading spaces
+          ARTICLE_CONTENT=$(echo "$ARTICLE_CONTENT" | sed 's/^          //')
+
+          # Encode content for GitHub API
+          ENCODED_CONTENT=$(echo "$ARTICLE_CONTENT" | base64 | tr -d '\n')
+          FILE_PATH="content/articles/${SLUG}.md"
+
+          # Check if article already exists
+          EXISTING_ARTICLE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}?ref=dev")
+
+          ARTICLE_BODY=$(jq -n \
+            --arg content "$ENCODED_CONTENT" \
+            --arg message "feat(auto): ${TITLE_EN} by ${AUTHOR_NAME}" \
+            '{message: $message, content: $content, branch: "dev"}')
+
+          if [ "$EXISTING_ARTICLE" = "200" ]; then
+            SHA=$(curl -s \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}?ref=dev" | jq -r '.sha')
+            ARTICLE_BODY=$(echo "$ARTICLE_BODY" | jq --arg sha "$SHA" '. + {sha: $sha}')
+          fi
+
+          RESULT=$(curl -s -X PUT \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}" \
+            -d "$ARTICLE_BODY")
+
+          if echo "$RESULT" | jq -e '.content.sha' > /dev/null 2>&1; then
+            echo "✅ Article published: ${TITLE_EN}"
+            echo "   Author: ${AUTHOR_NAME}"
+            echo "   Slug: ${SLUG}"
+            echo "   Path: ${FILE_PATH}"
+          else
+            echo "❌ Failed to publish article"
+            echo "$RESULT" | jq .
+            exit 1
+          fi
