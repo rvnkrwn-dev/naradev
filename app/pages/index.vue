@@ -84,9 +84,10 @@
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 </template>
                 <template v-else>
-                  <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10"></div>
-                  <div class="w-full h-full bg-gradient-to-br group-hover:scale-105 transition-transform duration-500"
-                    :class="getCardGradient(article.slug)"></div>
+                  <div class="absolute inset-0 bg-white dark:bg-slate-800 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-slate-300 dark:text-slate-600"
+                      style="font-size: 64px;">article</span>
+                  </div>
                 </template>
                 <span v-if="article.tags?.length"
                   class="absolute top-4 left-4 z-20 px-3 py-1 rounded-lg text-white text-xs font-bold backdrop-blur-md bg-white/10 border border-white/20 shadow-sm"
@@ -147,8 +148,10 @@
                 :to="localePath(`/articles/${article.slug}`)"
                 class="flex flex-col sm:flex-row gap-6 group cursor-pointer">
                 <div v-if="!article.cover"
-                  class="w-full sm:w-48 aspect-[4/3] sm:aspect-square rounded-xl overflow-hidden shrink-0"
-                  :class="getCardGradient(article.slug)"></div>
+                  class="w-full sm:w-48 aspect-[4/3] sm:aspect-square rounded-xl overflow-hidden shrink-0 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-800 grid place-items-center">
+                  <span class="material-symbols-outlined text-slate-300 dark:text-slate-600"
+                    style="font-size: 48px;">article</span>
+                </div>
                 <img v-else :src="article.cover" :alt="locale === 'id' ? article.title_id : article.title_en"
                   class="w-full sm:w-48 aspect-[4/3] sm:aspect-square rounded-xl overflow-hidden shrink-0 object-cover" />
                 <div :class="[
@@ -244,19 +247,6 @@ const allTags = computed(() => {
   return Array.from(tags)
 })
 
-const gradients = [
-  'from-blue-500/30 via-indigo-500/20 to-purple-500/10',
-  'from-emerald-500/30 via-teal-500/20 to-cyan-500/10',
-  'from-sky-500/30 via-blue-500/20 to-indigo-500/10',
-  'from-rose-500/30 via-pink-500/20 to-fuchsia-500/10',
-  'from-amber-500/30 via-orange-500/20 to-yellow-500/10',
-  'from-violet-500/30 via-purple-500/20 to-indigo-500/10',
-]
-
-const getCardGradient = (slug: string) => {
-  const hash = slug.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
-  return `bg-gradient-to-br ${gradients[hash % gradients.length]}`
-}
 
 const tagColors: Record<string, string> = {
   typescript: 'bg-blue-600/90',
