@@ -177,7 +177,7 @@ IMPORTANT:
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt },
                 ],
-                max_completion_tokens: 32768,
+                max_completion_tokens: 50000,
                 response_format: { type: 'json_object' },
             },
         })
