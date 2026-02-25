@@ -130,6 +130,26 @@ const totalArticles = computed(() => data.value?.totalArticles || 0)
 
 useHead({
     title: computed(() => author.value ? `${author.value.name} — Naradev` : 'Author — Naradev'),
+    script: computed(() => {
+        if (!author.value) return []
+        return [{
+            type: 'application/ld+json',
+            innerHTML: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'ProfilePage',
+                mainEntity: {
+                    '@type': 'Person',
+                    name: author.value.name,
+                    alternateName: author.value.username,
+                    interactionStatistic: {
+                        '@type': 'InteractionCounter',
+                        interactionType: 'https://schema.org/WriteAction',
+                        userInteractionCount: totalArticles.value
+                    }
+                }
+            })
+        }]
+    })
 })
 useSeoMeta({
     title: computed(() => author.value?.name || 'Author'),

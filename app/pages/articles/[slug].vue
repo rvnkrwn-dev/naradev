@@ -165,7 +165,7 @@
               <span class="material-symbols-outlined" style="font-size: 20px;">{{ isSaved ? 'bookmark' :
                 'bookmark_border' }}</span>
               <span class="font-medium text-sm">{{ isSaved ? $t('reading_list.saved') : $t('reading_list.save')
-              }}</span>
+                }}</span>
             </button>
           </div>
         </div>
@@ -327,6 +327,34 @@ const relatedArticles = computed(() => {
 
 useHead({
   title: computed(() => localizedTitle.value ? `${localizedTitle.value} — Naradev` : 'Article — Naradev'),
+  script: computed(() => {
+    if (!article.value) return []
+    return [{
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: localizedTitle.value,
+        description: localizedDescription.value,
+        image: article.value.cover ? [article.value.cover] : [],
+        datePublished: article.value.date,
+        dateModified: article.value.date,
+        author: {
+          '@type': 'Person',
+          name: article.value.author?.name || 'Naradev Author',
+          url: `${useRuntimeConfig().public.appUrl}/authors/${article.value.author?.id}`
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Naradev',
+          logo: {
+            '@type': 'ImageObject',
+            url: `${useRuntimeConfig().public.appUrl}/logo.png`
+          }
+        }
+      })
+    }]
+  })
 })
 useSeoMeta({
   title: computed(() => localizedTitle.value || 'Article'),
