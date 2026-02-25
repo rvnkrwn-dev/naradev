@@ -327,6 +327,34 @@ const relatedArticles = computed(() => {
 
 useHead({
   title: computed(() => localizedTitle.value ? `${localizedTitle.value} — Naradev` : 'Article — Naradev'),
+  script: computed(() => {
+    if (!article.value) return []
+    return [{
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: localizedTitle.value,
+        description: localizedDescription.value,
+        image: article.value.cover ? [article.value.cover] : [],
+        datePublished: article.value.date,
+        dateModified: article.value.date,
+        author: {
+          '@type': 'Person',
+          name: article.value.author?.name || 'Naradev Author',
+          url: `https://naradev.leci.app/authors/${article.value.author?.id}`
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Naradev',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://naradev.leci.app/logo.png'
+          }
+        }
+      })
+    }]
+  })
 })
 useSeoMeta({
   title: computed(() => localizedTitle.value || 'Article'),

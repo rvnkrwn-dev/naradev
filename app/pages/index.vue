@@ -271,7 +271,21 @@ const formatDate = (dateStr: string) => {
   })
 }
 
-useHead({ title: t('seo.home.title') })
+useHead({
+  title: t('seo.home.title'),
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Naradev',
+        url: 'https://naradev.leci.app',
+        description: t('seo.home.description'),
+      })
+    }
+  ]
+})
 useSeoMeta({
   title: t('seo.home.title'),
   description: t('seo.home.description'),
