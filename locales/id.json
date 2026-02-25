@@ -187,6 +187,20 @@
         "action_write_desc": "Mulai buat konten baru",
         "action_manage": "Kelola Artikel",
         "action_manage_desc": "Lihat, edit, atau hapus artikel",
+        "action_generate": "Generate AI",
+        "action_generate_desc": "Buat artikel otomatis dengan AI",
+        "generate_title": "Generate Artikel dengan AI",
+        "generate_desc": "Gunakan GPT-5 nano untuk membuat artikel SEO-optimized",
+        "generate_author": "Penulis AI",
+        "generate_random_author": "🎲 Penulis Acak",
+        "generate_topic": "Topik (opsional)",
+        "generate_topic_placeholder": "Kosongkan untuk topik otomatis",
+        "generate_count": "Jumlah Artikel",
+        "generate_article": "artikel",
+        "generate_articles": "artikel",
+        "generate_btn": "Generate",
+        "generating": "Membuat...",
+        "generate_success": "Berhasil membuat {count} artikel!",
         "recent_title": "Artikel Terbaru",
         "recent_view_all": "Lihat Semua →",
         "status_published": "Dipublikasikan",
@@ -343,7 +357,23 @@
         "dashboard_edit": {
             "title": "Edit: {title} — Naradev",
             "title_fallback": "Edit Artikel — Naradev"
+        },
+        "reading_list": {
+            "title": "Daftar Baca — Naradev",
+            "description": "Artikel yang Anda simpan di Naradev."
         }
+    },
+    "reading_list": {
+        "title": "Daftar Baca",
+        "subtitle": "Artikel yang Anda simpan untuk dibaca nanti",
+        "empty_title": "Belum ada artikel tersimpan",
+        "empty_desc": "Mulai jelajahi dan simpan artikel yang ingin Anda baca nanti.",
+        "browse_articles": "Jelajahi Artikel",
+        "login_required_title": "Login Diperlukan",
+        "login_required_desc": "Silakan login untuk mengakses daftar baca Anda.",
+        "save": "Simpan",
+        "saved": "Tersimpan",
+        "remove": "Hapus dari daftar baca"
     },
     "success": {
         "ARTICLE_CREATED": "Artikel berhasil dibuat",

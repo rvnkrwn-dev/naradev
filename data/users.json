@@ -38,5 +38,55 @@
     "passwordHash": "$2b$12$po9vfPAMDVHxJBxNTbEizOXASGub2yTsO2Sjq..kxCAAeLldLY1v6",
     "createdAt": "2026-02-25T05:00:02.464Z",
     "updatedAt": "2026-02-25T05:00:02.464Z"
+  },
+  {
+    "id": "usr_ai_frontend",
+    "username": "ai_frontend",
+    "name": "Anya Pratiwi",
+    "email": "ai.frontend@naradev.id",
+    "role": "author",
+    "passwordHash": "$2b$12$AI_AUTHOR_NO_LOGIN_ALLOWED_00000000000000000000",
+    "createdAt": "2026-02-25T12:00:00.000Z",
+    "updatedAt": "2026-02-25T12:00:00.000Z"
+  },
+  {
+    "id": "usr_ai_backend",
+    "username": "ai_backend",
+    "name": "Bima Nugroho",
+    "email": "ai.backend@naradev.id",
+    "role": "author",
+    "passwordHash": "$2b$12$AI_AUTHOR_NO_LOGIN_ALLOWED_00000000000000000001",
+    "createdAt": "2026-02-25T12:00:00.000Z",
+    "updatedAt": "2026-02-25T12:00:00.000Z"
+  },
+  {
+    "id": "usr_ai_devops",
+    "username": "ai_devops",
+    "name": "Citra Wulandari",
+    "email": "ai.devops@naradev.id",
+    "role": "author",
+    "passwordHash": "$2b$12$AI_AUTHOR_NO_LOGIN_ALLOWED_00000000000000000002",
+    "createdAt": "2026-02-25T12:00:00.000Z",
+    "updatedAt": "2026-02-25T12:00:00.000Z"
+  },
+  {
+    "id": "usr_ai_mobile",
+    "username": "ai_mobile",
+    "name": "Dimas Saputra",
+    "email": "ai.mobile@naradev.id",
+    "role": "author",
+    "passwordHash": "$2b$12$AI_AUTHOR_NO_LOGIN_ALLOWED_00000000000000000003",
+    "createdAt": "2026-02-25T12:00:00.000Z",
+    "updatedAt": "2026-02-25T12:00:00.000Z"
+  },
+  {
+    "id": "usr_ai_security",
+    "username": "ai_security",
+    "name": "Elsa Rahmawati",
+    "email": "ai.security@naradev.id",
+    "role": "author",
+    "passwordHash": "$2b$12$AI_AUTHOR_NO_LOGIN_ALLOWED_00000000000000000004",
+    "createdAt": "2026-02-25T12:00:00.000Z",
+    "updatedAt": "2026-02-25T12:00:00.000Z"
   }
 ]

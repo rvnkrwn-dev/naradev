@@ -187,6 +187,20 @@
         "action_write_desc": "Start creating new content",
         "action_manage": "Manage Articles",
         "action_manage_desc": "View, edit, or delete articles",
+        "action_generate": "AI Generate",
+        "action_generate_desc": "Auto-generate articles with AI",
+        "generate_title": "Generate Article with AI",
+        "generate_desc": "Use GPT-5 nano to create SEO-optimized articles",
+        "generate_author": "AI Author",
+        "generate_random_author": "🎲 Random Author",
+        "generate_topic": "Topic (optional)",
+        "generate_topic_placeholder": "Leave empty for auto-topic",
+        "generate_count": "Number of Articles",
+        "generate_article": "article",
+        "generate_articles": "articles",
+        "generate_btn": "Generate",
+        "generating": "Generating...",
+        "generate_success": "Successfully generated {count} article(s)!",
         "recent_title": "Recent Articles",
         "recent_view_all": "View All →",
         "status_published": "Published",
@@ -343,7 +357,23 @@
         "dashboard_edit": {
             "title": "Edit: {title} — Naradev",
             "title_fallback": "Edit Article — Naradev"
+        },
+        "reading_list": {
+            "title": "Reading List — Naradev",
+            "description": "Your saved articles on Naradev."
         }
+    },
+    "reading_list": {
+        "title": "Reading List",
+        "subtitle": "Articles you've saved for later",
+        "empty_title": "No saved articles",
+        "empty_desc": "Start exploring and save articles you want to read later.",
+        "browse_articles": "Browse Articles",
+        "login_required_title": "Login Required",
+        "login_required_desc": "Please login to access your reading list.",
+        "save": "Save",
+        "saved": "Saved",
+        "remove": "Remove from reading list"
     },
     "success": {
         "ARTICLE_CREATED": "Article created successfully",

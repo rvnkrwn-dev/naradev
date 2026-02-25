@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     githubOwner: process.env.GITHUB_OWNER || '',
     githubRepo: process.env.GITHUB_REPO || '',
     githubBranch: process.env.GITHUB_BRANCH || 'main',
+    openaiApiKey: process.env.OPENAI_API_KEY || '',
   },
 
   tailwindcss: {

@@ -85,7 +85,7 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
       <NuxtLink :to="localePath('/dashboard/create')"
         class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 hover:border-primary/30 dark:hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group flex items-center gap-4">
         <div
@@ -110,6 +110,19 @@
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('dashboard.action_manage_desc') }}</p>
         </div>
       </NuxtLink>
+
+      <button @click="showGenerateModal = true"
+        class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 hover:border-violet-300 dark:hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/5 transition-all duration-300 group flex items-center gap-4 text-left">
+        <div
+          class="size-12 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30 transition-colors">
+          <span class="material-symbols-outlined text-violet-600 dark:text-violet-400"
+            style="font-size: 24px;">auto_awesome</span>
+        </div>
+        <div>
+          <p class="font-semibold text-slate-900 dark:text-white">{{ $t('dashboard.action_generate') }}</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('dashboard.action_generate_desc') }}</p>
+        </div>
+      </button>
     </div>
 
     <!-- Recent Articles -->
@@ -171,6 +184,93 @@
         </NuxtLink>
       </div>
     </div>
+    <!-- Generate Modal -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div v-if="showGenerateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showGenerateModal = false"></div>
+          <div
+            class="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-lg p-6 sm:p-8">
+            <button @click="showGenerateModal = false"
+              class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+              <div class="size-10 rounded-xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                <span class="material-symbols-outlined text-violet-600" style="font-size: 22px;">auto_awesome</span>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $t('dashboard.generate_title') }}</h3>
+                <p class="text-xs text-slate-500">{{ $t('dashboard.generate_desc') }}</p>
+              </div>
+            </div>
+
+            <!-- Author Select -->
+            <div class="mb-4">
+              <label class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">{{
+                $t('dashboard.generate_author') }}</label>
+              <select v-model="genAuthorId"
+                class="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                <option value="">{{ $t('dashboard.generate_random_author') }}</option>
+                <option v-for="a in aiAuthors" :key="a.id" :value="a.id">{{ a.name }} — {{ a.focus }}</option>
+              </select>
+            </div>
+
+            <!-- Custom Topic -->
+            <div class="mb-4">
+              <label class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">{{
+                $t('dashboard.generate_topic') }}</label>
+              <input v-model="genTopic" type="text" :placeholder="$t('dashboard.generate_topic_placeholder')"
+                class="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+            </div>
+
+            <!-- Count -->
+            <div class="mb-6">
+              <label class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">{{
+                $t('dashboard.generate_count') }}</label>
+              <select v-model.number="genCount"
+                class="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                <option :value="1">1 {{ $t('dashboard.generate_article') }}</option>
+                <option :value="2">2 {{ $t('dashboard.generate_articles') }}</option>
+                <option :value="3">3 {{ $t('dashboard.generate_articles') }}</option>
+                <option :value="5">5 {{ $t('dashboard.generate_articles') }}</option>
+              </select>
+            </div>
+
+            <!-- Result -->
+            <div v-if="genResult" class="mb-4 p-4 rounded-xl text-sm"
+              :class="genResult.success ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'">
+              <p v-if="genResult.success" class="font-medium">✅ {{ $t('dashboard.generate_success', {
+                count:
+                  genResult.generated }) }}</p>
+              <p v-else class="font-medium">❌ {{ genResult.errors?.[0] || 'Generation failed' }}</p>
+              <ul v-if="genResult.articles?.length" class="mt-2 space-y-1">
+                <li v-for="a in genResult.articles" :key="a.slug" class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
+                  {{ a.title }} <span class="text-xs opacity-60">by {{ a.author }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3">
+              <button @click="showGenerateModal = false"
+                class="flex-1 h-11 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                {{ $t('common.cancel') }}
+              </button>
+              <button @click="handleGenerate" :disabled="isGenerating"
+                class="flex-1 h-11 rounded-xl bg-violet-600 text-white text-sm font-semibold hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2">
+                <span v-if="isGenerating" class="material-symbols-outlined animate-spin"
+                  style="font-size: 18px;">progress_activity</span>
+                <span v-else class="material-symbols-outlined" style="font-size: 18px;">auto_awesome</span>
+                {{ isGenerating ? $t('dashboard.generating') : $t('dashboard.generate_btn') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -203,6 +303,41 @@ const uniqueTags = computed(() => {
 const totalViews = computed(() => articles.value.reduce((sum: number, a: any) => sum + (a.stats?.views || 0), 0))
 const totalLikes = computed(() => articles.value.reduce((sum: number, a: any) => sum + (a.stats?.likes || 0), 0))
 
+// AI Generate
+const showGenerateModal = ref(false)
+const genAuthorId = ref('')
+const genTopic = ref('')
+const genCount = ref(1)
+const isGenerating = ref(false)
+const genResult = ref<any>(null)
+const aiAuthors = ref<any[]>([])
+
+onMounted(async () => {
+  try {
+    const res = await $fetch('/api/admin/ai-authors')
+    aiAuthors.value = res.authors || []
+  } catch { }
+})
+
+async function handleGenerate() {
+  isGenerating.value = true
+  genResult.value = null
+  try {
+    const res = await $fetch('/api/admin/articles/generate', {
+      method: 'POST',
+      body: {
+        authorId: genAuthorId.value || undefined,
+        topic: genTopic.value || undefined,
+        count: genCount.value,
+      },
+    })
+    genResult.value = res
+  } catch (err: any) {
+    genResult.value = { success: false, errors: [err?.data?.message || err?.message || 'Unknown error'] }
+  } finally {
+    isGenerating.value = false
+  }
+}
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString(locale.value === 'id' ? 'id-ID' : 'en-US', {
