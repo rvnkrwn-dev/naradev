@@ -163,23 +163,30 @@ IMPORTANT:
 - Use ## for main sections and ### for subsections
 - Include practical examples developers can immediately use`
 
-    const response = await $fetch<any>('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-        },
-        body: {
-            model: 'gpt-5-nano',
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: userPrompt },
-            ],
-            temperature: 0.7,
-            max_tokens: 8000,
-            response_format: { type: 'json_object' },
-        },
-    })
+    let response: any
+    try {
+        response = await $fetch<any>('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+            },
+            body: {
+                model: 'gpt-5-nano',
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt },
+                ],
+                temperature: 0.7,
+                max_completion_tokens: 8000,
+                response_format: { type: 'json_object' },
+            },
+        })
+    } catch (err: any) {
+        const detail = err?.data || err?.response?._data || err?.message
+        console.error('[openai] Chat completion error:', JSON.stringify(detail))
+        throw createError({ statusCode: 502, message: `OpenAI error: ${JSON.stringify(detail)}` })
+    }
 
     const content = response.choices?.[0]?.message?.content
     if (!content) {
