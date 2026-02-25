@@ -181,6 +181,8 @@
         "stat_published": "Dipublikasikan",
         "stat_draft": "Draf",
         "stat_tags": "Tag Digunakan",
+        "stat_views": "Total Dilihat",
+        "stat_likes": "Total Disukai",
         "action_write": "Tulis Artikel Baru",
         "action_write_desc": "Mulai buat konten baru",
         "action_manage": "Kelola Artikel",

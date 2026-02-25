@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="localePath(`/articles/${article.slug}`)" class="card-hover group block overflow-hidden">
+  <NuxtLink :to="localePath(`/articles/${article.slug}`)" class="card-hover group flex flex-col h-full overflow-hidden">
     <!-- Cover Image -->
     <div v-if="article.cover"
       class="aspect-[16/10] w-full overflow-hidden border-b border-slate-100 dark:border-slate-800">
@@ -7,7 +7,7 @@
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
     </div>
 
-    <div class="p-5 sm:p-6">
+    <div class="p-5 sm:p-6 flex flex-col flex-grow">
       <!-- Tags -->
       <div v-if="article.tags?.length" class="flex flex-wrap gap-1.5 mb-3">
         <TagBadge v-for="tag in article.tags.slice(0, 3)" :key="tag" :tag="tag" size="sm" no-link />
@@ -25,13 +25,25 @@
       </p>
 
       <!-- Meta -->
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between mt-auto pt-2">
         <AuthorBadge v-if="article.author" :author="article.author" size="sm" />
         <span v-else class="text-xs text-slate-500">{{ $t('article.unknown_author') }}</span>
 
-        <time class="text-xs text-slate-500" :datetime="article.date">
-          {{ formatDate(article.date) }}
-        </time>
+        <div class="flex items-center gap-3">
+          <div v-if="article.stats" class="flex items-center gap-2 text-xs text-slate-400">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size: 14px;">visibility</span>
+              {{ article.stats.views }}
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size: 14px;">favorite</span>
+              {{ article.stats.likes }}
+            </span>
+          </div>
+          <time class="text-xs text-slate-500" :datetime="article.date">
+            {{ formatDate(article.date) }}
+          </time>
+        </div>
       </div>
     </div>
   </NuxtLink>
@@ -54,6 +66,7 @@ const props = defineProps<{
     tags: string[]
     cover?: string
     author: { id: string; username: string; name: string; role: string } | null
+    stats?: { views: number; likes: number }
   }
 }>()
 

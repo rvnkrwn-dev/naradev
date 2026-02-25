@@ -181,6 +181,8 @@
         "stat_published": "Published",
         "stat_draft": "Draft",
         "stat_tags": "Tags Used",
+        "stat_views": "Total Views",
+        "stat_likes": "Total Likes",
         "action_write": "Write New Article",
         "action_write_desc": "Start creating new content",
         "action_manage": "Manage Articles",

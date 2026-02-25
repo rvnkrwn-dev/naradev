@@ -9,7 +9,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
       <div
         class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
         <div class="flex items-center justify-between mb-3">
@@ -55,6 +55,32 @@
         </div>
         <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ uniqueTags }}</p>
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('dashboard.stat_tags') }}</p>
+      </div>
+
+      <!-- Total Views -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300">
+        <div class="flex items-center justify-between mb-3">
+          <div class="size-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-blue-600 dark:text-blue-400"
+              style="font-size: 22px;">visibility</span>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ totalViews }}</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('dashboard.stat_views') }}</p>
+      </div>
+
+      <!-- Total Likes -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 hover:shadow-lg hover:shadow-pink-500/5 transition-all duration-300">
+        <div class="flex items-center justify-between mb-3">
+          <div class="size-10 rounded-xl bg-pink-50 dark:bg-pink-900/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-pink-600 dark:text-pink-400"
+              style="font-size: 22px;">favorite</span>
+          </div>
+        </div>
+        <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ totalLikes }}</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('dashboard.stat_likes') }}</p>
       </div>
     </div>
 
@@ -115,6 +141,8 @@
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {{ formatDate(article.date) }}
                 <span v-if="article.tags?.length"> · {{ article.tags.slice(0, 3).join(', ') }}</span>
+                <span v-if="article.stats"> · {{ article.stats.views }} view(s) · {{ article.stats.likes }}
+                  like(s)</span>
               </p>
             </div>
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold leading-4"
@@ -172,6 +200,9 @@ const uniqueTags = computed(() => {
   articles.value.forEach((a: any) => a.tags?.forEach((t: string) => tags.add(t)))
   return tags.size
 })
+const totalViews = computed(() => articles.value.reduce((sum: number, a: any) => sum + (a.stats?.views || 0), 0))
+const totalLikes = computed(() => articles.value.reduce((sum: number, a: any) => sum + (a.stats?.likes || 0), 0))
+
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString(locale.value === 'id' ? 'id-ID' : 'en-US', {
