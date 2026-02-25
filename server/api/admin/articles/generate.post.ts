@@ -1,4 +1,4 @@
-import { requireRole } from '../../../utils/guards'
+import { requireAuth } from '../../../utils/guards'
 import { writeArticle } from '../../../utils/articles'
 import {
     AI_AUTHORS,
@@ -9,9 +9,13 @@ import {
 } from '../../../utils/openai'
 import type { ArticleFrontmatter } from '../../../utils/markdown'
 
+const ALLOWED_USER_ID = 'usr_74107943' // rvnkrwn only
+
 export default defineEventHandler(async (event) => {
-    // Admin only
-    requireRole(event, ['admin'])
+    const auth = requireAuth(event)
+    if (auth.userId !== ALLOWED_USER_ID) {
+        throw createError({ statusCode: 403, message: 'Fitur ini hanya tersedia untuk admin.' })
+    }
 
     const body = await readBody(event)
     const count = Math.min(Math.max(body?.count || 1, 1), 5)

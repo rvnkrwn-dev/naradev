@@ -111,7 +111,7 @@
         </div>
       </NuxtLink>
 
-      <button @click="showGenerateModal = true"
+      <button v-if="user?.id === 'usr_74107943'" @click="showGenerateModal = true"
         class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 hover:border-violet-300 dark:hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/5 transition-all duration-300 group flex items-center gap-4 text-left">
         <div
           class="size-12 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center group-hover:bg-violet-100 dark:group-hover:bg-violet-900/30 transition-colors">
@@ -243,7 +243,8 @@
               :class="genResult.success ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'">
               <p v-if="genResult.success" class="font-medium">✅ {{ $t('dashboard.generate_success', {
                 count:
-                  genResult.generated }) }}</p>
+                  genResult.generated
+              }) }}</p>
               <p v-else class="font-medium">❌ {{ genResult.errors?.[0] || 'Generation failed' }}</p>
               <ul v-if="genResult.articles?.length" class="mt-2 space-y-1">
                 <li v-for="a in genResult.articles" :key="a.slug" class="flex items-center gap-1.5">
