@@ -6,5 +6,10 @@
   "typescript-beginners-guide": {
     "views": 4,
     "likes": 0
+  },
+  "hello-world": {
+    "views": 1,
+    "likes": 0,
+    "likedBy": []
   }
 }
