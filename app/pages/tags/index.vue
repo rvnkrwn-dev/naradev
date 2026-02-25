@@ -64,7 +64,18 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 
 useHead({ title: t('seo.tags.title') })
-useSeoMeta({ title: t('seo.tags.title'), description: t('seo.tags.description') })
+useSeoMeta({
+    title: t('seo.tags.title'),
+    description: t('seo.tags.description'),
+    ogTitle: t('seo.tags.title'),
+    ogDescription: t('seo.tags.description'),
+    ogImage: '/logo.png',
+    ogType: 'website',
+    twitterCard: 'summary_large_image',
+    twitterTitle: t('seo.tags.title'),
+    twitterDescription: t('seo.tags.description'),
+    twitterImage: '/logo.png',
+})
 
 const searchQuery = ref('')
 

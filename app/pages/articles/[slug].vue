@@ -165,7 +165,7 @@
               <span class="material-symbols-outlined" style="font-size: 20px;">{{ isSaved ? 'bookmark' :
                 'bookmark_border' }}</span>
               <span class="font-medium text-sm">{{ isSaved ? $t('reading_list.saved') : $t('reading_list.save')
-                }}</span>
+              }}</span>
             </button>
           </div>
         </div>
@@ -333,6 +333,12 @@ useSeoMeta({
   description: computed(() => localizedDescription.value || ''),
   ogTitle: computed(() => localizedTitle.value || 'Article'),
   ogDescription: computed(() => localizedDescription.value || ''),
+  ogImage: computed(() => article.value?.cover || '/logo.png'),
+  ogType: 'article',
+  twitterCard: 'summary_large_image',
+  twitterTitle: computed(() => localizedTitle.value || 'Article'),
+  twitterDescription: computed(() => localizedDescription.value || ''),
+  twitterImage: computed(() => article.value?.cover || '/logo.png'),
 })
 
 function formatDate(dateStr: string) {

@@ -180,7 +180,18 @@
 const { t } = useI18n()
 
 useHead({ title: t('seo.articles.title') })
-useSeoMeta({ title: t('seo.articles.title'), description: t('seo.articles.description') })
+useSeoMeta({
+  title: t('seo.articles.title'),
+  description: t('seo.articles.description'),
+  ogTitle: t('seo.articles.title'),
+  ogDescription: t('seo.articles.description'),
+  ogImage: '/logo.png',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: t('seo.articles.title'),
+  twitterDescription: t('seo.articles.description'),
+  twitterImage: '/logo.png',
+})
 
 const route = useRoute()
 const searchQuery = ref((route.query.q as string) || '')
@@ -210,11 +221,7 @@ watch(() => route.query, (q) => {
 }, { deep: true })
 
 const { data, pending } = await useFetch('/api/articles', {
-  query: computed(() => ({
-    limit: 100,
-    q: searchQuery.value || undefined,
-  })),
-  watch: false,
+  query: { limit: 100 },
 })
 
 const allArticles = computed(() => data.value?.articles || [])
@@ -237,12 +244,28 @@ const tagCounts = computed(() => {
 
 const filteredArticles = computed(() => {
   let result = allArticles.value as any[]
+
+  // 1. Text Search Filter
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase()
+    result = result.filter((a: any) =>
+      a.title_id?.toLowerCase().includes(q) ||
+      a.title_en?.toLowerCase().includes(q) ||
+      a.description_id?.toLowerCase().includes(q) ||
+      a.description_en?.toLowerCase().includes(q) ||
+      a.author?.name?.toLowerCase().includes(q)
+    )
+  }
+
+  // 2. Tag Filter
   if (appliedTags.value.length) {
     const lowerTags = appliedTags.value.map(t => t.toLowerCase())
     result = result.filter((a: any) =>
       lowerTags.every(tag => a.tags?.some((t: string) => t.toLowerCase() === tag))
     )
   }
+
+  // 3. Sort
   if (sortBy.value === 'popular') {
     result = [...result].sort((a: any, b: any) => (b.stats?.views || 0) - (a.stats?.views || 0))
   } else {

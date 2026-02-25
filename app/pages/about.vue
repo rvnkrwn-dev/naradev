@@ -98,7 +98,18 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 
 useHead({ title: t('seo.about.title') })
-useSeoMeta({ title: t('seo.about.title'), description: t('seo.about.description') })
+useSeoMeta({
+    title: t('seo.about.title'),
+    description: t('seo.about.description'),
+    ogTitle: t('seo.about.title'),
+    ogDescription: t('seo.about.description'),
+    ogImage: '/logo.png',
+    ogType: 'website',
+    twitterCard: 'summary_large_image',
+    twitterTitle: t('seo.about.title'),
+    twitterDescription: t('seo.about.description'),
+    twitterImage: '/logo.png',
+})
 
 const features = [
     { icon: 'edit_note', iconBg: 'bg-primary/10', iconColor: 'text-primary', titleKey: 'about.feature_1_title', descKey: 'about.feature_1_desc' },
