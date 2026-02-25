@@ -132,7 +132,7 @@
                                     </div>
                                 </NuxtLink>
                                 <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
-                                <NuxtLink :to="localePath('/dashboard')" class="dropdown-item" @click="closeAll">
+                                <NuxtLink :to="localePath('/reading-list')" class="dropdown-item" @click="closeAll">
                                     <div
                                         class="dropdown-icon bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400">
                                         <span class="material-symbols-outlined" style="font-size: 20px;">bookmark</span>
@@ -398,7 +398,7 @@
                                     <span class="material-symbols-outlined" style="font-size: 18px;">group</span>
                                     {{ $t('nav.authors') }}
                                 </NuxtLink>
-                                <NuxtLink :to="localePath('/dashboard')" class="mobile-sub-link" @click="closeAll">
+                                <NuxtLink :to="localePath('/reading-list')" class="mobile-sub-link" @click="closeAll">
                                     <span class="material-symbols-outlined" style="font-size: 18px;">bookmark</span>
                                     {{ $t('nav.reading_list') }}
                                 </NuxtLink>

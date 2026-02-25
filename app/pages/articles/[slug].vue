@@ -151,13 +151,21 @@
             </NuxtLink>
           </div>
 
-          <div class="mt-8 flex justify-center">
+          <div class="mt-8 flex justify-center gap-3">
             <button @click="handleLike" :disabled="isLiking"
               class="flex items-center gap-2 px-6 py-3 rounded-full border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary transition-all shadow-sm"
               :class="{ 'text-primary border-primary bg-primary/5': hasLiked }">
               <span class="material-symbols-outlined" :class="{ 'fill-current text-primary': hasLiked }"
                 style="font-size: 20px;">favorite</span>
               <span class="font-medium text-sm">{{ article.stats?.likes || 0 }} Likes</span>
+            </button>
+            <button @click="handleBookmark" :disabled="isBookmarking"
+              class="flex items-center gap-2 px-6 py-3 rounded-full border border-slate-200 dark:border-slate-700 hover:border-amber-500 hover:text-amber-500 transition-all shadow-sm"
+              :class="{ 'text-amber-500 border-amber-500 bg-amber-50 dark:bg-amber-900/20': isSaved }">
+              <span class="material-symbols-outlined" style="font-size: 20px;">{{ isSaved ? 'bookmark' :
+                'bookmark_border' }}</span>
+              <span class="font-medium text-sm">{{ isSaved ? $t('reading_list.saved') : $t('reading_list.save')
+                }}</span>
             </button>
           </div>
         </div>
@@ -207,9 +215,12 @@ const hasLiked = computed(() => {
   return article.value.stats.likedBy.includes(user.value.id)
 })
 
+const isSaved = ref(false)
+const isBookmarking = ref(false)
+
 onMounted(async () => {
   if (article.value) {
-    // Check local storage for tracking views per device
+    // Track view per device
     const viewedKey = 'naradev_viewed_articles'
     const viewedArticles = JSON.parse(localStorage.getItem(viewedKey) || '[]')
 
@@ -221,8 +232,18 @@ onMounted(async () => {
           viewedArticles.push(slug)
           localStorage.setItem(viewedKey, JSON.stringify(viewedArticles))
         }
-      } catch { } // Ignore errors
+      } catch { }
     }
+  }
+
+  // Check if article is in reading list
+  if (isAuthenticated.value) {
+    try {
+      const res = await $fetch('/api/readinglist')
+      if (res.articles) {
+        isSaved.value = res.articles.some((a: any) => a.slug === slug)
+      }
+    } catch { }
   }
 })
 
@@ -242,6 +263,21 @@ async function handleLike() {
     }
   } catch { } finally {
     isLiking.value = false
+  }
+}
+
+async function handleBookmark() {
+  if (!isAuthenticated.value) {
+    router.push(localePath('/login'))
+    return
+  }
+  if (isBookmarking.value) return
+  isBookmarking.value = true
+  try {
+    const res = await $fetch(`/api/readinglist/${slug}`, { method: 'POST' })
+    isSaved.value = !!res.saved
+  } catch { } finally {
+    isBookmarking.value = false
   }
 }
 
