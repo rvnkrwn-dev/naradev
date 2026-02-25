@@ -279,7 +279,7 @@ useHead({
       innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'WebSite',
-        name: 'Naradev',
+        name: t('seo.home.title'),
         url: 'https://naradev.leci.app',
         description: t('seo.home.description'),
       })
