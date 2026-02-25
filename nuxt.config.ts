@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/i18n'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/i18n', '@nuxtjs/sitemap'],
 
   runtimeConfig: {
     jwtSecret: process.env.JWT_SECRET || 'default-secret-change-me',
@@ -13,6 +13,19 @@ export default defineNuxtConfig({
     githubRepo: process.env.GITHUB_REPO || '',
     githubBranch: process.env.GITHUB_BRANCH || 'main',
     openaiApiKey: process.env.OPENAI_API_KEY || '',
+  },
+
+  site: {
+    url: 'https://naradev.id', // Change to your actual domain
+    name: 'Naradev',
+  },
+
+  sitemap: {
+    sources: [
+      '/api/__sitemap__/urls',
+    ],
+    // Options specific to i18n
+    sitemaps: true,
   },
 
   tailwindcss: {
