@@ -1,75 +1,51 @@
-# Nuxt Minimal Starter
+# Naradev — Narasi Developer
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A modern, editorial full-stack article platform built with Nuxt 4. Write in Markdown, manage with ease, read with delight.
+
+## Features
+
+- 📝 Markdown editor with real-time preview
+- 🔐 JWT authentication with role-based access
+- 🌐 Bilingual (Indonesian & English) with i18n
+- 🌙 Dark mode support
+- 🏷️ Tag-based article organization
+- 📱 Fully responsive design
+- ☁️ GitHub-based persistent storage (Vercel-compatible)
 
 ## Setup
 
-Make sure to install dependencies:
-
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Development
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
+
+The app will be available at `http://localhost:3000`.
 
 ## Production
 
-Build the application for production:
-
 ```bash
-# npm
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+npm run preview
 ```
 
-Locally preview production build:
+## Environment Variables
+
+Copy `.env.example` to `.env` and fill in the values:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+cp .env.example .env
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Tech Stack
+
+- **Framework**: Nuxt 4
+- **Styling**: Tailwind CSS
+- **Auth**: JWT (jsonwebtoken + bcryptjs)
+- **Storage**: GitHub Contents API
+- **Editor**: md-editor-v3
+- **i18n**: @nuxtjs/i18n

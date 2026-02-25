@@ -33,7 +33,7 @@
                     {{ $t('dashboard.back') }}
                 </NuxtLink>
                 <h1 class="text-3xl font-bold font-serif text-slate-900 dark:text-white">{{ $t('dashboard.edit_title')
-                    }}</h1>
+                }}</h1>
                 <p class="text-slate-500 dark:text-slate-400 mt-1">{{ article.title_id }}</p>
             </div>
 
@@ -71,7 +71,7 @@ const slug = route.params.slug as string
 const { data, pending, error } = await useFetch(`/api/articles/${slug}`)
 const article = computed(() => data.value?.article)
 
-useHead({ title: computed(() => article.value ? `${t('dashboard.edit_title')}: ${article.value.title_id} — Indigo` : t('dashboard.edit_title')) })
+useHead({ title: computed(() => article.value ? `${t('dashboard.edit_title')}: ${article.value.title_id} — Naradev` : t('dashboard.edit_title')) })
 
 const { updateArticle } = useArticles()
 const errorMsg = ref('')

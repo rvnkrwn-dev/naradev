@@ -11,7 +11,7 @@
                   stroke-linejoin="round" stroke-width="2" />
               </svg>
             </div>
-            <span class="font-bold text-lg text-slate-900 dark:text-white">Indigo</span>
+            <span class="font-bold text-lg text-slate-900 dark:text-white">Naradev</span>
           </NuxtLink>
           <p class="text-slate-500 text-sm leading-relaxed">
             {{ $t('footer.description') }}

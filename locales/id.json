@@ -1,6 +1,6 @@
 {
     "common": {
-        "brand_name": "Indigo",
+        "brand_name": "Naradev",
         "save": "Simpan",
         "cancel": "Batal",
         "delete": "Hapus",
@@ -61,7 +61,7 @@
         "register": "Daftar",
         "dashboard": "Dashboard",
         "follow": "Ikuti Kami",
-        "copyright": "© {year} Indigo Media. Hak cipta dilindungi.",
+        "copyright": "© {year} Naradev Media. Hak cipta dilindungi.",
         "privacy": "Privasi",
         "cookies": "Cookie",
         "accessibility": "Aksesibilitas"
@@ -93,8 +93,8 @@
         "badge": "Tentang Kami",
         "hero_title_1": "Dibuat untuk developer,",
         "hero_title_2": "oleh developer",
-        "hero_description": "Indigo adalah platform editorial modern yang dibuat untuk berbagi pengetahuan engineering. Tulis dalam Markdown, kelola dengan mudah, dan publikasikan dengan indah.",
-        "features_title": "Apa yang membuat Indigo istimewa",
+        "hero_description": "Naradev adalah platform editorial modern yang dibuat untuk berbagi pengetahuan engineering. Tulis dalam Markdown, kelola dengan mudah, dan publikasikan dengan indah.",
+        "features_title": "Apa yang membuat Naradev istimewa",
         "features_description": "Semua yang Anda butuhkan untuk menulis, mempublikasikan, dan berbagi konten teknis.",
         "feature_1_title": "Editor Markdown",
         "feature_1_desc": "Tulis artikel dalam Markdown dengan pratinjau real-time dan penyorotan sintaks.",
@@ -111,7 +111,7 @@
         "tech_title": "Dibangun dengan teknologi modern",
         "tech_description": "Didukung oleh teknologi terdepan untuk performa dan pengalaman developer.",
         "cta_title": "Siap mulai menulis?",
-        "cta_description": "Bergabunglah dengan komunitas developer yang berbagi pengetahuan di Indigo.",
+        "cta_description": "Bergabunglah dengan komunitas developer yang berbagi pengetahuan di Naradev.",
         "cta_button": "Mulai Sekarang",
         "cta_browse": "Jelajahi Artikel"
     },
@@ -265,12 +265,12 @@
     "authors": {
         "badge": "Komunitas",
         "title": "Penulis",
-        "subtitle": "Temui para kontributor berbakat di balik artikel-artikel Indigo.",
+        "subtitle": "Temui para kontributor berbakat di balik artikel-artikel Naradev.",
         "search_placeholder": "Cari penulis...",
         "joined": "Bergabung {date}",
         "empty_title": "Belum Ada Penulis",
         "empty_description": "Jadilah yang pertama bergabung! Buat akun dan mulai menulis.",
-        "empty_cta": "Gabung Indigo"
+        "empty_cta": "Gabung Naradev"
     },
     "validation": {
         "USERNAME_MIN_LENGTH": "Username minimal 3 karakter",
@@ -304,43 +304,43 @@
     },
     "seo": {
         "home": {
-            "title": "Indigo — Platform Wawasan Engineering",
+            "title": "Naradev — Platform Wawasan Engineering",
             "description": "Platform artikel full-stack editorial modern — tulis dalam Markdown, kelola dengan mudah, baca dengan nyaman."
         },
         "about": {
-            "title": "Tentang — Indigo",
-            "description": "Pelajari tentang Indigo, platform editorial modern yang dibuat untuk developer berbagi pengetahuan engineering."
+            "title": "Tentang — Naradev",
+            "description": "Pelajari tentang Naradev, platform editorial modern yang dibuat untuk developer berbagi pengetahuan engineering."
         },
         "articles": {
-            "title": "Artikel — Indigo",
-            "description": "Jelajahi semua artikel yang dipublikasikan di Indigo."
+            "title": "Artikel — Naradev",
+            "description": "Jelajahi semua artikel yang dipublikasikan di Naradev."
         },
         "tags": {
-            "title": "Tag — Indigo",
-            "description": "Jelajahi semua tag dan topik artikel di Indigo."
+            "title": "Tag — Naradev",
+            "description": "Jelajahi semua tag dan topik artikel di Naradev."
         },
         "authors": {
-            "title": "Penulis — Indigo",
-            "description": "Temui para kontributor dan penulis di Indigo."
+            "title": "Penulis — Naradev",
+            "description": "Temui para kontributor dan penulis di Naradev."
         },
         "login": {
-            "title": "Masuk — Indigo"
+            "title": "Masuk — Naradev"
         },
         "register": {
-            "title": "Daftar — Indigo"
+            "title": "Daftar — Naradev"
         },
         "dashboard": {
-            "title": "Dashboard — Indigo"
+            "title": "Dashboard — Naradev"
         },
         "dashboard_articles": {
-            "title": "Artikel Saya — Indigo"
+            "title": "Artikel Saya — Naradev"
         },
         "dashboard_create": {
-            "title": "Tulis Artikel — Indigo"
+            "title": "Tulis Artikel — Naradev"
         },
         "dashboard_edit": {
-            "title": "Edit: {title} — Indigo",
-            "title_fallback": "Edit Artikel — Indigo"
+            "title": "Edit: {title} — Naradev",
+            "title_fallback": "Edit Artikel — Naradev"
         }
     },
     "success": {

@@ -221,7 +221,7 @@ const relatedArticles = computed(() => {
 })
 
 useHead({
-  title: computed(() => localizedTitle.value ? `${localizedTitle.value} — Indigo` : 'Article — Indigo'),
+  title: computed(() => localizedTitle.value ? `${localizedTitle.value} — Naradev` : 'Article — Naradev'),
 })
 useSeoMeta({
   title: computed(() => localizedTitle.value || 'Article'),

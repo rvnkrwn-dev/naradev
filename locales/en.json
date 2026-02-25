@@ -1,6 +1,6 @@
 {
     "common": {
-        "brand_name": "Indigo",
+        "brand_name": "Naradev",
         "save": "Save",
         "cancel": "Cancel",
         "delete": "Delete",
@@ -61,7 +61,7 @@
         "register": "Register",
         "dashboard": "Dashboard",
         "follow": "Follow Us",
-        "copyright": "© {year} Indigo Media. All rights reserved.",
+        "copyright": "© {year} Naradev Media. All rights reserved.",
         "privacy": "Privacy",
         "cookies": "Cookies",
         "accessibility": "Accessibility"
@@ -93,8 +93,8 @@
         "badge": "About Us",
         "hero_title_1": "Built for developers,",
         "hero_title_2": "by developers",
-        "hero_description": "Indigo is a modern editorial platform built for sharing engineering knowledge. Write in Markdown, manage effortlessly, and publish beautifully.",
-        "features_title": "What makes Indigo special",
+        "hero_description": "Naradev is a modern editorial platform built for sharing engineering knowledge. Write in Markdown, manage effortlessly, and publish beautifully.",
+        "features_title": "What makes Naradev special",
         "features_description": "Everything you need to write, publish, and share technical content.",
         "feature_1_title": "Markdown Editor",
         "feature_1_desc": "Write articles in Markdown with real-time preview and syntax highlighting.",
@@ -111,7 +111,7 @@
         "tech_title": "Built with modern tech",
         "tech_description": "Powered by cutting-edge technologies for performance and developer experience.",
         "cta_title": "Ready to start writing?",
-        "cta_description": "Join the community of developers sharing their knowledge on Indigo.",
+        "cta_description": "Join the community of developers sharing their knowledge on Naradev.",
         "cta_button": "Get Started",
         "cta_browse": "Browse Articles"
     },
@@ -265,12 +265,12 @@
     "authors": {
         "badge": "Community",
         "title": "Authors",
-        "subtitle": "Meet the talented contributors behind the articles on Indigo.",
+        "subtitle": "Meet the talented contributors behind the articles on Naradev.",
         "search_placeholder": "Search authors...",
         "joined": "Joined {date}",
         "empty_title": "No Authors Yet",
         "empty_description": "Be the first to join! Create an account and start writing.",
-        "empty_cta": "Join Indigo"
+        "empty_cta": "Join Naradev"
     },
     "validation": {
         "USERNAME_MIN_LENGTH": "Username must be at least 3 characters",
@@ -304,43 +304,43 @@
     },
     "seo": {
         "home": {
-            "title": "Indigo — Engineering Insights Platform",
+            "title": "Naradev — Engineering Insights Platform",
             "description": "A modern, editorial full-stack article platform — write in Markdown, manage with ease, read with delight."
         },
         "about": {
-            "title": "About — Indigo",
-            "description": "Learn about Indigo, the modern editorial platform built for developers to share engineering knowledge."
+            "title": "About — Naradev",
+            "description": "Learn about Naradev, the modern editorial platform built for developers to share engineering knowledge."
         },
         "articles": {
-            "title": "Articles — Indigo",
-            "description": "Browse all published articles on Indigo."
+            "title": "Articles — Naradev",
+            "description": "Browse all published articles on Naradev."
         },
         "tags": {
-            "title": "Tags — Indigo",
-            "description": "Browse all article tags and topics on Indigo."
+            "title": "Tags — Naradev",
+            "description": "Browse all article tags and topics on Naradev."
         },
         "authors": {
-            "title": "Authors — Indigo",
-            "description": "Meet the contributors and authors on Indigo."
+            "title": "Authors — Naradev",
+            "description": "Meet the contributors and authors on Naradev."
         },
         "login": {
-            "title": "Login — Indigo"
+            "title": "Login — Naradev"
         },
         "register": {
-            "title": "Register — Indigo"
+            "title": "Register — Naradev"
         },
         "dashboard": {
-            "title": "Dashboard — Indigo"
+            "title": "Dashboard — Naradev"
         },
         "dashboard_articles": {
-            "title": "My Articles — Indigo"
+            "title": "My Articles — Naradev"
         },
         "dashboard_create": {
-            "title": "Write Article — Indigo"
+            "title": "Write Article — Naradev"
         },
         "dashboard_edit": {
-            "title": "Edit: {title} — Indigo",
-            "title_fallback": "Edit Article — Indigo"
+            "title": "Edit: {title} — Naradev",
+            "title_fallback": "Edit Article — Naradev"
         }
     },
     "success": {

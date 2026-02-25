@@ -19,7 +19,7 @@
                                 stroke-linejoin="round" stroke-width="2" />
                         </svg>
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Indigo</span>
+                    <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Naradev</span>
                 </NuxtLink>
 
                 <!-- Desktop Navigation -->
@@ -284,7 +284,7 @@
                     <button @click="toggleDarkMode" class="action-btn" :aria-label="$t('nav.toggle_dark_mode')">
                         <span class="material-symbols-outlined" style="font-size: 22px;">{{ isDark ? 'light_mode' :
                             'dark_mode'
-                        }}</span>
+                            }}</span>
                     </button>
                     <button @click="switchLocale" class="action-btn" :aria-label="$t('nav.switch_language')">
                         <span class="material-symbols-outlined" style="font-size: 22px;">translate</span>
