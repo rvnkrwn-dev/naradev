@@ -1,10 +1,13 @@
 <template>
   <NuxtLink :to="localePath(`/articles/${article.slug}`)" class="card-hover group flex flex-col h-full overflow-hidden">
     <!-- Cover Image -->
-    <div v-if="article.cover"
-      class="aspect-[16/10] w-full overflow-hidden border-b border-slate-100 dark:border-slate-800">
-      <img :src="article.cover" :alt="localizedTitle"
-        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+    <div class="relative aspect-[16/10] w-full overflow-hidden border-b border-slate-100 dark:border-slate-800">
+      <img v-if="article.cover" :src="article.cover" :alt="localizedTitle"
+        class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+      <div v-else class="absolute inset-0 bg-white dark:bg-slate-800 flex items-center justify-center">
+        <span class="material-symbols-outlined text-slate-300 dark:text-slate-600"
+          style="font-size: 48px;">article</span>
+      </div>
     </div>
 
     <div class="p-5 sm:p-6 flex flex-col flex-grow">
