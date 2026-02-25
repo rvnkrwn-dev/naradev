@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: 'https://naradev.id', // Change to your actual domain
+    url: 'https://naradev.leci.app', // Change to your actual domain
     name: 'Naradev',
   },
 

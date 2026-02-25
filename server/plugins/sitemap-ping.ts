@@ -4,7 +4,7 @@ export default defineNitroPlugin((nitroApp) => {
 
     // Function to ping search engines
     const pingSearchEngines = async () => {
-        const siteUrl = 'https://naradev.id' // Change to actual url
+        const siteUrl = 'https://naradev.leci.app' // Change to actual url
         const sitemapUrl = `${siteUrl}/sitemap.xml`
 
         try {
