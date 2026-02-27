@@ -19,7 +19,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: process.env.APP_URL || 'http://localhost:3000',
+    url: process.env.APP_URL || 'https://naradev.com',
     name: 'Naradev',
   },
 
