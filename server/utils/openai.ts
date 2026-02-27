@@ -246,6 +246,7 @@ Colors: Professional blues, teals, and purples. Aspect ratio: 16:10. High qualit
             n: 1,
             size: '1024x1024',
             quality: 'standard',
+            response_format: 'b64_json',
         },
     })
 
