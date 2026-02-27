@@ -105,7 +105,7 @@ function slugify(text: string): string {
 }
 
 /**
- * Generate article content using GPT-5 nano.
+ * Generate article content using GPT-4o mini.
  */
 export async function generateArticleContent(
     author: AIAuthorProfile,
@@ -172,12 +172,12 @@ IMPORTANT:
                 'Content-Type': 'application/json',
             },
             body: {
-                model: 'gpt-5-nano',
+                model: 'gpt-4o-mini',
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt },
                 ],
-                max_completion_tokens: 50000,
+                max_completion_tokens: 16000,
                 response_format: { type: 'json_object' },
             },
         })
@@ -215,7 +215,7 @@ IMPORTANT:
 }
 
 /**
- * Generate a cover image using gpt-image-1-mini and upload it to GitHub.
+ * Generate a cover image using dall-e-3 and upload it to GitHub.
  */
 export async function generateCoverImage(
     slug: string,
@@ -241,11 +241,11 @@ Colors: Professional blues, teals, and purples. Aspect ratio: 16:10. High qualit
             'Content-Type': 'application/json',
         },
         body: {
-            model: 'gpt-image-1-mini',
+            model: 'dall-e-3',
             prompt,
             n: 1,
-            size: '1536x1024',
-            quality: 'low',
+            size: '1024x1024',
+            quality: 'standard',
         },
     })
 

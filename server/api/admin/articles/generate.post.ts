@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
                 ? getAIAuthorById(authorId) || getRandomAIAuthor()
                 : getRandomAIAuthor()
 
-            // Generate article content via GPT-5 nano
+            // Generate article content via GPT-4o mini
             const article = await generateArticleContent(author, customTopic)
 
             // Generate cover image
