@@ -127,23 +127,24 @@ jobs:
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}?ref=dev")
 
-            COVER_BODY=$(jq -n \
+            jq -n \
               --arg message "Add cover: ${SLUG}" \
               --rawfile content <(echo -n "$ENCODED_IMG") \
-              '{message: $message, content: $content, branch: "dev"}')
+              '{message: $message, content: $content, branch: "dev"}' > cover_payload.json
 
             if [ "$EXISTING" = "200" ]; then
               SHA=$(curl -s \
                 -H "Authorization: Bearer $GITHUB_TOKEN" \
                 "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}?ref=dev" | jq -r '.sha')
-              COVER_BODY=$(echo "$COVER_BODY" | jq --arg sha "$SHA" '. + {sha: $sha}')
+              jq --arg sha "$SHA" '. + {sha: $sha}' cover_payload.json > cover_payload_tmp.json
+              mv cover_payload_tmp.json cover_payload.json
             fi
 
             curl -s -X PUT \
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               -H "Content-Type: application/json" \
               "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}" \
-              -d "$COVER_BODY" > /dev/null
+              -d @cover_payload.json > /dev/null
 
             COVER_URL="https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/dev/${COVER_PATH}"
             echo "Cover uploaded: $COVER_URL"
@@ -198,23 +199,24 @@ jobs:
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}?ref=dev")
 
-          ARTICLE_BODY=$(jq -n \
+          jq -n \
             --arg message "feat(auto): ${TITLE_EN} by ${AUTHOR_NAME}" \
             --rawfile content <(echo -n "$ENCODED_CONTENT") \
-            '{message: $message, content: $content, branch: "dev"}')
+            '{message: $message, content: $content, branch: "dev"}' > article_payload.json
 
           if [ "$EXISTING_ARTICLE" = "200" ]; then
             SHA=$(curl -s \
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}?ref=dev" | jq -r '.sha')
-            ARTICLE_BODY=$(echo "$ARTICLE_BODY" | jq --arg sha "$SHA" '. + {sha: $sha}')
+            jq --arg sha "$SHA" '. + {sha: $sha}' article_payload.json > article_payload_tmp.json
+            mv article_payload_tmp.json article_payload.json
           fi
 
           RESULT=$(curl -s -X PUT \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
             "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}" \
-            -d "$ARTICLE_BODY")
+            -d @article_payload.json)
 
           if echo "$RESULT" | jq -e '.content.sha' > /dev/null 2>&1; then
             echo "✅ Article published: ${TITLE_EN}"
