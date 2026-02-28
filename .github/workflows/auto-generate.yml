@@ -128,8 +128,8 @@ jobs:
               "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}?ref=dev")
 
             COVER_BODY=$(jq -n \
-              --arg content "$ENCODED_IMG" \
               --arg message "Add cover: ${SLUG}" \
+              --rawfile content <(echo -n "$ENCODED_IMG") \
               '{message: $message, content: $content, branch: "dev"}')
 
             if [ "$EXISTING" = "200" ]; then
@@ -199,8 +199,8 @@ jobs:
             "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}?ref=dev")
 
           ARTICLE_BODY=$(jq -n \
-            --arg content "$ENCODED_CONTENT" \
             --arg message "feat(auto): ${TITLE_EN} by ${AUTHOR_NAME}" \
+            --rawfile content <(echo -n "$ENCODED_CONTENT") \
             '{message: $message, content: $content, branch: "dev"}')
 
           if [ "$EXISTING_ARTICLE" = "200" ]; then
