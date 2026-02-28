@@ -57,22 +57,24 @@ jobs:
           # ──────────────────────────────────────
           # 2. Generate article via GPT-4o mini
           # ──────────────────────────────────────
-          SYSTEM_PROMPT="You are ${AUTHOR_NAME}, a professional tech writer specializing in ${AUTHOR_FOCUS}. You write in-depth, high-quality, SEO-optimized technical articles for the Naradev engineering blog.\n\nCRITICAL RULES:\n1. Write content in BOTH Indonesian (Bahasa Indonesia) AND English\n2. Each language version must be independently complete and natural\n3. Include practical code examples with syntax highlighting\n4. Use proper heading hierarchy (H1 for title, H2 for sections, H3 for subsections)\n5. Write at least 800-1200 words per language\n6. Include actionable tips and best practices\n7. Use engaging, conversational yet professional tone\n8. SEO: include relevant keywords naturally, use descriptive headings\n9. End with a conclusion and call-to-action"
+          SYSTEM_PROMPT="You are ${AUTHOR_NAME}, a professional tech writer specializing in ${AUTHOR_FOCUS}.\nYou write in-depth, high-quality, SEO-optimized technical articles for the Naradev engineering blog.\n\nCRITICAL RULES:\n1. Write content in BOTH Indonesian (Bahasa Indonesia) AND English\n2. Use the EXACT bilingual markdown format with markers\n3. Each language version must be independently complete and natural\n4. Include practical code examples with syntax highlighting\n5. Use proper heading hierarchy (H1 for title, H2 for sections, H3 for subsections)\n6. Write at least 800-1200 words per language\n7. Include actionable tips and best practices\n8. Use engaging, conversational yet professional tone\n9. SEO: include relevant keywords naturally, use descriptive headings\n10. End with a conclusion and call-to-action"
 
-          USER_PROMPT="Generate a complete technical article about: \"${TOPIC}\"\n\nReturn a valid JSON object with this EXACT structure (no markdown wrapping, pure JSON):\n{\n  \"title_id\": \"Judul dalam Bahasa Indonesia\",\n  \"title_en\": \"Title in English\",\n  \"description_id\": \"Deskripsi SEO 120-160 karakter dalam Bahasa Indonesia\",\n  \"description_en\": \"SEO description 120-160 characters in English\",\n  \"tags\": [\"tag1\", \"tag2\", \"tag3\"],\n  \"body_id\": \"Full markdown content in Indonesian (without frontmatter, starting with # heading)\",\n  \"body_en\": \"Full markdown content in English (without frontmatter, starting with # heading)\"\n}\n\nIMPORTANT:\n- tags should be 3-5 lowercase single-word tags relevant to the topic\n- body_id and body_en must be complete standalone articles\n- Include code blocks with language specifiers\n- Use ## for main sections and ### for subsections\n- Include practical examples developers can immediately use"
+          USER_PROMPT="Generate a complete technical article about: \"${TOPIC}\"\n\nReturn a valid JSON object with this EXACT structure (no markdown wrapping, pure JSON):\n{\n  \"title_id\": \"Judul dalam Bahasa Indonesia\",\n  \"title_en\": \"Title in English\",\n  \"description_id\": \"Deskripsi SEO 120-160 karakter dalam Bahasa Indonesia\",\n  \"description_en\": \"SEO description 120-160 characters in English\",\n  \"tags\": [\"tag1\", \"tag2\", \"tag3\"],\n  \"body_id\": \"Full markdown content in Indonesian (without frontmatter, starting with # heading)\",\n  \"body_en\": \"Full markdown content in English (without frontmatter, starting with # heading)\"\n}\n\nIMPORTANT:\n- tags should be 3-5 lowercase single-word tags relevant to the topic\n- body_id and body_en must be complete standalone articles\n- Include code blocks with language specifiers (e.g. \`\`\`typescript)\n- Use ## for main sections and ### for subsections\n- Include practical examples developers can immediately use"
+
+          jq -n \
+            --arg sys "$SYSTEM_PROMPT" \
+            --arg usr "$USER_PROMPT" \
+            '{
+              model: "gpt-4o-mini",
+              messages: [{role: "system", content: $sys}, {role: "user", content: $usr}],
+              max_completion_tokens: 16000,
+              response_format: {type: "json_object"}
+            }' > chat_payload.json
 
           RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
             -H "Authorization: Bearer $OPENAI_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n \
-              --arg sys "$SYSTEM_PROMPT" \
-              --arg usr "$USER_PROMPT" \
-              '{
-                model: "gpt-4o-mini",
-                messages: [{role: "system", content: $sys}, {role: "user", content: $usr}],
-                max_completion_tokens: 8000,
-                response_format: {type: "json_object"}
-              }')")
+            -d @chat_payload.json)
 
           CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
           if [ -z "$CONTENT" ] || [ "$CONTENT" = "null" ]; then
@@ -93,8 +95,9 @@ jobs:
           SLUG=$(echo "$TITLE_EN" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 -]//g' | sed 's/ /-/g' | sed 's/--*/-/g' | cut -c1-60)
           DATE=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 
-          # Merge tags
-          TAGS_YAML=$(echo "$CONTENT" | jq -r '.tags[:5][]' | head -5 | sed 's/^/  - /')
+          # Merge tags: AI tags + first 2 default tags (deduplicated, max 5)
+          TAGS_JSON=$(jq -n --argjson ai "$TAGS" --argjson def "$DEFAULT_TAGS" '($ai + $def[0:2]) | unique | .[0:5]')
+          TAGS_YAML=$(echo "$TAGS_JSON" | jq -r '.[]' | sed 's/^/  - /')
 
           echo "Generated: $TITLE_EN (slug: $SLUG)"
 
@@ -102,19 +105,22 @@ jobs:
           # 3. Generate cover image via dall-e-3
           # ──────────────────────────────────────
           COVER_URL=""
-          IMG_PROMPT="Create a modern, minimalist, professional blog cover image for a tech article titled \"${TITLE_EN}\". Style: Clean gradient background, subtle geometric shapes or abstract tech elements, no text overlay, no logos. Colors: Professional blues, teals, and purples. High quality, editorial style."
+          TAGS_JOINED=$(echo "$TAGS_JSON" | jq -r 'join(", ")')
+          IMG_PROMPT="Create a modern, minimalist, professional blog cover image for a tech article titled \"${TITLE_EN}\". Topics: ${TAGS_JOINED}. Style: Clean gradient background, subtle geometric shapes or abstract tech elements, no text overlay, no logos. Colors: Professional blues, teals, and purples. Aspect ratio: 16:10. High quality, editorial style."
+
+          jq -n --arg prompt "$IMG_PROMPT" '{
+            model: "dall-e-3",
+            prompt: $prompt,
+            n: 1,
+            size: "1024x1024",
+            quality: "standard",
+            response_format: "b64_json"
+          }' > image_payload.json
 
           IMG_RESPONSE=$(curl -s https://api.openai.com/v1/images/generations \
             -H "Authorization: Bearer $OPENAI_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg prompt "$IMG_PROMPT" '{
-              model: "dall-e-3",
-              prompt: $prompt,
-              n: 1,
-              size: "1024x1024",
-              quality: "standard",
-              response_format: "b64_json"
-            }')")
+            -d @image_payload.json)
 
           IMG_B64=$(echo "$IMG_RESPONSE" | jq -r '.data[0].b64_json // empty')
 
@@ -127,23 +133,25 @@ jobs:
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}?ref=dev")
 
-            COVER_BODY=$(jq -n \
+            echo -n "$ENCODED_IMG" > temp_cover.txt
+            jq -n \
               --arg message "Add cover: ${SLUG}" \
-              --rawfile content <(echo -n "$ENCODED_IMG") \
-              '{message: $message, content: $content, branch: "dev"}')
+              --rawfile content temp_cover.txt \
+              '{message: $message, content: $content, branch: "dev"}' > cover_payload.json
 
             if [ "$EXISTING" = "200" ]; then
               SHA=$(curl -s \
                 -H "Authorization: Bearer $GITHUB_TOKEN" \
                 "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}?ref=dev" | jq -r '.sha')
-              COVER_BODY=$(echo "$COVER_BODY" | jq --arg sha "$SHA" '. + {sha: $sha}')
+              jq --arg sha "$SHA" '. + {sha: $sha}' cover_payload.json > cover_payload_tmp.json
+              mv cover_payload_tmp.json cover_payload.json
             fi
 
             curl -s -X PUT \
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               -H "Content-Type: application/json" \
               "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${COVER_PATH}" \
-              -d "$COVER_BODY" > /dev/null
+              -d @cover_payload.json > /dev/null
 
             COVER_URL="https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/dev/${COVER_PATH}"
             echo "Cover uploaded: $COVER_URL"
@@ -198,23 +206,25 @@ jobs:
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}?ref=dev")
 
-          ARTICLE_BODY=$(jq -n \
+          echo -n "$ENCODED_CONTENT" > temp_article.txt
+          jq -n \
             --arg message "feat(auto): ${TITLE_EN} by ${AUTHOR_NAME}" \
-            --rawfile content <(echo -n "$ENCODED_CONTENT") \
-            '{message: $message, content: $content, branch: "dev"}')
+            --rawfile content temp_article.txt \
+            '{message: $message, content: $content, branch: "dev"}' > article_payload.json
 
           if [ "$EXISTING_ARTICLE" = "200" ]; then
             SHA=$(curl -s \
               -H "Authorization: Bearer $GITHUB_TOKEN" \
               "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}?ref=dev" | jq -r '.sha')
-            ARTICLE_BODY=$(echo "$ARTICLE_BODY" | jq --arg sha "$SHA" '. + {sha: $sha}')
+            jq --arg sha "$SHA" '. + {sha: $sha}' article_payload.json > article_payload_tmp.json
+            mv article_payload_tmp.json article_payload.json
           fi
 
           RESULT=$(curl -s -X PUT \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
             "https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}" \
-            -d "$ARTICLE_BODY")
+            -d @article_payload.json)
 
           if echo "$RESULT" | jq -e '.content.sha' > /dev/null 2>&1; then
             echo "✅ Article published: ${TITLE_EN}"
