@@ -2,159 +2,244 @@
 title_id: "Daftar Periksa Audit Keamanan untuk Aplikasi Web"
 title_en: "Security Audit Checklist for Web Apps"
 slug: "security-audit-checklist-for-web-apps"
-date: "2026-02-27T21:48:57.000Z"
-description_id: "Pelajari cara melakukan audit keamanan untuk aplikasi web dengan daftar periksa lengkap ini."
-description_en: "Learn how to conduct a security audit for web apps with this comprehensive checklist."
+date: "2026-03-02T12:40:43.000Z"
+description_id: "Pelajari bagaimana melakukan audit keamanan untuk aplikasi web dengan daftar periksa komprehensif dan praktik terbaik."
+description_en: "Learn how to perform a security audit for web applications with a comprehensive checklist and best practices."
 tags:
-  - keamanan
-  - audit
   - aplikasi
-  - web
+  - audit
+  - authentication
+  - keamanan
   - praktik
 status: "published"
 authorId: "usr_ai_security"
+cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/security-audit-checklist-for-web-apps.png"
 ---
 
 <!-- lang:id -->
 # Daftar Periksa Audit Keamanan untuk Aplikasi Web
 
-## Pendahuluan
-Dalam dunia digital saat ini, keamanan aplikasi web menjadi sangat penting. Aplikasi yang tidak terlindungi dapat menjadi sasaran serangan siber yang berpotensi merusak data dan reputasi bisnis. Oleh karena itu, melakukan audit keamanan secara teratur adalah kunci untuk memastikan aplikasi Anda tetap aman. Artikel ini memberikan daftar periksa lengkap untuk membantu Anda melakukan audit keamanan aplikasi web.
+Aplikasi web menjadi bagian penting dari kehidupan sehari-hari kita dan mengumpulkan banyak data sensitif. Oleh karena itu, audit keamanan menjadi langkah penting untuk memastikan bahwa aplikasi Anda aman dari potensi ancaman. Berikut adalah daftar periksa lengkap untuk melakukan audit keamanan aplikasi web Anda.
 
-## Daftar Periksa Audit Keamanan
-Berikut adalah beberapa kategori yang harus diperhatikan saat melakukan audit keamanan:
+## 1. Informasi Umum
 
-### 1. Keamanan Kode Sumber
-- **Kaji ulang kode sumber**: Pastikan tidak ada celah yang dapat dimanfaatkan. Gunakan alat seperti SonarQube atau Checkmarx untuk analisis statis kode.
-- **Contoh**: Berikut adalah cara menggunakan SonarQube untuk memindai proyek Anda:
-  ```bash
-  sonar-scanner -Dsonar.projectKey=your_project_key -Dsonar.sources=src
-  ```
-- **Praktik Terbaik**: Terapkan prinsip secure coding, seperti input validation dan output encoding untuk mencegah serangan seperti XSS dan SQL Injection.
+### 1.1. Tentukan Ruang Lingkup Audit
 
-### 2. Pengelolaan Autentikasi dan Otorisasi
-- **Periksa pengelolaan sesi**: Pastikan sesi pengguna diatur dengan aman dan cookie ditandai dengan atribut `HttpOnly` dan `Secure`.
-- **Contoh**: Berikut adalah cara mengatur cookie aman dalam aplikasi Node.js:
-  ```javascript
-  res.cookie('sessionId', sessionId, { httpOnly: true, secure: true });
-  ```
-- **Praktik Terbaik**: Gunakan otentikasi multi-faktor (MFA) untuk menambah lapisan keamanan bagi pengguna.
+Sebelum memulai audit, tetapkan ruang lingkupnya. Tentukan aplikasi mana yang akan diaudit dan apa saja yang harus diperiksa. 
 
-### 3. Keamanan Data
-- **Enkripsi Data Sensitif**: Pastikan semua data penting terenkripsi ketika disimpan dan saat dalam transmisi menggunakan protokol SSL/TLS.
-- **Contoh**: Menggunakan libraries seperti `crypto` di Node.js untuk mengenkripsi data:
-  ```javascript
-  const crypto = require('crypto');
-  const algorithm = 'aes-256-cbc';
-  const key = crypto.randomBytes(32);
-  const iv = crypto.randomBytes(16);
+### 1.2. Identifikasi Stakeholders
 
-  const encrypt = (text) => {
-      let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
-      let encrypted = cipher.update(text);
-      encrypted = Buffer.concat([encrypted, cipher.final()]);
-      return encrypted.toString('hex');
-  };
-  ```
-- **Praktik Terbaik**: Nonaktifkan akses langsung ke basis data untuk pengguna yang tidak berwenang. Hanya berikan akses untuk bagian yang diperlukan.
+Hubungi pihak-pihak terkait, seperti pengembang, pemilik bisnis, dan tim keamanan untuk memastikan semua aspek keamanan diperhatikan.
 
-### 4. Keamanan Infrastruktur
-- **Periksa Server dan Konfigurasi Jaringan**: Pastikan firewall terkonfigurasi dengan benar dan tidak ada port yang terbuka tanpa alasan yang jelas.
-- **Contoh**: Menggunakan `nmap` untuk memindai port yang terbuka:
-  ```bash
-  nmap -sS -O your.server.ip
-  ```
-- **Praktik Terbaik**: Selalu perbarui perangkat lunak dan sistem operasi untuk menutup celah keamanan yang mungkin ada.
+## 2. Keamanan Infrastruktur
 
-### 5. Monitoring dan Logging
-- **Implementasikan Logging yang Efektif**: Pastikan semua aktivitas penting tercatat dengan baik untuk keperluan audit dan deteksi dini.
-- **Contoh**: Menggunakan `winston` untuk logging dalam aplikasi Node.js:
-  ```javascript
-  const winston = require('winston');
-  const logger = winston.createLogger({
-      level: 'info',
-      format: winston.format.json(),
-      transports: [
-new winston.transports.File({ filename: 'error.log', level: 'error' }),
-new winston.transports.File({ filename: 'combined.log' })
-      ],
-  });
-  ```
-- **Praktik Terbaik**: Tinjau log secara berkala untuk mendeteksi perilaku mencurigakan atau anomali.
+### 2.1. Konfigurasi Server
+
+Periksa konfigurasi server Anda, termasuk:
+- Sistem operasi yang diperbarui
+- Firewall yang diterapkan
+
+Contoh konfigurasi firewall menggunakan iptables:
+```bash
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+iptables -A INPUT -j DROP
+```  
+
+### 2.2. SSL/TLS
+
+Pastikan bahwa lalu lintas antara klien dan server Anda aman. Gunakan HTTPS dengan SSL/TLS. Periksa apakah sertifikat SSL Anda valid dan terbarui.
+
+## 3. Keamanan Aplikasi Web
+
+### 3.1. Validasi Input
+
+Periksa validasi input untuk melindungi aplikasi dari serangan seperti XSS dan SQL Injection. Pastikan input pengguna divalidasi dan diproses dengan aman.
+
+Contoh validasi input sederhana dalam JavaScript:
+```javascript
+function validateInput(input) {
+  const regex = /^[a-zA-Z0-9]+$/;
+  if (!regex.test(input)) {
+    throw new Error('Input tidak valid!');
+  }
+}
+```  
+
+### 3.2. Autentikasi dan Otorisasi
+
+Periksa mekanisme autentikasi dan otorisasi Anda. Pastikan:
+- Password disimpan dengan hashing (mis: bcrypt)
+- Menerapkan Multi-Factor Authentication (MFA)
+
+Contoh pemakaian bcrypt dalam Node.js:
+```javascript
+const bcrypt = require('bcrypt');
+
+const hashPassword = async (plainTextPassword) => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(plainTextPassword, salt);
+};
+```  
+
+## 4. Keamanan Basis Data
+
+### 4.1. Keamanan Koneksi DB
+
+Pastikan koneksi ke basis data Anda aman. Gunakan parameterized queries untuk menghindari SQL Injection. 
+
+Contoh penggunaan parameterized query di Python dengan psycopg2:
+```python
+import psycopg2
+
+connection = psycopg2.connect(
+    dbname='your_db', 
+    user='your_user', 
+    password='your_pass', 
+    host='localhost'
+)
+cursor = connection.cursor()
+
+query = "SELECT * FROM users WHERE username = %s"
+cursor.execute(query, (username,))
+```  
+
+## 5. Penanganan Kesalahan dan Logging
+
+### 5.1. Logging Yang Aman
+
+Pastikan aplikasi Anda mencatat dengan benar dan tidak mengungkapkan informasi sensitif.
+- Gunakan logging terstandarisasi
+- Hindari mencatat informasi pribadi
+
+### 5.2. Penanganan Kesalahan
+
+Tangani kesalahan dengan baik. Jangan berikan informasi berlebih kepada pengguna. Contohnya:
+```javascript
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Terjadi kesalahan, silakan coba lagi!');
+});
+```  
 
 ## Kesimpulan
-Melakukan audit keamanan secara berkala adalah langkah penting untuk melindungi aplikasi web Anda dari ancaman. Dengan menggunakan daftar periksa di atas, Anda dapat mengidentifikasi potensi kerentanan dan mengambil langkah-langkah untuk mengamankannya. Jangan ragu untuk menerapkan praktik terbaik yang telah disarankan untuk menjaga keamanan aplikasi web Anda.
 
-Jangan lupa untuk membagikan artikel ini dan mulai melakukan audit keamanan aplikasi web Anda hari ini!
+Melakukan audit keamanan aplikasi web adalah langkah yang vital untuk menjaga keamanan data pengguna dan menjaga reputasi perusahaan Anda. Gunakan daftar periksa ini sebagai panduan untuk menilai dan meningkatkan keamanan aplikasi Anda.
+
+#### Tindakan Lanjutan
+
+Lakukan audit secara berkala dan perbarui langkah-langkah keamanan Anda agar tetap relevan dengan ancaman terbaru dan kebijakan keamanan terkini.
 
 <!-- lang:en -->
 # Security Audit Checklist for Web Apps
 
-## Introduction
-In today's digital world, the security of web applications is paramount. Unsecured applications can become targets for cyber attacks that can compromise data and damage business reputations. Therefore, conducting regular security audits is key to ensuring your applications remain secure. This article provides a comprehensive checklist to help you perform a web application security audit.
+Web applications are an essential part of our daily lives and collect a lot of sensitive data. Therefore, conducting a security audit is a crucial step to ensure that your application is safe from potential threats. Here is a comprehensive checklist for performing a security audit on your web application.
 
-## Security Audit Checklist
-Here are several categories to consider when performing a security audit:
+## 1. General Information
 
-### 1. Source Code Security
-- **Conduct Code Review**: Ensure there are no vulnerabilities that can be exploited. Use tools like SonarQube or Checkmarx for static code analysis.
-- **Example**: Here’s how to use SonarQube to scan your project:
-  ```bash
-  sonar-scanner -Dsonar.projectKey=your_project_key -Dsonar.sources=src
-  ```
-- **Best Practices**: Implement secure coding principles, such as input validation and output encoding to prevent attacks like XSS and SQL Injection.
+### 1.1. Define Audit Scope
 
-### 2. Authentication and Authorization Management
-- **Check Session Management**: Ensure user sessions are securely managed and cookies are marked with `HttpOnly` and `Secure` attributes.
-- **Example**: Here’s how to set secure cookies in a Node.js application:
-  ```javascript
-  res.cookie('sessionId', sessionId, { httpOnly: true, secure: true });
-  ```
-- **Best Practices**: Use multi-factor authentication (MFA) to add an extra layer of security for users.
+Before starting the audit, define its scope. Identify which applications will be audited and which aspects need to be checked.
 
-### 3. Data Security
-- **Encrypt Sensitive Data**: Ensure all critical data is encrypted at rest and during transmission using SSL/TLS protocols.
-- **Example**: Using libraries like `crypto` in Node.js to encrypt data:
-  ```javascript
-  const crypto = require('crypto');
-  const algorithm = 'aes-256-cbc';
-  const key = crypto.randomBytes(32);
-  const iv = crypto.randomBytes(16);
+### 1.2. Identify Stakeholders
 
-  const encrypt = (text) => {
-      let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
-      let encrypted = cipher.update(text);
-      encrypted = Buffer.concat([encrypted, cipher.final()]);
-      return encrypted.toString('hex');
-  };
-  ```
-- **Best Practices**: Disable direct database access for unauthorized users. Only provide access to necessary parts.
+Contact relevant parties, including developers, business owners, and security teams, to ensure all security aspects are considered.
 
-### 4. Infrastructure Security
-- **Check Server and Network Configuration**: Ensure firewalls are configured correctly and that there are no unnecessary open ports.
-- **Example**: Using `nmap` to scan for open ports:
-  ```bash
-  nmap -sS -O your.server.ip
-  ```
-- **Best Practices**: Always update software and operating systems to patch any existing security vulnerabilities.
+## 2. Infrastructure Security
 
-### 5. Monitoring and Logging
-- **Implement Effective Logging**: Ensure all critical activities are logged properly for audit and early detection purposes.
-- **Example**: Using `winston` for logging in a Node.js application:
-  ```javascript
-  const winston = require('winston');
-  const logger = winston.createLogger({
-      level: 'info',
-      format: winston.format.json(),
-      transports: [
-new winston.transports.File({ filename: 'error.log', level: 'error' }),
-new winston.transports.File({ filename: 'combined.log' })
-      ],
-  });
-  ```
-- **Best Practices**: Review logs regularly to detect suspicious behavior or anomalies.
+### 2.1. Server Configuration
+
+Check your server configuration, including:
+- Updated operating systems
+- Implemented firewalls
+
+Example of firewall configuration using iptables:
+```bash
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+iptables -A INPUT -j DROP
+```  
+
+### 2.2. SSL/TLS
+
+Ensure that traffic between clients and your server is secure. Use HTTPS with SSL/TLS. Check that your SSL certificate is valid and updated.
+
+## 3. Web Application Security
+
+### 3.1. Input Validation
+
+Check input validation to protect the application from attacks like XSS and SQL Injection. Ensure user inputs are validated and processed securely.
+
+Example of simple input validation in JavaScript:
+```javascript
+function validateInput(input) {
+  const regex = /^[a-zA-Z0-9]+$/;
+  if (!regex.test(input)) {
+    throw new Error('Invalid input!');
+  }
+}
+```  
+
+### 3.2. Authentication and Authorization
+
+Review your authentication and authorization mechanisms. Ensure:
+- Passwords are stored using hashing (e.g. bcrypt)
+- Multi-Factor Authentication (MFA) is applied
+
+Example of using bcrypt in Node.js:
+```javascript
+const bcrypt = require('bcrypt');
+
+const hashPassword = async (plainTextPassword) => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(plainTextPassword, salt);
+};
+```  
+
+## 4. Database Security
+
+### 4.1. DB Connection Security
+
+Ensure that your database connection is secure. Use parameterized queries to avoid SQL Injection. 
+
+Example of using a parameterized query in Python with psycopg2:
+```python
+import psycopg2
+
+connection = psycopg2.connect(
+    dbname='your_db', 
+    user='your_user', 
+    password='your_pass', 
+    host='localhost'
+)
+cursor = connection.cursor()
+
+query = "SELECT * FROM users WHERE username = %s"
+cursor.execute(query, (username,))
+```  
+
+## 5. Error Handling and Logging
+
+### 5.1. Secure Logging
+
+Ensure your application logs correctly and does not expose sensitive information.
+- Use standardized logging
+- Avoid logging personal information
+
+### 5.2. Error Handling
+
+Handle errors properly. Do not provide excessive information to the user. For example:
+```javascript
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('An error occurred, please try again!');
+});
+```  
 
 ## Conclusion
-Conducting security audits regularly is a crucial step towards protecting your web applications from threats. By using the checklist above, you can identify potential vulnerabilities and take measures to secure them. Feel free to implement the recommended best practices to ensure the security of your web applications.
 
-Don’t forget to share this article and start auditing the security of your web applications today!
+Conducting a security audit of a web application is a vital step to protect user data and maintain your company's reputation. Use this checklist as a guide to assess and enhance your application's security.
+
+#### Next Steps
+
+Conduct audits periodically and update your security measures to stay relevant with the latest threats and security policies.
