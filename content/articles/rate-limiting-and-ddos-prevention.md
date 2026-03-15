@@ -2,15 +2,15 @@
 title_id: "Pembatasan Laju dan Pencegahan DDoS"
 title_en: "Rate Limiting and DDoS Prevention"
 slug: "rate-limiting-and-ddos-prevention"
-date: "2026-03-12T18:47:44.000Z"
-description_id: "Pelajari tentang pembatasan laju dan bagaimana menerapkan langkah pencegahan DDoS untuk melindungi aplikasi Anda."
-description_en: "Learn about rate limiting and how to implement DDoS prevention measures to protect your applications."
+date: "2026-03-15T06:47:01.000Z"
+description_id: "Pelajari cara efektif membatasi laju permintaan dan mencegah serangan DDoS untuk keamanan aplikasi Anda."
+description_en: "Learn effective methods of rate limiting and DDoS prevention to secure your applications."
 tags:
-  - DDoS
   - authentication
+  - ddos
   - keamanan
-  - latensi
-  - pembatasan
+  - rate-limiting
+  - security
 status: "published"
 authorId: "usr_ai_security"
 cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/rate-limiting-and-ddos-prevention.png"
@@ -19,167 +19,233 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 <!-- lang:id -->
 # Pembatasan Laju dan Pencegahan DDoS
 
-Dalam era digital yang semakin canggih, serangan DDoS (Distributed Denial of Service) menjadi salah satu tantangan terbesar bagi pengembang dan insinyur keamanan. Untuk melindungi aplikasi Anda, salah satu teknik yang paling efektif adalah pembatasan laju (rate limiting). Artikel ini akan membahas konsep dasar dari pembatasan laju dan bagaimana teknik ini dapat digunakan sebagai langkah pencegahan terhadap serangan DDoS.
+Dalam dunia digital saat ini, keamanan aplikasi adalah prioritas utama. Salah satu tantangan besar yang dihadapi pengembang adalah serangan DDoS (Distributed Denial of Service) dan cara mencegahnya. Pembatasan laju adalah salah satu metode yang dapat diterapkan untuk menjaga ketersediaan aplikasi. Dalam artikel ini, kita akan membahas konsep pembatasan laju dan bagaimana strategi ini dapat membantu mencegah serangan DDoS.
 
 ## Apa itu Pembatasan Laju?
 
-Pembatasan laju adalah teknik yang digunakan untuk membatasi jumlah permintaan (request) yang dapat dilakukan oleh pengguna dalam jangka waktu tertentu. Hal ini penting untuk mencegah pengguna atau sistem tertentu dari mengambil alih sumber daya server dan mengakibatkan penurunan layanan yang parah.
+Pembatasan laju adalah teknik yang digunakan untuk membatasi jumlah permintaan yang dapat dibuat oleh pengguna dalam periode waktu tertentu. Hal ini berguna untuk mencegah penyalahgunaan layanan, terutama dalam mengatasi serangan DDoS.
 
-### Mengapa Pembatasan Laju Penting?
+### Mengapa Pembatasan Laju Diperlukan?
 
-1. **Mencegah Penyalahgunaan Layanan**: Dengan membatasi jumlah permintaan, Anda dapat menghindari penyalahgunaan layanan oleh pihak yang tidak bertanggung jawab.  
-2. **Menjaga Ketersediaan Layanan**: Membatasi jumlah permintaan dari satu sumber dapat membantu menjaga ketersediaan layanan untuk pengguna yang sah.
-3. **Mengurangi Risiko DDoS**: Dengan menerapkan pembatasan laju, Anda dapat mengurangi kemungkinan serangan DDoS, yang umumnya melibatkan banyak permintaan dalam waktu singkat dari berbagai sumber.
+1. **Melindungi Sumber Daya**: Membatasi permintaan membantu melindungi server dari kelebihan beban.
+2. **Meningkatkan Kinerja**: Dengan mengontrol jumlah permintaan, aplikasi dapat berjalan lebih responsif.
+3. **Mengurangi Biaya**: Mengurangi beban pada server dapat mengurangi biaya operasional.
 
-## Cara Menerapkan Pembatasan Laju
+## Metode Pembatasan Laju
 
-Berikut adalah cara umum untuk menerapkan pembatasan laju dalam aplikasi web Anda:
+Ada beberapa metode untuk mengimplementasikan pembatasan laju:
 
-### Menggunakan Middleware di Aplikasi Node.js
+### 1. Token Bucket
 
-Middleware dapat digunakan untuk membatasi jumlah permintaan yang diterima. Berikut adalah contoh menggunakan `express-rate-limit`, sebuah middleware untuk Node.js.
+Metode ini menggunakan "bucket" untuk menyimpan token yang mewakili izin untuk mengakses sumber daya. Setiap permintaan yang datang memerlukan token.
 
-```typescript
-import express from 'express';
-import rateLimit from 'express-rate-limit';
+```python
+class TokenBucket:
+    def __init__(self, rate, capacity):
+        self.rate = rate  # Permintaan per detik
+        self.capacity = capacity  # Kapasitas maksimum
+        self.tokens = capacity  # Token yang tersedia
+        self.last_check = time.time()
+
+    def add_tokens(self):
+        now = time.time()
+        elapsed = now - self.last_check
+        self.last_check = now
+        self.tokens = min(self.capacity, self.tokens + elapsed * self.rate)
+
+    def get_token(self):
+        self.add_tokens()
+        if self.tokens > 0:
+  self.tokens -= 1
+  return True
+        return False
+```
+
+### 2. Leaky Bucket
+
+Mirip dengan token bucket, tetapi di sini token "mengalir" keluar, analogi ini menciptakan antrian permintaan yang lebih teratur.
+
+```python
+class LeakyBucket:
+    def __init__(self, rate, capacity):
+        self.rate = rate  # Jumlah token yang dikeluarkan per detik
+        self.capacity = capacity  # Kapasitas bucket
+        self.current_level = 0
+        self.last_check = time.time()
+
+    def leak(self):
+        now = time.time()
+        elapsed = now - self.last_check
+        self.last_check = now
+        self.current_level = max(0, self.current_level - elapsed * self.rate)
+
+    def add_request(self):
+        self.leak()
+        if self.current_level < self.capacity:
+  self.current_level += 1
+  return True
+        return False
+```
+
+### 3. Fixed Window
+
+Metode ini menghitung jumlah permintaan dalam jendela waktu tetap.
+
+```javascript
+const express = require('express');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
-
-// Rata-rata membatasi 100 permintaan per IP dalam 15 menit
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,  // 15 menit
-  max: 100,  // maksimal 100 permintaan
-  message: 'Terlalu banyak permintaan dari IP ini, silakan coba lagi nanti.'
+    windowMs: 60 * 1000, // 1 menit
+    max: 100 // Limit 100 permintaan per IP
 });
 
-// Menggunakan middleware di semua route
 app.use(limiter);
-
 app.get('/', (req, res) => {
-  res.send('Hello, world!');
+    res.send('Hello World!');
 });
 
 app.listen(3000, () => {
-  console.log('Server berjalan di port 3000');
+    console.log('Server berjalan di port 3000');
 });
 ```
 
-### Menggunakan Nginx untuk Pembatasan Laju
-
-Jika ingin membatasi laju pada level server, Anda bisa menggunakan Nginx dengan konfigurasi.
-
-```nginx
-http {
-    limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;
-    server {
-        location / {
-  limit_req zone=mylimit burst=20;
-  proxy_pass http://backend;
-        }
-    }
-}
-```
-
-Dengan konfigurasi ini, akan ada batasan sebanyak 10 permintaan per detik per IP dengan burst maksimum 20 permintaan.
-
 ## Pencegahan DDoS
 
-Menggunakan pembatasan laju adalah langkah yang baik untuk mencegah serangan, namun ada beberapa teknik tambahan lain yang dapat digunakan untuk memperkuat pertahanan Anda.
+### Menggunakan Pembatasan Laju untuk Mencegah DDoS
 
-### Firewall dan IDS/IPS
+Mengimplementasikan pembatasan laju adalah langkah awal yang efektif untuk mencegah serangan DDoS. Berikut adalah beberapa teknik tambahan yang dapat digunakan:
 
-Menggunakan firewall dan sistem deteksi/preventif intrusi (IDS/IPS) juga dapat meningkatkan keamanan aplikasi Anda. Firewall dapat membantu memfilter trafik, sedangkan IDS/IPS dapat mendeteksi dan merespons serangan.
+1. **Firewall dan IDS/IPS**: Gunakan sistem deteksi dan pencegahan intrusi untuk melindungi server.
+2. **Load Balancer**: Juga berfungsi untuk mendistribusikan beban ke beberapa server.
+3. **Web Application Firewall (WAF)**: Memfilter dan memantau HTTP traffic untuk melindungi aplikasi web.
 
-### Cloud-Based DDoS Protection
+### Praktik Terbaik untuk Keamanan Aplikasi
 
-Pertimbangkan untuk menggunakan layanan perlindungan DDoS berbasis cloud, seperti Cloudflare atau Amazon Web Services Shield, untuk menambahkan lapisan perlindungan ekstra.
+- **Pemantauan**: Lakukan pemantauan secara real-time untuk mendeteksi serangan lebih awal.
+- **Pembaruan Sistem**: Pastikan semua software dan infrastruktur diperbarui untuk mengatasi celah keamanan.
+- **Melibatkan Tim Keamanan**: Berkolaborasilah dengan tim keamanan untuk mengembangkan strategi proaktif.
 
 ## Kesimpulan
 
-Pembatasan laju adalah alat yang sangat berharga dalam perlindungan terhadap serangan DDoS dan untuk menjaga ketersediaan layanan Anda. Dengan menerapkan pembatasan laju serta mengikuti praktik terbaik lainnya, Anda akan lebih siap untuk menghadapi serangan di dunia siber. 
+Pembatasan laju adalah alat yang sangat efektif untuk menjaga ketersediaan aplikasi dan mencegah serangan DDoS. Menggabungkan teknik ini dengan praktik keamanan lainnya dapat meningkatkan pertahanan Anda. Pastikan untuk terus memantau dan mengadaptasi strategi keamanan Anda agar selalu selangkah lebih maju dari potensi ancaman.
 
-**Ayo mulai menerapkan pembatasan laju hari ini dan lindungi aplikasi Anda dari serangan DDoS!**
+Apakah Anda siap untuk mengimplementasikan pembatasan laju? Mulailah sekarang dan amankan aplikasi Anda!  
 
 <!-- lang:en -->
 # Rate Limiting and DDoS Prevention
 
-In the sophisticated digital landscape we live in, DDoS (Distributed Denial of Service) attacks represent one of the biggest challenges for developers and security engineers. To protect your applications, one of the most effective techniques is rate limiting. This article will cover the fundamentals of rate limiting and how this technique can be employed as a preventive measure against DDoS attacks.
+In today’s digital world, application security is a top priority. One of the significant challenges developers face is DDoS (Distributed Denial of Service) attacks and how to prevent them. Rate limiting is one method that can be employed to maintain application availability. In this article, we will discuss the concept of rate limiting and how this strategy can help prevent DDoS attacks.
 
 ## What is Rate Limiting?
 
-Rate limiting is a technique used to limit the number of requests that a user can make in a certain period of time. This is essential for preventing a single user or system from monopolizing server resources and causing significant degradation of service.
+Rate limiting is a technique used to limit the number of requests that a user can make in a given time period. This is useful for preventing abuse of services, especially in combating DDoS attacks.
 
-### Why is Rate Limiting Important?
+### Why is Rate Limiting Needed?
 
-1. **Prevent Service Abuse**: By capping the number of requests, you can avoid the misuse of services by malicious entities.  
-2. **Maintain Service Availability**: Limiting the number of requests from a single source can help ensure service availability for legitimate users.
-3. **Reduce DDoS Risk**: Implementing rate limiting can decrease the likelihood of a DDoS attack, which often involves massive request floods from multiple sources in a short time.
+1. **Protect Resources**: Limiting requests helps protect the server from being overwhelmed.
+2. **Improve Performance**: By controlling the number of requests, applications can run more responsively.
+3. **Reduce Costs**: Decreasing the load on servers can lower operational costs.
 
-## How to Implement Rate Limiting
+## Methods of Rate Limiting
 
-Here are common approaches to implement rate limiting in your web application:
+There are several methods for implementing rate limiting:
 
-### Using Middleware in a Node.js Application
+### 1. Token Bucket
 
-Middleware can be utilized to restrict the number of requests that your application receives. Below is an example of using `express-rate-limit`, a middleware for Node.js.
+This method uses a "bucket" to store tokens that represent permission to access resources. Each incoming request requires a token.
 
-```typescript
-import express from 'express';
-import rateLimit from 'express-rate-limit';
+```python
+class TokenBucket:
+    def __init__(self, rate, capacity):
+        self.rate = rate  # Requests per second
+        self.capacity = capacity  # Maximum capacity
+        self.tokens = capacity  # Available tokens
+        self.last_check = time.time()
+
+    def add_tokens(self):
+        now = time.time()
+        elapsed = now - self.last_check
+        self.last_check = now
+        self.tokens = min(self.capacity, self.tokens + elapsed * self.rate)
+
+    def get_token(self):
+        self.add_tokens()
+        if self.tokens > 0:
+  self.tokens -= 1
+  return True
+        return False
+```
+
+### 2. Leaky Bucket
+
+Similar to the token bucket, but here tokens "leak" out, creating a more regular request queue.
+
+```python
+class LeakyBucket:
+    def __init__(self, rate, capacity):
+        self.rate = rate  # Number of tokens released per second
+        self.capacity = capacity  # Bucket capacity
+        self.current_level = 0
+        self.last_check = time.time()
+
+    def leak(self):
+        now = time.time()
+        elapsed = now - self.last_check
+        self.last_check = now
+        self.current_level = max(0, self.current_level - elapsed * self.rate)
+
+    def add_request(self):
+        self.leak()
+        if self.current_level < self.capacity:
+  self.current_level += 1
+  return True
+        return False
+```
+
+### 3. Fixed Window
+
+This method counts the number of requests in a fixed time window.
+
+```javascript
+const express = require('express');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
-
-// Limiting to 100 requests per IP every 15 minutes
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,  // 15 minutes
-  max: 100,  // maximum 100 requests
-  message: 'Too many requests from this IP, please try again later.'
+    windowMs: 60 * 1000, // 1 minute
+    max: 100 // Limit 100 requests per IP
 });
 
-// Applying middleware to all routes
 app.use(limiter);
-
 app.get('/', (req, res) => {
-  res.send('Hello, world!');
+    res.send('Hello World!');
 });
 
 app.listen(3000, () => {
-  console.log('Server running on port 3000');
+    console.log('Server running on port 3000');
 });
 ```
 
-### Using Nginx for Rate Limiting
-
-If you prefer to impose rate limits at the server level, Nginx can be configured for this purpose.
-
-```nginx
-http {
-    limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;
-    server {
-        location / {
-  limit_req zone=mylimit burst=20;
-  proxy_pass http://backend;
-        }
-    }
-}
-```
-
-With this configuration, there will be a limitation of 10 requests per second per IP with a maximum burst of 20 requests.
-
 ## DDoS Prevention
 
-Using rate limiting is a great step toward prevention, but there are several other additional techniques that you can use to reinforce your defenses.
+### Using Rate Limiting to Prevent DDoS
 
-### Firewalls and IDS/IPS
+Implementing rate limiting is an effective first step in preventing DDoS attacks. Here are some additional techniques that can be utilized:
 
-Employing firewalls and Intrusion Detection/Prevention Systems (IDS/IPS) can also enhance the security of your applications. Firewalls can filter traffic, while IDS/IPS can detect and respond to attacks.
+1. **Firewalls and IDS/IPS**: Use intrusion detection and prevention systems to protect your servers.
+2. **Load Balancer**: Also serves to distribute loads across multiple servers.
+3. **Web Application Firewall (WAF)**: Filters and monitors HTTP traffic to protect web applications.
 
-### Cloud-Based DDoS Protection
+### Best Practices for Application Security
 
-Consider utilizing cloud-based DDoS protection services, such as Cloudflare or Amazon Web Services Shield, to add an additional layer of security.
+- **Monitoring**: Perform real-time monitoring to detect attacks early.
+- **System Updates**: Ensure all software and infrastructure are updated to address security vulnerabilities.
+- **Involve Security Teams**: Collaborate with security teams to develop proactive strategies.
 
 ## Conclusion
 
-Rate limiting is an invaluable tool in defending against DDoS attacks and maintaining your service availability. By implementing rate limiting along with adhering to other best practices, you’ll be better prepared to face attacks in the cyber world.  
+Rate limiting is a highly effective tool for maintaining application availability and preventing DDoS attacks. Combining this technique with other security practices can enhance your defenses. Ensure to continuously monitor and adapt your security strategy to stay ahead of potential threats.
 
-**Start implementing rate limiting today and protect your applications from DDoS attacks!**
+Are you ready to implement rate limiting? Get started now and secure your applications!
