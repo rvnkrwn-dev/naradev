@@ -2,9 +2,9 @@
 title_id: "React Hooks dan Pola"
 title_en: "React Hooks and Patterns"
 slug: "react-hooks-and-patterns"
-date: "2026-03-08T18:25:50.000Z"
-description_id: "Pelajari cara menggunakan React Hooks dan pola terbaik untuk pengembangan frontend yang lebih efisien."
-description_en: "Learn how to use React Hooks and best patterns for more efficient frontend development."
+date: "2026-03-18T12:57:00.000Z"
+description_id: "Pelajari cara menggunakan React Hooks dan pola terbaik untuk meningkatkan pengembangan frontend Anda."
+description_en: "Learn how to use React Hooks and best practices to enhance your frontend development."
 tags:
   - css
   - frontend
@@ -19,243 +19,231 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 <!-- lang:id -->
 # React Hooks dan Pola
 
-React telah menjadi salah satu library JavaScript yang paling terkenal untuk membangun antarmuka pengguna. Dengan diperkenalkannya Hooks pada React 16.8, pengembangan aplikasi dengan React menjadi lebih fleksibel dan efisien. Artikel ini akan membahas secara mendalam tentang React Hooks, pola penggunaannya, dan bagaimana Anda bisa mengintegrasikannya ke dalam proyek Anda.
+## Pengenalan
+React Hooks adalah fitur yang diperkenalkan di React 16.8 yang memungkinkan Anda menggunakan state dan fitur React lainnya tanpa menulis kelas. Ini sangat mempermudah pengelolaan state dan efek samping di dalam komponen fungsional. Dalam artikel ini, kita akan membahas cara menggunakan hooks dan pola-pola terbaik yang dapat Anda terapkan dalam proyek Anda.
 
-## Apa Itu React Hooks?
+### Apa itu Hooks?
+Hooks adalah fungsi yang memungkinkan Anda “mengaitkan” ke state dan lifecycle React dari komponen fungsional. Mari kita lihat beberapa hooks yang paling sering digunakan:
 
-React Hooks adalah fungsi yang memungkinkan Anda untuk “mengaitkan” state dan fitur React lainnya ke dalam fungsional komponen. Sebelum adanya Hooks, Anda harus menggunakan class components untuk memiliki state dan lifecycle methods. Hooks memberikan kita kemampuan untuk menggunakan state dan fitur lain dalam fungsional komponen tanpa mengubah strukturnya.
+- **useState**: untuk mengelola state.
+- **useEffect**: untuk efek samping (side effects).
+- **useContext**: untuk mengelola konteks global.
 
-## Jenis-Jenis Hooks
+## Penggunaan useState
+### Contoh Penggunaan
+Berikut adalah contoh penggunaan `useState` untuk mengelola state dalam sebuah komponen.
 
-### 1. Built-in Hooks
-
-React menyediakan beberapa Hooks bawaan yang bisa langsung digunakan:
-
-- **useState**: Untuk mengatur state dalam komponen fungsional.
-- **useEffect**: Untuk mengatur efek samping dalam komponen.
-- **useContext**: Untuk mengakses context API.
-
-#### Contoh Penggunaan useState
 ```javascript
 import React, { useState } from 'react';
 
-const Counter = () => {
+function Counter() {
   const [count, setCount] = useState(0);
 
   return (
     <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>Click me</button>
+      <h1>{count}</h1>
+      <button onClick={() => setCount(count + 1)}>Tambah</button>
     </div>
   );
-};
-
-export default Counter;
+}
 ```
 
-### 2. Custom Hooks
+Dalam contoh di atas, kita membuat komponen sederhana yang menampilkan angka dan tombol untuk menambah nilai.
 
-Selain hooks bawaan, Anda juga bisa membuat Custom Hooks untuk mengelola logika dan state yang dapat digunakan ulang.
+## Penggunaan useEffect
+### Efek Samping
+`useEffect` memungkinkan Anda untuk melakukan efek samping dalam komponen seperti mengambil data, menyetel timer, atau memperbarui DOM. Berikut adalah contohnya:
 
-#### Contoh Custom Hook
+```javascript
+import React, { useEffect, useState } from 'react';
+
+function Timer() {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return <div>Timer: {seconds} detik</div>;
+}
+```
+
+Di sini, kita membuat timer yang memperbarui setiap detik.
+
+## Mengelola Konteks dengan useContext
+### Apa itu useContext?
+`useContext` memungkinkan Anda untuk mengakses nilai dari konteks React tanpa perlu menggunakan komponen pembungkus.
+
+### Contoh Penggunaan useContext
+```javascript
+import React, { createContext, useContext } from 'react';
+
+const ThemeContext = createContext('light');
+
+function ThemedComponent() {
+  const theme = useContext(ThemeContext);
+  return <div>Tema saat ini: {theme}</div>;
+}
+
+function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <ThemedComponent />
+    </ThemeContext.Provider>
+  );
+}
+```
+
+Pada contoh di atas, `ThemedComponent` dapat mengakses nilai tema dari `ThemeContext` tanpa harus menggunakan komponen kelas.
+
+## Pola Terbaik Menggunakan Hooks
+### 1. Membagi Logika dengan Custom Hooks
+Custom hooks memungkinkan Anda untuk membagi logika stateful menjadi fungsi yang dapat digunakan kembali. Contoh:
+
 ```javascript
 import { useState, useEffect } from 'react';
 
-const useFetch = (url) => {
+function useFetch(url) {
   const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(url);
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        setError(error);
-      }
-    };
-
-    fetchData();
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      });
   }, [url]);
 
-  return { data, error };
-};
-
-export default useFetch;
-```
-
-## Pola Umum dalam Menggunakan Hooks
-
-### 1. Mengorganisir State
-
-Pola ini bermanfaat saat kita memiliki beberapa state yang berbeda dalam komponen. Gunakan `useReducer` saat state yang Anda kelola cukup kompleks.
-
-#### Contoh Menggunakan useReducer
-```javascript
-import React, { useReducer } from 'react';
-
-const initialState = { count: 0 };
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'increment':
-      return { count: state.count + 1 };
-    case 'decrement':
-      return { count: state.count - 1 };
-    default:
-      throw new Error();
-  }
+  return { data, loading };
 }
-
-const Counter = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  return (
-    <div>
-      Count: {state.count}
-      <button onClick={() => dispatch({ type: 'increment' })}>+</button>
-      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
-    </div>
-  );
-};
-
-export default Counter;
 ```
 
-### 2. Membagi Komponen Menjadi Fungsi Kecil
-
-Pola ini bermanfaat untuk memecah komponen menjadi bagian yang tersendiri, sehingga lebih mudah untuk mengelola state dan efek.
-
-## Tips Menggunakan React Hooks
-- **Sederhanakan logika komponen**: Dengan menggunakan custom hooks, Anda bisa menjaga komponen tetap bersih dan legible.
-- **Jaga agar dependencies di useEffect lengkap**: Selalu periksa dependencies dalam useEffect untuk menghindari infinite loops.
-- **Gunakan React DevTools**: Alat ini membantu Anda untuk memeriksa dan mem-debug hooks yang digunakan dalam aplikasi Anda.
+Dengan `useFetch`, Anda dapat mengambil data dari API hanya dengan memanggil hook ini di dalam komponen.
 
 ## Kesimpulan
+React Hooks membawa banyak kemudahan dalam pengembangan aplikasi React. Dengan memahami penggunaan dasar dan pola terbaik seperti penggunaan custom hooks, Anda dapat meningkatkan produktivitas dan keterbacaan kode Anda. Mulailah berlatih dan eksplorasi lebih lanjut untuk mendapatkan manfaat maksimal dari React Hooks.
 
-React Hooks telah merevolusi cara kita menulis komponen dalam React. Dengan memahami dan memanfaatkan hooks dan pola-pola yang ada, Anda dapat meningkatkan kualitas dari kode Anda. Cobalah untuk mengintegrasikan hooks ke dalam proyek Anda hari ini!
-
-Jika Anda memiliki pertanyaan atau ingin berbagi pengalaman dengan React Hooks, jangan ragu untuk meninggalkan komentar di bawah. Happy coding!
+## Ayo Mencoba!
+Ini saatnya bagi Anda untuk mencoba menggunakan React Hooks di proyek Anda. Bagikan pengalaman Anda dan jangan ragu untuk bertanya jika Anda menemui kesulitan!
 
 <!-- lang:en -->
 # React Hooks and Patterns
 
-React has become one of the most popular JavaScript libraries for building user interfaces. With the introduction of Hooks in React 16.8, developing applications with React has become more flexible and efficient. This article will delve into React Hooks, their usage patterns, and how to integrate them into your projects.
+## Introduction
+React Hooks were introduced in React 16.8, allowing you to use state and other React features without writing classes. This greatly simplifies state management and side effects in functional components. In this article, we will discuss how to use hooks and the best patterns you can apply to your projects.
 
-## What Are React Hooks?
+### What are Hooks?
+Hooks are functions that let you “hook into” state and lifecycle React features from functional components. Let’s take a look at some of the most commonly used hooks:
 
-React Hooks are functions that let you “hook into” state and other React features from functional components. Before Hooks, you had to use class components to manage state and lifecycle methods. Hooks allow us to use state and other features in functional components without changing their structure.
+- **useState**: for managing state.
+- **useEffect**: for side effects.
+- **useContext**: for managing global context.
 
-## Types of Hooks
+## Using useState
+### Example Usage
+Here’s an example of using `useState` to manage state in a component.
 
-### 1. Built-in Hooks
-
-React provides several built-in hooks that can be used directly:
-
-- **useState**: For managing state in functional components.
-- **useEffect**: For managing side effects in components.
-- **useContext**: For accessing the Context API.
-
-#### Example of useState
 ```javascript
 import React, { useState } from 'react';
 
-const Counter = () => {
+function Counter() {
   const [count, setCount] = useState(0);
 
   return (
     <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>Click me</button>
+      <h1>{count}</h1>
+      <button onClick={() => setCount(count + 1)}>Add</button>
     </div>
   );
-};
-
-export default Counter;
+}
 ```
 
-### 2. Custom Hooks
+In the above example, we create a simple component that displays a number and a button to increment the value.
 
-In addition to built-in hooks, you can create Custom Hooks to manage reusable logic and state.
+## Using useEffect
+### Side Effects
+`useEffect` allows you to perform side effects in components, such as fetching data, setting timers, or updating the DOM. Here’s an example:
 
-#### Example Custom Hook
+```javascript
+import React, { useEffect, useState } from 'react';
+
+function Timer() {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return <div>Timer: {seconds} seconds</div>;
+}
+```
+
+Here, we create a timer that updates every second.
+
+## Managing Context with useContext
+### What is useContext?
+`useContext` allows you to access values from the React Context without having to use wrapper components.
+
+### Example of Using useContext
+```javascript
+import React, { createContext, useContext } from 'react';
+
+const ThemeContext = createContext('light');
+
+function ThemedComponent() {
+  const theme = useContext(ThemeContext);
+  return <div>Current theme: {theme}</div>;
+}
+
+function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <ThemedComponent />
+    </ThemeContext.Provider>
+  );
+}
+```
+
+In the above example, `ThemedComponent` can access the theme value from `ThemeContext` without needing a class component.
+
+## Best Patterns for Using Hooks
+### 1. Sharing Logic with Custom Hooks
+Custom hooks allow you to share stateful logic as reusable functions. Here’s an example:
+
 ```javascript
 import { useState, useEffect } from 'react';
 
-const useFetch = (url) => {
+function useFetch(url) {
   const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(url);
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        setError(error);
-      }
-    };
-
-    fetchData();
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      });
   }, [url]);
 
-  return { data, error };
-};
-
-export default useFetch;
-```
-
-## Common Patterns for Using Hooks
-
-### 1. Organizing State
-
-This pattern is useful when you have multiple different states in a component. Use `useReducer` when the state you are managing is quite complex.
-
-#### Example Using useReducer
-```javascript
-import React, { useReducer } from 'react';
-
-const initialState = { count: 0 };
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'increment':
-      return { count: state.count + 1 };
-    case 'decrement':
-      return { count: state.count - 1 };
-    default:
-      throw new Error();
-  }
+  return { data, loading };
 }
-
-const Counter = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  return (
-    <div>
-      Count: {state.count}
-      <button onClick={() => dispatch({ type: 'increment' })}>+</button>
-      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
-    </div>
-  );
-};
-
-export default Counter;
 ```
 
-### 2. Breaking Components Into Smaller Functions
-
-This pattern is beneficial for breaking components into separate parts, making it easier to manage state and effects.
-
-## Tips for Using React Hooks
-- **Simplify component logic**: By utilizing custom hooks, you can keep components clean and legible.
-- **Ensure complete dependencies in useEffect**: Always check dependencies in useEffect to avoid infinite loops.
-- **Use React DevTools**: This tool helps you inspect and debug hooks used in your application.
+With `useFetch`, you can fetch data from an API just by calling this hook inside a component.
 
 ## Conclusion
+React Hooks bring a lot of convenience to React application development. By understanding the basic usage and best patterns like using custom hooks, you can improve the productivity and readability of your code. Start practicing and exploring further to reap the maximum benefits from React Hooks.
 
-React Hooks have revolutionized the way we write components in React. By understanding and leveraging hooks and their patterns, you can enhance the quality of your code. Try integrating hooks into your projects today!
-
-If you have any questions or would like to share experiences with React Hooks, feel free to leave a comment below. Happy coding!
+## Try It Out!
+Now it’s your turn to start using React Hooks in your projects. Share your experiences and feel free to ask if you encounter any difficulties!
