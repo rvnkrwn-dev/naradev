@@ -2,11 +2,12 @@
 title_id: "Alur Kerja GitHub Actions"
 title_en: "GitHub Actions Workflows"
 slug: "github-actions-workflows"
-date: "2026-03-01T01:30:34.000Z"
-description_id: "Pelajari cara membuat alur kerja GitHub Actions untuk otomatisasi pengembangan perangkat lunak."
-description_en: "Learn how to create GitHub Actions workflows for software development automation."
+date: "2026-03-18T07:01:20.000Z"
+description_id: "Pelajari cara membuat alur kerja menggunakan GitHub Actions untuk otomatisasi pengembangan perangkat lunak."
+description_en: "Learn how to create workflows using GitHub Actions for software development automation."
 tags:
   - actions
+  - automation
   - devops
   - docker
   - github
@@ -18,48 +19,18 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 <!-- lang:id -->
 # Alur Kerja GitHub Actions
 
-GitHub Actions adalah fitur yang memungkinkan kita untuk mengautomatisasi berbagai tugas dalam pengembangan perangkat lunak. Dengan Actions, kita bisa membuat alur kerja (workflow) yang secara otomatis dijalankan ketika ada perubahan kode di repositori. Artikel ini akan membahas cara menyusun alur kerja GitHub Actions secara efektif.
+GitHub Actions adalah alat yang kuat yang memungkinkan Anda mengautomasi proses pengembangan perangkat lunak langsung dalam repositori GitHub Anda. Dengan Actions, Anda dapat menyusun alur kerja yang mengatur serangkaian tindakan yang dapat dipicu oleh berbagai event seperti push, pull request, dan lainnya.
 
-## Apa Itu Alur Kerja GitHub Actions?
+## Apa itu Alur Kerja?
 
-Alur kerja GitHub Actions adalah serangkaian langkah yang didefinisikan dalam file YAML. Setiap kali sebuah peristiwa (event) terjadi di repositori GitHub, alur kerja ini bisa dipicu secara otomatis. Event ini bisa berupa commit, pull request, atau bahkan penjadwalan waktu tertentu.
+Alur kerja (workflow) adalah serangkaian tugas atau aksi yang dijalankan dalam urutan tertentu. Dalam konteks GitHub Actions, alur kerja didefinisikan di dalam file YAML dan berada dalam folder `.github/workflows` di repositori Anda.
 
-### Struktur Dasar Workflow
+### Konten File Alur Kerja
 
-Berikut adalah struktur dasar dari sebuah workflow GitHub Actions:
+Struktur dasar dari file alur kerja memuat beberapa bagian, sebagai contoh:
+
 ```yaml
-yaml
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        run: npm test
-```
-
-## Membuat Workflow Pertama Anda
-
-Untuk membuat workflow, pertama-tama kita harus membuat file YAML di dalam direktori `.github/workflows/`. Nama file ini bisa apa saja, namun umumnya menggunakan format `*.yml` atau `*.yaml`.
-
-### Langkah-langkah Membuat Workflow
-1. **Buat direktori**: Jika belum ada, buat direktori `.github/workflows/` di repositori Anda.
-2. **Buat file YAML**: Di dalam direktori yang baru dibuat, buat file, misalnya `ci.yml`.
-3. **Definisikan alur kerja**: Salin struktur workflow di atas ke dalam file yang baru dibuat.
-
-### Contoh Workflow: Deploy ke Heroku
-Berikut adalah contoh alur kerja untuk menerapkan kode ke Heroku setiap kali ada pembaruan di cabang `main`:
-```yaml
-name: Deploy to Heroku
+name: CI Pipeline
 
 on:
   push:
@@ -67,78 +38,78 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Set up Node.js
+
+      - name: Set Up Node.js
         uses: actions/setup-node@v2
         with:
 node-version: '14'
-      - name: Install dependencies
+
+      - name: Install Dependencies
         run: npm install
-      - name: Deploy to Heroku
-        env:
-HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: npm run deploy
+
+      - name: Run Tests
+        run: npm test
 ```
 
-## Tips dan Praktik Terbaik dalam Menggunakan GitHub Actions
-- **Gunakan Secrets**: Simpan konfigurasi sensitif seperti token API dalam secrets GitHub untuk keamanan.
-- **Optimalkan Alur Kerja**: Hanya jalankan langkah yang diperlukan untuk mempercepat proses CI/CD.
-- **Baca Log**: Selalu periksa log alur kerja untuk mengidentifikasi dan memperbaiki masalah.
+## Menyiapkan Alur Kerja GitHub Actions
+
+Untuk memulai, Anda perlu membuat file YAML baru dalam folder `.github/workflows/`. Berikut adalah panduan langkah demi langkah untuk menyiapkan alur kerja:
+
+### 1. Buat Folder dan File
+
+Buat folder `.github/workflows/` jika belum ada, dan kemudian buat file misalnya `ci.yml`.
+
+### 2. Tentukan Event Pemicu
+
+Anda perlu menentukan kapan alur kerja ini akan dijalankan. Misalnya, jika Anda ingin menjalankannya pada setiap 'push' ke cabang `main`:
+
+```yaml
+on:
+  push:
+    branches:
+      - main
+```
+
+### 3. Tambahkan Job dan Step
+
+Setelah menentukan event, kita bisa menambahkan job. Job adalah serangkaian langkah (steps) yang akan dieksekusi. Dalam contoh sebelumnya, kita sudah menentukan job `build` yang akan berjalan pada `ubuntu-latest`.
+
+### 4. Menjalankan Skrip dan Perintah
+
+Setiap langkah bisa menjalankan perintah shell. Contohnya, `npm install` digunakan untuk memasang dependensi proyek.
+
+## Tips dan Praktik Terbaik
+
+- **Gunakan Caching**: Jika Anda menggunakan dependensi besar, gunakan caching untuk mempercepat waktu build.
+- **Bagi Job**: Bagi workflow Anda menjadi beberapa job untuk meningkatkan kecepatan dengan menjalankan job secara paralel.
+- **Monitoring dan Logging**: Pastikan Anda memeriksa log untuk setiap step agar mudah menemukan masalah yang terjadi.
 
 ## Kesimpulan
 
-GitHub Actions memberikan kemudahan dalam mengautomatisasi alur kerja pengembangan perangkat lunak. Dengan mengikuti contoh dan praktik terbaik di atas, Anda dapat membuat alur kerja yang efisien dan efektif. Jangan ragu untuk bereksperimen dengan berbagai event dan langkah untuk mendukung kebutuhan proyek Anda.
+Dengan GitHub Actions, Anda dapat mengotomatiskan hampir semua aspek dari pengembangan perangkat lunak. Alur kerja memberikan fleksibilitas dan kekuatan dalam menangani proses CI/CD. Mulailah dengan proyek Anda hari ini dan tingkatkan efisiensi pengembangan Anda!
 
-Untuk mempelajari lebih lanjut, kunjungi [dokumentasi GitHub Actions](https://docs.github.com/en/actions).
+Jika Anda tertarik untuk belajar lebih lanjut tentang GitHub Actions, kunjungi [dokumentasi resmi GitHub](https://docs.github.com/en/actions).
 
 <!-- lang:en -->
 # GitHub Actions Workflows
 
-GitHub Actions is a feature that allows us to automate various tasks in software development. With Actions, we can create workflows that are automatically triggered when changes are made to the repository. This article will discuss how to effectively compose GitHub Actions workflows.
+GitHub Actions is a powerful tool that allows you to automate your software development processes directly within your GitHub repositories. With Actions, you can compose workflows that orchestrate a set of actions triggered by various events such as push, pull requests, and more.
 
-## What Is a GitHub Actions Workflow?
+## What is a Workflow?
 
-A GitHub Actions workflow is a series of steps defined in a YAML file. Each time an event occurs in a GitHub repository, this workflow can be automatically triggered. This event could be a commit, pull request, or even a specific scheduled time.
+A workflow is a series of tasks or actions executed in a specific order. In the context of GitHub Actions, workflows are defined in YAML files found in the `.github/workflows` directory of your repository.
 
-### Basic Workflow Structure
+### Workflow File Content
 
-Here is a basic structure of a GitHub Actions workflow:
+The basic structure of a workflow file includes several components, for example:
+
 ```yaml
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        run: npm test
-```
-
-## Creating Your First Workflow
-
-To create a workflow, we first need to create a YAML file inside the `.github/workflows/` directory. The name of this file can be anything, but it typically uses the format `*.yml` or `*.yaml`.
-
-### Steps to Create a Workflow
-1. **Create a directory**: If not already present, create the `.github/workflows/` directory in your repository.
-2. **Create a YAML file**: Inside the newly created directory, create a file, for example, `ci.yml`.
-3. **Define the workflow**: Copy the workflow structure above into the newly created file.
-
-### Workflow Example: Deploy to Heroku
-Here’s an example workflow for deploying code to Heroku whenever there’s an update in the `main` branch:
-```yaml
-name: Deploy to Heroku
+name: CI Pipeline
 
 on:
   push:
@@ -146,30 +117,59 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Set up Node.js
+
+      - name: Set Up Node.js
         uses: actions/setup-node@v2
         with:
 node-version: '14'
-      - name: Install dependencies
+
+      - name: Install Dependencies
         run: npm install
-      - name: Deploy to Heroku
-        env:
-HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: npm run deploy
+
+      - name: Run Tests
+        run: npm test
 ```
 
-## Tips and Best Practices for Using GitHub Actions
-- **Use Secrets**: Store sensitive configuration like API tokens in GitHub secrets for security.
-- **Optimize Workflows**: Only run necessary steps to speed up the CI/CD process.
-- **Review Logs**: Always check the workflow logs to identify and troubleshoot issues.
+## Setting Up GitHub Actions Workflows
+
+To get started, you'll need to create a new YAML file in the `.github/workflows/` directory. Here is a step-by-step guide to set up a workflow:
+
+### 1. Create Folder and File
+
+Create the `.github/workflows/` folder if it doesn't exist, then create a file, for instance, `ci.yml`.
+
+### 2. Define the Trigger Event
+
+You need to specify when this workflow will be executed. For example, if you want it to run on every 'push' to the `main` branch:
+
+```yaml
+on:
+  push:
+    branches:
+      - main
+```
+
+### 3. Add Job and Steps
+
+After defining the event, we can add a job. A job is a sequence of steps that will be executed. In the previous example, we defined a job called `build` that runs on `ubuntu-latest`.
+
+### 4. Running Scripts and Commands
+
+Each step can run shell commands. For instance, `npm install` is used to install project dependencies.
+
+## Tips and Best Practices
+
+- **Use Caching**: If you're dealing with large dependencies, use caching to speed up build times.
+- **Split Jobs**: Divide your workflows into multiple jobs to increase speed by executing jobs in parallel.
+- **Monitoring and Logging**: Ensure you check logs for each step to easily identify issues that arise.
 
 ## Conclusion
 
-GitHub Actions makes it easy to automate software development workflows. By following the examples and best practices above, you can create efficient and effective workflows. Feel free to experiment with different events and steps to cater to your project needs.
+With GitHub Actions, you can automate almost every aspect of software development. Workflows provide flexibility and power in managing your CI/CD processes. Get started with your project today and enhance your development efficiency!
 
-To learn more, visit the [GitHub Actions documentation](https://docs.github.com/en/actions).
+If you're interested in learning more about GitHub Actions, visit the [official GitHub documentation](https://docs.github.com/en/actions).
