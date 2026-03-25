@@ -2,12 +2,11 @@
 title_id: "Enkripsi Data Saat Istirahat dan Dalam Perjalanan"
 title_en: "Data Encryption at Rest and in Transit"
 slug: "data-encryption-at-rest-and-in-transit"
-date: "2026-03-25T06:59:08.000Z"
-description_id: "Pelajari pentingnya enkripsi data saat istirahat dan dalam perjalanan untuk melindungi privasi dan keamanan informasi."
-description_en: "Learn the importance of data encryption at rest and in transit to protect privacy and security of information."
+date: "2026-03-25T12:54:09.000Z"
+description_id: "Pelajari pentingnya enkripsi data saat istirahat dan dalam perjalanan untuk menjaga keamanan informasi Anda."
+description_en: "Learn the importance of data encryption at rest and in transit to keep your information secure."
 tags:
   - authentication
-  - cybersecurity
   - data
   - encryption
   - security
@@ -19,59 +18,60 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 <!-- lang:id -->
 # Enkripsi Data Saat Istirahat dan Dalam Perjalanan
 
-Enkripsi adalah teknik penting dalam keamanan siber yang digunakan untuk melindungi data sensitif. Dalam artikel ini, kita akan membahas istilah enkripsi data saat istirahat (at rest) dan dalam perjalanan (in transit), serta praktek terbaik untuk menerapkannya.
+Data adalah salah satu aset paling berharga bagi organisasi di era digital saat ini. Dengan meningkatnya ancaman terhadap keamanan data, enkripsi menjadi langkah penting untuk melindungi informasi. Artikel ini membahas apa itu enkripsi data, perbedaan antara enkripsi saat istirahat dan dalam perjalanan, serta praktik terbaik untuk mengimplementasikannya.
 
-## Apa itu Enkripsi Data?
+## Apa Itu Enkripsi Data?
 
-Enkripsi adalah proses mengubah data menjadi format yang tidak dapat dibaca tanpa kunci atau metode yang tepat. Ini dapat memungkinkan pengguna untuk menjaga kerahasiaan dan integritas data mereka.
+Enkripsi adalah proses mengubah informasi menjadi format yang tidak dapat dibaca tanpa menggunakan kunci dekripsi. Tujuannya adalah untuk melindungi data dari akses tidak sah. Dua tahap penting dalam enkripsi adalah saat data disimpan (istirahat) dan saat data dikirim (dalam perjalanan).
 
-## Enkripsi Saat Istirahat (At Rest)
+## Enkripsi Data Saat Istirahat
 
-Enkripsi data saat istirahat merujuk pada melindungi data yang disimpan, baik di server, database, atau perangkat penyimpanan lainnya. Ketika data tidak digunakan, enkripsi mencegah akses tidak sah. Berikut adalah beberapa langkah untuk menerapkan enkripsi saat istirahat:
+### Mengapa Penting?
 
-### 1. Memilih Algoritma Enkripsi yang Tepat
+Data yang disimpan di server, database, atau perangkat keras bisa menjadi sasaran pencurian. Enkripsi saat istirahat memastikan data tetap aman bahkan jika ada pelanggaran keamanan.
 
-Pilih algoritma yang kuat seperti AES (Advanced Encryption Standard) untuk mengenkripsi data. AES bisa diterapkan dalam beberapa mode, salah satunya adalah:
+### Cara Mengimplementasikan
 
-```typescript
-import crypto from 'crypto';
+Berikut adalah contoh penggunaan enkripsi saat istirahat dengan menggunakan Node.js dan Crypto Library:
 
-const algorithm = 'aes-256-cbc';
-const key = crypto.randomBytes(32);
-const iv = crypto.randomBytes(16);
+```javascript
+const crypto = require('crypto');
+const fs = require('fs');
 
-function encrypt(text: string) {
-    let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
-    let encrypted = cipher.update(text, 'utf8', 'hex');
+function encryptData(data, password) {
+    const iv = crypto.randomBytes(16);
+    const key = crypto.scryptSync(password, 'salt', 24);
+    const cipher = crypto.createCipheriv('aes-192-cbc', key, iv);
+    let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    return {
-        iv: iv.toString('hex'),
-        encryptedData: encrypted
-    };
+    return iv.toString('hex') + ':' + encrypted;
 }
 
-const data = 'Data rahasia';
-const encryptedData = encrypt(data);
-console.log(encryptedData);
+const data = 'Data Rahasia';
+const password = 'PasswordAman';
+const encryptedData = encryptData(data, password);
+fs.writeFileSync('data_encrypted.txt', encryptedData);
 ```
 
-### 2. Pengelolaan Kunci yang Aman
+### Praktik Terbaik
+- Gunakan algoritma enkripsi yang kuat seperti AES-256.
+- Buat dan simpan kunci enkripsi dengan aman.
+- Lakukan penilaian secara teratur untuk memastikan keamanan data yang dienkripsi.
 
-Kunci enkripsi harus dikelola dengan aman. Gunakan Hardware Security Modules (HSM) atau solusi manajemen kunci untuk menyimpan dan mengelola kunci.
+## Enkripsi Data Dalam Perjalanan
 
-### 3. Audit dan Pemantauan
+### Mengapa Penting?
 
-Lakukan audit dan pemantauan secara rutin pada akses data yang ter-enkripsi untuk mendeteksi akses tidak sah.
+Data yang berpindah antara sistem atau ditransmisikan melalui jaringan rentan terhadap penyadapan. Enkripsi dalam perjalanan melindungi data saat dikirim dari satu titik ke titik lainnya.
 
-## Enkripsi Dalam Perjalanan (In Transit)
+### Cara Mengimplementasikan
 
-Enkripsi data dalam perjalanan melindungi data saat dikirimkan dari satu lokasi ke lokasi lain, seperti saat mengakses situs web atau mengirim email. Langkah-langkah berikut dapat digunakan:
+Berikut adalah contoh penggunaan HTTPS untuk melindungi data dalam perjalanan:
 
-### 1. Menggunakan HTTPS
+1. **Dapatkan Sertifikat SSL/TLS**: Anda dapat membeli atau mendapatkan sertifikat dari lembaga sertifikasi.
+2. **Konfigurasi Server**: Berikut adalah contoh konfigurasi server menggunakan Express.js:
 
-Pastikan semua komunikasi dengan server menggunakan HTTPS untuk melindungi data. Anda bisa menggunakan sertifikat SSL/TLS untuk mengenkripsi koneksi:
-
-```typescript
+```javascript
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
@@ -79,91 +79,89 @@ const fs = require('fs');
 const app = express();
 
 const options = {
-  key: fs.readFileSync('privatekey.pem'),
-  cert: fs.readFileSync('certificate.pem')
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
 };
 
+app.get('/', (req, res) => {
+    res.send('Halo, Data Aman di Jalur!');
+});
+
 https.createServer(options, app).listen(443, () => {
-  console.log('Server berjalan di https://localhost');
+    console.log('Server berjalan di https://localhost');
 });
 ```
 
-### 2. VPN dan Protokol Keamanan
-
-Gunakan VPN atau protokol keamanan lainnya seperti IPSec untuk mengamankan koneksi antara dua titik, terutama saat menggunakan jaringan publik.
-
-### 3. Kode Persetujuan dan Otentikasi
-
-Pastikan setiap data yang dikirimkan memiliki tanda tangan digital atau kode persetujuan untuk memastikan integritas data selama transmisi.
-
-## Praktek Terbaik untuk Enkripsi Data
-
-- **Selalu Enkripsi data sensitif**: Setiap data sensitif harus dienkripsi, baik saat istirahat maupun dalam perjalanan.
-- **Pemeliharaan Rutin Kunci**: Ganti kunci secara berkala untuk menjaga keamanan data yang ter-enkripsi.
-- **Pendidikan Pengguna**: Edukasi semua pengguna tentang pentingnya keamanan data dan penggunaan enkripsi.
+### Praktik Terbaik
+- Gunakan SSL/TLS untuk semua komunikasi data.
+- Validasi sertifikat pada sisi klien.
+- Terapkan kebijakan keamanan untuk meminimalkan risiko penyadapan.
 
 ## Kesimpulan
 
-Enkripsi data saat istirahat dan dalam perjalanan sangat penting untuk mengamankan data Anda. Dengan menggunakan teknologi dan praktek terbaik yang tepat, Anda dapat melindungi informasi sensitif dari akses tidak sah. Pastikan untuk menerapkan solusi enkripsi di lingkungan Anda sekarang juga!
+Enkripsi data saat istirahat dan dalam perjalanan adalah aspek penting dari strategi keamanan informasi. Dengan mengimplementasikan enkripsi yang efisien dan mengikuti praktik terbaik, Anda dapat melindungi data sensitif dari akses tidak sah dan potensi serangan. Mulailah menerapkan teknik ini di organisasi Anda hari ini untuk meningkatkan keamanan data.
 
-**Ayo, tingkatkan keamanan data Anda dengan enkripsi hari ini!**
+### Ajakan untuk Bertindak
+
+Ingin tahu lebih banyak tentang enkripsi dan keamanan data? Ikuti blog Naradev untuk mendapatkan informasi terkini tentang praktik keamanan terbaik.
 
 <!-- lang:en -->
 # Data Encryption at Rest and in Transit
 
-Encryption is a critical technique in cybersecurity used to protect sensitive data. In this article, we will discuss the concept of data encryption at rest and in transit, as well as best practices for implementing it.
+Data is one of the most valuable assets for organizations in today's digital age. With the rise of threats to data security, encryption has become a crucial step in protecting information. This article discusses what data encryption is, the difference between data at rest and in transit, and best practices for implementing it.
 
 ## What is Data Encryption?
 
-Encryption is the process of converting data into a format that cannot be read without the correct key or method. This allows users to maintain confidentiality and integrity of their data.
+Encryption is the process of converting information into a format that cannot be read without a decryption key. The aim is to safeguard data from unauthorized access. Two crucial stages in encryption are when the data is stored (at rest) and when the data is transmitted (in transit).
 
-## Encryption at Rest
+## Data Encryption at Rest
 
-Encryption at rest refers to protecting data that is stored, whether on servers, databases, or other storage devices. When data is not in use, encryption prevents unauthorized access. Here are some steps to implement encryption at rest:
+### Why Is It Important?
 
-### 1. Choose the Right Encryption Algorithm
+Stored data on servers, databases, or hardware can become a target for theft. Encryption at rest ensures that your data remains secure even if there is a security breach.
 
-Select a robust algorithm like AES (Advanced Encryption Standard) for encrypting data. AES can be applied in several modes, one of them is:
+### How to Implement
 
-```typescript
-import crypto from 'crypto';
+Here is an example of using encryption at rest with Node.js and the Crypto Library:
 
-const algorithm = 'aes-256-cbc';
-const key = crypto.randomBytes(32);
-const iv = crypto.randomBytes(16);
+```javascript
+const crypto = require('crypto');
+const fs = require('fs');
 
-function encrypt(text: string) {
-    let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
-    let encrypted = cipher.update(text, 'utf8', 'hex');
+function encryptData(data, password) {
+    const iv = crypto.randomBytes(16);
+    const key = crypto.scryptSync(password, 'salt', 24);
+    const cipher = crypto.createCipheriv('aes-192-cbc', key, iv);
+    let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    return {
-        iv: iv.toString('hex'),
-        encryptedData: encrypted
-    };
+    return iv.toString('hex') + ':' + encrypted;
 }
 
-const data = 'Secret data';
-const encryptedData = encrypt(data);
-console.log(encryptedData);
+const data = 'Secret Data';
+const password = 'SecurePassword';
+const encryptedData = encryptData(data, password);
+fs.writeFileSync('data_encrypted.txt', encryptedData);
 ```
 
-### 2. Secure Key Management
+### Best Practices
+- Use strong encryption algorithms like AES-256.
+- Safely generate and store encryption keys.
+- Regularly assess the security of your encrypted data.
 
-Encryption keys must be managed securely. Use Hardware Security Modules (HSM) or key management solutions to store and manage keys.
+## Data Encryption in Transit
 
-### 3. Auditing and Monitoring
+### Why Is It Important?
 
-Regularly audit and monitor access to the encrypted data to detect unauthorized access.
+Data that moves between systems or is transmitted over a network is vulnerable to interception. Encryption in transit protects data as it's sent from one point to another.
 
-## Encryption in Transit
+### How to Implement
 
-Encryption in transit protects data when it is sent from one location to another, such as when accessing a website or sending an email. The following steps can be used:
+Here’s an example of using HTTPS to secure data in transit:
 
-### 1. Use HTTPS
+1. **Obtain an SSL/TLS Certificate**: You can purchase or obtain a certificate from a Certificate Authority.
+2. **Configure Your Server**: Here’s an example server configuration using Express.js:
 
-Ensure that all communication with the server uses HTTPS to protect the data. You can use SSL/TLS certificates to encrypt the connection:
-
-```typescript
+```javascript
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
@@ -171,31 +169,28 @@ const fs = require('fs');
 const app = express();
 
 const options = {
-  key: fs.readFileSync('privatekey.pem'),
-  cert: fs.readFileSync('certificate.pem')
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
 };
 
+app.get('/', (req, res) => {
+    res.send('Hello, Data is Secure in Transit!');
+});
+
 https.createServer(options, app).listen(443, () => {
-  console.log('Server running at https://localhost');
+    console.log('Server running at https://localhost');
 });
 ```
 
-### 2. VPN and Security Protocols
-
-Use VPN or other security protocols such as IPSec to secure connections between two points, especially when using public networks.
-
-### 3. Code Signing and Authentication
-
-Ensure that any data being transmitted has a digital signature or code approval to ensure data integrity during transmission.
-
-## Best Practices for Data Encryption
-
-- **Always Encrypt Sensitive Data**: Every piece of sensitive data should be encrypted, both at rest and in transit.
-- **Regular Key Maintenance**: Rotate keys regularly to maintain the security of encrypted data.
-- **User Education**: Educate all users on the importance of data security and the use of encryption.
+### Best Practices
+- Use SSL/TLS for all data communications.
+- Validate certificates on the client-side.
+- Implement security policies to minimize interception risks.
 
 ## Conclusion
 
-Data encryption at rest and in transit is vital in securing your data. By applying the right technologies and best practices, you can protect sensitive information from unauthorized access. Ensure that you implement encryption solutions in your environment today!
+Data encryption at rest and in transit is a vital aspect of any information security strategy. By implementing efficient encryption techniques and adhering to best practices, you can protect sensitive data from unauthorized access and potential attacks. Start applying these techniques in your organization today to enhance your data security.
 
-**Let’s enhance your data security with encryption today!**
+### Call to Action
+
+Want to learn more about encryption and data security? Follow the Naradev blog for the latest updates on best security practices.
