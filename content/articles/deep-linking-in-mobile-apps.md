@@ -2,15 +2,15 @@
 title_id: "Deep Linking dalam Aplikasi Mobile"
 title_en: "Deep Linking in Mobile Apps"
 slug: "deep-linking-in-mobile-apps"
-date: "2026-03-13T01:19:05.000Z"
-description_id: "Pelajari apa itu deep linking, manfaatnya, dan cara mengimplementasikannya dalam aplikasi mobile."
-description_en: "Learn what deep linking is, its benefits, and how to implement it in mobile apps."
+date: "2026-03-26T07:06:20.000Z"
+description_id: "Pelajari tentang deep linking dalam aplikasi mobile dan bagaimana cara mengimplementasikannya untuk meningkatkan pengalaman pengguna."
+description_en: "Learn about deep linking in mobile apps and how to implement it to enhance user experience."
 tags:
+  - apps
   - deeplinking
   - development
   - flutter
   - mobile
-  - react-native
 status: "published"
 authorId: "usr_ai_mobile"
 cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/deep-linking-in-mobile-apps.png"
@@ -19,141 +19,147 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 <!-- lang:id -->
 # Deep Linking dalam Aplikasi Mobile
 
-## Apa itu Deep Linking?
-Deep linking adalah teknik yang memungkinkan pengembang untuk mengarahkan pengguna ke halaman tertentu dalam aplikasi mobile tanpa perlu menavigasi melalui beranda.
+Deep linking adalah teknik yang memungkinkan pengguna untuk langsung masuk ke konten tertentu dalam aplikasi mobile dari sumber luar, seperti website atau notifikasi. Hal ini sangat penting untuk meningkatkan pengalaman pengguna dan meningkatkan keterlibatan dalam aplikasi.
 
-Deep links membuka aplikasi ke lokasi tertentu dan memberikan pengalaman pengguna yang lebih halus. Misalnya, jika Anda mengklik tautan produk di sebuah email, itu bisa membuka aplikasi dan langsung menampilkan produk tersebut.
+## Apa Itu Deep Linking?
+
+Deep linking memungkinkan Anda untuk menavigasi ke bagian tertentu dari aplikasi Anda tanpa harus melalui layar awal. Misalnya, alih-alih hanya membuka aplikasi berita, Anda dapat membuka artikel tertentu langsung dari link yang di-share.
+
+### Jenis-Jenis Deep Linking
+
+1. **Traditional Deep Links**: Mengarah ke URL spesifik di dalam aplikasi, tetapi hanya berfungsi jika aplikasi sudah terinstal.
+2. **Deferred Deep Links**: Jika aplikasi tidak terinstal, pengguna akan diarahkan ke toko aplikasi terlebih dahulu, dan setelah instalasi, mereka akan diarahkan ke konten yang diinginkan.
+3. **Contextual Deep Links**: Mirip dengan deferred deep links, tetapi juga menyertakan data tambahan yang memungkinkan pengalaman yang lebih personal.
 
 ## Mengapa Deep Linking Penting?
-Implementasi deep linking dapat meningkatkan retensi pengguna dan keterlibatan aplikasi. Berikut adalah beberapa manfaat:
-1. **Pengalaman Pengguna yang Lebih Baik:** Menghilangkan langkah-langkah tambahan dalam navigasi.
-2. **Meningkatkan Konversi:** Membuat pengguna langsung menuju apa yang mereka cari.
-3. **Peningkatan Pemasaran:** Meningkatkan efektivitas kampanye pemasaran dengan tautan yang relevan.
 
-## Jenis-Jenis Deep Linking
-### 1. Traditional Deep Linking
-Sebagai contoh, jika seorang pengguna mengklik tautan ke produk di web, maka aplikasi terbuka ke produk tersebut jika sudah terinstal. Jika belum terinstal, pengguna akan diarahkan ke halaman unduhan aplikasi.
-
-### 2. Deferred Deep Linking
-Dengan deferred deep linking, jika aplikasi tidak terinstal, pengguna akan diberi opsi untuk mengunduh aplikasi, dan setelah itu dikirim ke konten yang dimaksud. Ini mendorong lebih banyak unduhan.
-
-### 3. Contextual Deep Linking
-INI menambahkan konteks lebih dalam tautan, menyimpan data tentang bagaimana pengguna sampai ke tautan tersebut sehingga konten dapat dipersonalisasi setelah penginstalan.
+- **Meningkatkan Keterlibatan**: Membuat konten lebih mudah diakses, yang pada gilirannya meningkatkan interaksi pengguna.
+- **Peningkatan Retensi**: Dengan pengalaman pengguna yang lebih baik, kemungkinan pengguna untuk kembali menggunakan aplikasi meningkat.
+- **Marketing yang Lebih Efektif**: Memungkinkan pemasar untuk berfokus pada konten spesifik dalam kampanye mereka.
 
 ## Cara Mengimplementasikan Deep Linking
-### 1. Untuk Android
-Untuk mengimplementasikan deep linking pada Android, Anda perlu menambahkan intent filter dalam file `AndroidManifest.xml`. Berikut adalah contoh:
+
+### Langkah 1: Menyiapkan Link Deep
+
+Untuk memulai, Anda perlu membuat deep link. Di Android, Anda dapat melakukannya dengan mengedit `AndroidManifest.xml`: 
+
 ```xml
-<activity android:name="com.example.MyActivity">
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="https" android:host="www.example.com" android:pathPrefix="/product/" />
-    </intent-filter>
-</activity>
+<intent-filter>
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="https" android:host="www.example.com" android:pathPrefix="/article" />
+</intent-filter>
 ```
 
-### 2. Untuk iOS
-Pada iOS, Anda perlu melakukan beberapa langkah untuk mengatur deep linking dengan menggunakan URL Types dalam file Info.plist. Berikut contohnya:
-```xml
-<key>CFBundleURLTypes</key>
-<array>
-    <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-  <string>example</string>
-        </array>
-    </dict>
-</array>
-```
+### Langkah 2: Menangani Deep Link di Android
 
-Setelah itu, Anda dapat menangani link di `AppDelegate`:
-```swift
-func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-    // Tangani URL di sini
-    return true
+Sekarang, Anda harus menangani link yang diterima. Berikut adalah contoh cara melakukannya di `MainActivity.java`:
+
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    Intent intent = getIntent();
+    Uri data = intent.getData();
+    if (data != null) {
+        String articleId = data.getLastPathSegment();
+        // Lakukan sesuatu dengan articleId, misalnya buka artikel
+    }
 }
 ```
 
+## Contoh Pemakaian Deep Linking
+
+Misalkan Anda memiliki aplikasi berita, dan Anda ingin mengarahkan pengguna ke artikel tertentu. Anda dapat menggunakan URL berikut:
+
+`https://www.example.com/article/123`
+
+Ketika pengguna mengklik link ini, aplikasi akan terbuka dan langsung menampilkan artikel dengan ID 123. 
+
 ## Tips dan Praktik Terbaik
-1. **Uji Semua Skenario:** Pastikan untuk menguji semua tautan dalam situasi yang berbeda agar tidak ada tautan yang rusak.
-2. **Gunakan Analitik:** Lacak penggunaan deep linking untuk memahami perilaku pengguna lebih baik.
-3. **Optimalkan SEO:** Gunakan URL yang bersih dan deskriptif untuk tujuan SEO, sehingga lebih mudah ditemukan di mesin pencari.
+- **Pengujian Mendalam**: Selalu lakukan pengujian untuk memastikan deep link berfungsi dengan baik di berbagai skenario.
+- **Update yang Berkelanjutan**: Pantau dan perbarui link deep Anda agar tetap relevan dengan konten yang ada.
+- **Analisis Keterlibatan**: Gunakan alat analisis untuk mengukur efektivitas deep linking Anda dalam hal keterlibatan pengguna.
 
 ## Kesimpulan
-Deep linking adalah fitur yang sangat penting dalam aplikasi mobile modern. Dengan implementasi yang tepat, Anda dapat meningkatkan pengalaman pengguna, meningkatkan konversi, dan melakukan pemasaran lebih efektif. Mulailah mengeksplorasi deep linking hari ini dan lihatlah peningkatan yang bisa didapatkan pada aplikasi Anda.
 
-### Ajak Bertindak
-Apakah Anda siap untuk mengimplementasikan deep linking di aplikasi Anda? Hubungi kami untuk mendapatkan bantuan lebih lanjut atau berbagi pengalaman Anda di komentar di bawah ini!
+Deep linking adalah alat yang sangat berguna untuk meningkatkan pengalaman pengguna dalam aplikasi mobile. Dengan menerapkan teknik ini, Anda tidak hanya mempermudah akses konten tetapi juga meningkatkan retensi dan keterlibatan pengguna. Jangan ragu untuk bereksperimen dengan berbagai jenis deep linking untuk menemukan yang paling sesuai dengan kebutuhan aplikasi Anda.
+
+Ayo mulai mengimplementasikan deep linking dalam aplikasi Anda dan rasakan peningkatan keterlibatan pengguna!
 
 <!-- lang:en -->
 # Deep Linking in Mobile Apps
 
-## What is Deep Linking?
-Deep linking is a technique that enables developers to route users to specific pages within a mobile app without going through the home page.
+Deep linking is a technique that allows users to navigate directly to specific content within mobile apps from external sources, such as websites or notifications. This is crucial for improving user experience and increasing engagement within the app.
 
-Deep links open the app to a specific location and provide a smoother user experience. For instance, if you click on a product link in an email, it could open the app and directly show that product.
+## What is Deep Linking?
+
+Deep linking enables users to jump to a specific part of your app without having to go through the home screen. For instance, instead of merely opening a news app, you can open a specific article directly from a shared link.
+
+### Types of Deep Links
+
+1. **Traditional Deep Links**: These link to a specific URL within the app but only work if the app is already installed.
+2. **Deferred Deep Links**: If the app is not installed, users are first directed to the app store, and after installation, they are redirected to the desired content.
+3. **Contextual Deep Links**: Similar to deferred deep links but also include additional data that allows for a more personalized experience.
 
 ## Why is Deep Linking Important?
-Implementing deep linking can enhance user retention and app engagement. Here are some benefits:
-1. **Better User Experience:** Removes extra steps in navigation.
-2. **Increased Conversion:** Directs users to exactly what they are looking for.
-3. **Enhanced Marketing:** Improves marketing campaign effectiveness with relevant links.
 
-## Types of Deep Linking
-### 1. Traditional Deep Linking
-For example, if a user clicks a link to a product on the web, the app opens to that product if already installed. If not, users will be directed to the app download page.
-
-### 2. Deferred Deep Linking
-With deferred deep linking, if the app is not installed, users will be prompted to download it and then redirected to the intended content. This encourages more downloads.
-
-### 3. Contextual Deep Linking
-This adds further context to the link, storing data about how the user arrived at the link so that the content can be personalized after installation.
+- **Increased Engagement**: By making content easier to access, it boosts user interaction.
+- **Improved Retention**: A better user experience increases the likelihood that users will return to the app.
+- **More Effective Marketing**: It allows marketers to focus on specific content within their campaigns.
 
 ## How to Implement Deep Linking
-### 1. For Android
-To implement deep linking on Android, you need to add an intent filter in the `AndroidManifest.xml`. Here's an example:
+
+### Step 1: Set Up the Deep Link
+
+To start, you need to create a deep link. For Android, you can do this by editing the `AndroidManifest.xml`: 
+
 ```xml
-<activity android:name="com.example.MyActivity">
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="https" android:host="www.example.com" android:pathPrefix="/product/" />
-    </intent-filter>
-</activity>
+<intent-filter>
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="https" android:host="www.example.com" android:pathPrefix="/article" />
+</intent-filter>
 ```
 
-### 2. For iOS
-For iOS, you need to take several steps to set up deep linking using URL Types in the Info.plist file. Here’s an example:
-```xml
-<key>CFBundleURLTypes</key>
-<array>
-    <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-  <string>example</string>
-        </array>
-    </dict>
-</array>
-```
+### Step 2: Handle Deep Links in Android
 
-Next, you can handle the link in `AppDelegate`:
-```swift
-func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-    // Handle the URL here
-    return true
+Now, you need to handle the incoming link. Here’s an example of how to do this in `MainActivity.java`:
+
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    Intent intent = getIntent();
+    Uri data = intent.getData();
+    if (data != null) {
+        String articleId = data.getLastPathSegment();
+        // Do something with articleId, like open the article
+    }
 }
 ```
 
+## Example of Deep Linking in Action
+
+Suppose you have a news app and want to direct users to a specific article. You could use the following URL:
+
+`https://www.example.com/article/123`
+
+When users click this link, the app will open directly displaying the article with ID 123.
+
 ## Tips and Best Practices
-1. **Test All Scenarios:** Ensure to test all links in different situations so that no links are broken.
-2. **Use Analytics:** Track deep link usage to better understand user behavior.
-3. **Optimize SEO:** Use clean and descriptive URLs for SEO purposes, making them easier to find in search engines.
+- **Thorough Testing**: Always conduct testing to ensure deep links work correctly across various scenarios.
+- **Continuous Updates**: Monitor and update your deep links to keep them relevant to the current content.
+- **Engagement Analytics**: Use analytics tools to measure the effectiveness of your deep linking in terms of user engagement.
 
 ## Conclusion
-Deep linking is a vital feature in modern mobile applications. With the right implementation, you can enhance user experience, increase conversions, and market more effectively. Start exploring deep linking today and see the improvements you can achieve in your app.
 
-### Call to Action
-Are you ready to implement deep linking in your app? Contact us for further assistance or share your experience in the comments below!
+Deep linking is a powerful tool for enhancing user experience in mobile apps. By implementing this technique, you not only facilitate easier access to content but also boost retention and user engagement. Don’t hesitate to experiment with various types of deep linking to find what works best for your app's needs.
+
+Start implementing deep linking in your application and see the improvement in user engagement!
