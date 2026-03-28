@@ -2,14 +2,15 @@
 title_id: "API Komposisi Vue 3"
 title_en: "Vue 3 Composition API"
 slug: "vue-3-composition-api"
-date: "2026-03-07T06:31:34.000Z"
-description_id: "Pelajari tentang Vue 3 Composition API untuk pengembangan frontend yang lebih baik."
-description_en: "Learn about Vue 3 Composition API for enhanced frontend development."
+date: "2026-03-28T06:52:09.000Z"
+description_id: "Pelajari semua tentang API Komposisi di Vue 3 untuk pengembangan frontend yang lebih efektif dan terstruktur."
+description_en: "Learn all about the Composition API in Vue 3 for more effective and structured frontend development."
 tags:
+  - api
+  - composition
   - css
   - frontend
   - javascript
-  - vue
 status: "published"
 authorId: "usr_ai_frontend"
 cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/vue-3-composition-api.png"
@@ -18,135 +19,159 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 <!-- lang:id -->
 # API Komposisi Vue 3
 
-## Pengenalan
-Vue 3 memperkenalkan fitur baru yang disebut API Komposisi, yang memberikan cara lebih fleksibel dan terorganisasi untuk mengelola state dan komponen dalam aplikasi Vue. Dalam artikel ini, kita akan membahas apa itu API Komposisi, bagaimana cara implementasinya, serta beberapa contoh praktis dan tips terbaik.
+Vue 3 memperkenalkan API Komposisi sebagai cara baru dalam mengelola logika komponen. Artikel ini akan membahas konsep dasar dan bagaimana menggunakan API Komposisi dalam aplikasi Vue Anda.
 
-## Apa itu API Komposisi?
-API Komposisi memungkinkan kita untuk mengelompokkan logika komponen berdasarkan fungsionalitas daripada siklus hidup komponen. Ini menjadikan kode lebih mudah dibaca dan lebih mudah untuk dikelola dalam proyek besar.
+## Apa Itu API Komposisi?
+API Komposisi memberikan kemampuan untuk mengelompokkan logika komponen berdasarkan fungsionalitas, bukan hanya berdasarkan siklus hidup komponen. Ini membuat kode lebih mudah dipelihara dan diorganisir.
 
-### Manfaat API Komposisi
-1. **Reusabilitas**: Kamu dapat menggunakan fungsi komposisi di beberapa komponen dengan mudah.
-2. **Organisasi yang lebih baik**: Memberikan struktur yang lebih jelas untuk kode yang kompleks.
-3. **TypeScript**: Menyediakan dukungan yang lebih baik untuk TypeScript.
+### Mengapa Menggunakan API Komposisi?
+- **Keterbacaan**: Kode menjadi lebih mudah dibaca karena alur logika dikelompokkan.
+- **Reusabilitas**: Fungsi logika bisa digunakan kembali di beberapa komponen.
+- **Pengujian**: Kode yang terpisah lebih mudah untuk diuji.
 
-## Menggunakan API Komposisi
-Mari kita lihat bagaimana cara menggunakan API Komposisi dengan contoh sederhana.
+## Memulai dengan API Komposisi
+Untuk menggunakan API Komposisi, pastikan Anda sudah menginstal Vue 3. Berikut adalah langkah-langkah dasar untuk membuat komponen dengan API Komposisi.
 
-### Instalasi Vue 3
-Pertama, pastikan bahwa kamu telah menginstal Vue 3 dalam proyekmu. Jika kamu menggunakan Vue CLI, kamu bisa membuat proyek baru dengan perintah berikut:
-```bash
-vue create my-app
-```
+### Contoh Komponen Sederhana
+Mari kita lihat contoh komponen sederhana menggunakan API Komposisi:
 
-### Membuat Komponen dengan API Komposisi
-Berikut adalah contoh komponen Vue 3 menggunakan API Komposisi:
 ```javascript
 <template>
   <div>
     <h1>{{ title }}</h1>
     <button @click="increment">Increment</button>
-    <p>Count: {{ count }}</p>
+    <p>Counter: {{ counter }}</p>
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
 
-export default {
-  setup() {
-    const count = ref(0);
-    const title = 'Belajar API Komposisi Vue 3';
+const title = ref('Hello Vue 3 Composition API');
+const counter = ref(0);
 
-    const increment = () => {
-      count.value++;
-    };
-
-    return { count, title, increment };
-  }
+const increment = () => {
+  counter.value++;
 };
 </script>
 ```
 
-### Penjelasan Kode
-- **ref()**: Fungsi ini digunakan untuk membuat reaktif data. Dalam contoh ini, `count` adalah reaktif state yang kita buat.
-- **setup()**: Merupakan fungsi utama dalam API Komposisi yang di dalamnya kita mendefinisikan state dan metode.
-- Binding reaktif ke template seperti `{{ count }}`, memungkinkan Vue untuk mereaksi terhadap perubahan.
+#### Penjelasan Kode
+- `ref` digunakan untuk mendeklarasikan variabel reaktif.
+- `title` dan `counter` adalah state komponen yang bisa diubah.
+- `increment` adalah fungsi yang mengubah nilai counter.
 
-## Tips Terbaik untuk Menggunakan API Komposisi
-1. **Gunakan Fungsi Reusable**: Pecah logika yang berulang menjadi fungsi yang dapat dipanggil dari berbagai komponen.
-2. **Gunakan modul**: Untuk proyek besar, pertimbangkan untuk memecah fungsionalitas menjadi modul terpisah untuk meningkatkan manajemen kode.
-3. **Pertimbangkan Performance**: Meskipun API Komposisi fleksibel, pastikan untuk tidak membuat commit atau reactivity useless yang dapat memperlambat aplikasi.
+## Mengorganisasi Logika Menggunakan Fungsi
+Dengan API Komposisi, kita dapat memisahkan logika ke dalam fungsi yang tersendiri. Berikut adalah contohnya:
+
+### Membuat Fungsi Khusus
+```javascript
+<script setup>
+import { ref } from 'vue';
+
+const useCounter = () => {
+  const counter = ref(0);
+  const increment = () => {
+    counter.value++;
+  };
+  return { counter, increment };
+};
+
+const { counter, increment } = useCounter();
+</script>
+```
+
+#### Penjelasan
+- Fungsi `useCounter` didefinisikan untuk mengemas logika penghitungan.
+- Komponen utama kini lebih bersih dan hanya fokus pada tata letak.
+
+## Tips Terbaik dalam Memanfaatkan API Komposisi
+1. **Gunakan Makro untuk Mengorganisir Kode**: Kelompokkan fungsi yang berhubungan dalam satu file dan ekspor.
+2. **Manfaatkan Reaktivitas Vue**: Gunakan `ref` atau `reactive` sesuai kebutuhan untuk memaksimalkan reaktivitas.
+3. **Simpan Rekomendasi untuk Penggunaan di Seluruh Aplikasi**: Buat modul reusable seperti plugin Vue untuk kode modular.
 
 ## Kesimpulan
-API Komposisi Vue 3 memungkinkan pengembang untuk menjelajahi arsitektur yang lebih mudah diawasi dan dirawat. Dengan memanfaatkan fitur ini, kamu akan dapat membuat aplikasi yang lebih terstruktur dan efisien. Yuk, coba terapkan API Komposisi dalam proyekmu yang berikutnya!
+API Komposisi di Vue 3 memperkenalkan cara baru untuk menstrukturkan komponen. Dengan prinsip pemisahan fungsionalitas, Anda bisa membuat aplikasi yang lebih terstruktur, mudah dibaca, dan mudah diuji. Segera coba di proyek Anda!
 
-## Aksi
-Mulailah pengalaman baru dengan Vue 3 dan API Komposisi. Cobalah dengan membuat proyek kecil dan eksplorasi fitur lainnya.
+## Ayo Mulai
+Kami mengajak Anda untuk mencoba fitur baru ini di proyek Anda dan bagikan pengalaman Anda!
 
 <!-- lang:en -->
 # Vue 3 Composition API
 
-## Introduction
-Vue 3 introduces a new feature called the Composition API, which provides a more flexible and organized way to manage state and components in a Vue application. In this article, we will discuss what the Composition API is, how to implement it, and some practical examples and best practices.
+Vue 3 introduces the Composition API as a new way to manage component logic. This article will discuss the fundamental concepts and how to use the Composition API in your Vue applications.
 
 ## What is the Composition API?
-The Composition API allows us to group component logic based on functionality rather than lifecycle hooks. This makes the code easier to read and maintain in larger projects.
+The Composition API enables you to group component logic by functionality rather than the component lifecycle. This makes your code more maintainable and organized.
 
-### Benefits of the Composition API
-1. **Reusability**: You can easily reuse composition functions across multiple components.
-2. **Better Organization**: Provides a clearer structure for complex code.
-3. **TypeScript Support**: Offers better support for TypeScript.
+### Why Use the Composition API?
+- **Readability**: Code becomes easier to read because logic flows are grouped.
+- **Reusability**: Logical functions can be reused across multiple components.
+- **Testability**: Isolated code is easier to test.
 
-## Using the Composition API
-Let’s take a look at how to use the Composition API with a simple example.
+## Getting Started with the Composition API
+To use the Composition API, make sure you have Vue 3 installed. Here are the basic steps to create a component using the Composition API.
 
-### Installing Vue 3
-First, make sure you have Vue 3 installed in your project. If you are using Vue CLI, you can create a new project with the following command:
-```bash
-vue create my-app
-```
+### Simple Component Example
+Let’s look at a simple component using the Composition API:
 
-### Creating a Component with the Composition API
-Here is an example of a Vue 3 component using the Composition API:
-```javascript
+```html
 <template>
   <div>
     <h1>{{ title }}</h1>
     <button @click="increment">Increment</button>
-    <p>Count: {{ count }}</p>
+    <p>Counter: {{ counter }}</p>
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
 
-export default {
-  setup() {
-    const count = ref(0);
-    const title = 'Learning the Vue 3 Composition API';
+const title = ref('Hello Vue 3 Composition API');
+const counter = ref(0);
 
-    const increment = () => {
-      count.value++;
-    };
-
-    return { count, title, increment };
-  }
+const increment = () => {
+  counter.value++;
 };
 </script>
 ```
 
-### Code Explanation
-- **ref()**: This function is used to create reactive data. In this example, `count` is a reactive state we created.
-- **setup()**: This is the main function in the Composition API where we define state and methods.
-- Binding reactive data to the template like `{{ count }}` allows Vue to react to changes.
+#### Code Explanation
+- `ref` is used to declare reactive variables.
+- `title` and `counter` are the component state that can change.
+- `increment` is a function that modifies the counter value.
+
+## Organizing Logic Using Functions
+With the Composition API, we can separate logic into distinct functions. Here’s how:
+
+### Creating Custom Functions
+```javascript
+<script setup>
+import { ref } from 'vue';
+
+const useCounter = () => {
+  const counter = ref(0);
+  const increment = () => {
+    counter.value++;
+  };
+  return { counter, increment };
+};
+
+const { counter, increment } = useCounter();
+</script>
+```
+
+#### Explanation
+- The `useCounter` function is defined to encapsulate counting logic.
+- The main component is much cleaner and focused only on layout.
 
 ## Best Practices for Using the Composition API
-1. **Use Reusable Functions**: Break down repetitive logic into functions that can be called from various components.
-2. **Modularize**: For large projects, consider breaking functionalities into separate modules for better code management.
-3. **Consider Performance**: While the Composition API is flexible, ensure you aren't creating useless reactivity that can slow down your application.
+1. **Use Macros to Organize Code**: Group related functions into a single file and export.
+2. **Leverage Vue's Reactivity**: Use `ref` or `reactive` as needed to maximize reactivity.
+3. **Keep Recommendations for Use Across Applications**: Create reusable modules like Vue plugins for modular code.
 
 ## Conclusion
-The Vue 3 Composition API allows developers to explore a more manageable and maintainable architecture. By leveraging this feature, you will be able to create more structured and efficient applications. Give the Composition API a try in your next project!
+The Composition API in Vue 3 introduces a new way to structure components. By separating functionality, you can create applications that are more structured, easier to read, and easy to test. Start applying it in your projects today!
 
-## Call to Action
-Start your journey with Vue 3 and the Composition API. Try creating a small project and explore additional features.
+## Get Started
+We encourage you to try out this new feature in your projects and share your experiences!
