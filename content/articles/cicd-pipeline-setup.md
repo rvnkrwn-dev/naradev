@@ -1,10 +1,10 @@
 ---
-title_id: "Pengaturan Jalur CI/CD"
+title_id: "Pengaturan Pipeline CI/CD"
 title_en: "CI/CD Pipeline Setup"
 slug: "cicd-pipeline-setup"
-date: "2026-03-20T18:44:21.000Z"
-description_id: "Pelajari cara mengatur jalur CI/CD untuk otomatisasi pengembangan dan penyebaran aplikasi Anda."
-description_en: "Learn how to set up a CI/CD pipeline for automated application development and deployment."
+date: "2026-03-29T18:34:53.000Z"
+description_id: "Pelajari cara mengatur pipeline CI/CD untuk meningkatkan otomatisasi dan efisiensi pengembangan perangkat lunak."
+description_en: "Learn how to set up a CI/CD pipeline to enhance automation and efficiency in software development."
 tags:
   - automation
   - cd
@@ -17,26 +17,40 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 ---
 
 <!-- lang:id -->
-# Pengaturan Jalur CI/CD
+# Pengaturan Pipeline CI/CD
 
-CI/CD (Continuous Integration/Continuous Deployment) adalah praktik penting dalam pengembangan perangkat lunak modern. Dengan mengotomatiskan pengujian dan penyebaran, CI/CD memungkinkan tim untuk merilis aplikasi lebih cepat dan dengan kualitas yang lebih baik. Pada artikel ini, kita akan membahas cara mengatur jalur CI/CD menggunakan alat-alat modern seperti GitHub Actions dan Docker.
+Pipeline CI/CD adalah rangkaian proses otomatis yang digunakan untuk mengembangkan, menguji, dan mengirimkan perangkat lunak dengan lebih cepat dan efisien. Pada artikel ini, kita akan membahas cara mengatur pipeline CI/CD, langkah demi langkah, serta memberikan contoh praktis yang dapat langsung diterapkan.
 
-## Mengapa CI/CD Sangat Penting?
+## Apa itu CI/CD?
 
-CI/CD membantu tim pengembang dengan mengurangi waktu yang diperlukan untuk menguji dan menyebarkan kode. Ini memungkinkan integrasi perubahan kode yang lebih cepat dan lebih aman, mengurangi kemungkinan kesalahan manusia.
+**CI** (Continuous Integration) dan **CD** (Continuous Delivery atau Continuous Deployment) adalah praktik yang digunakan dalam pengembangan perangkat lunak modern. CI melibatkan mengintegrasikan perubahan kode ke dalam repositori pusat secara teratur, sementara CD adalah proses otomatisasi untuk mengirimkan perubahan itu ke produksi.
 
-## Langkah-langkah untuk Mengatur Jalur CI/CD
+### Mengapa CI/CD Penting?
 
-### 1. Persiapan Proyek
-Sebelum kita mulai mengatur jalur CI/CD, pastikan proyek Anda sudah siap. Anda harus memiliki:
-- Repositori Git yang dihosting (GitHub, GitLab, Bitbucket, dll.)
-- File Dockerfile jika menggunakan Docker
+- **Meningkatkan Kecepatan Pengembangan**: Mengotomatiskan proses build dan pengujian artinya pengembang dapat lebih cepat melakukan pengiriman.
+- **Mengurangi Risiko Kesalahan**: Dengan menguji secara otomatis, kita dapat mendeteksi masalah lebih awal.
+- **Feedback yang Cepat**: Mempercepat waktu respons terhadap perubahan yang dilakukan.
 
-### 2. Membuat File Konfigurasi CI/CD
-Untuk mengotomatiskan proses CI/CD, kita perlu membuat file konfigurasi. Berikut adalah contoh konfigurasi untuk GitHub Actions:
+## Langkah-langkah Mengatur Pipeline CI/CD
+
+Berikut adalah langkah-langkah dalam mengatur pipeline CI/CD:
+
+### 1. Memilih Alat CI/CD
+
+Ada berbagai alat yang bisa digunakan untuk CI/CD, seperti:
+- Jenkins
+- GitLab CI
+- CircleCI
+- Travis CI
+
+**Contoh Alat**: Dalam artikel ini, kita akan menggunakan GitHub Actions sebagai alat CI/CD. Berikut adalah contoh bagaimana kita bisa menggunakan GitHub Actions.
+
+### 2. Menyiapkan Repositori
+
+Pastikan Anda memiliki repositori di GitHub. Buat file `.github/workflows/ci.yml` di dalam repositori Anda. Berikut adalah contoh konfigurasi YAML untuk pipeline CI:
 
 ```yaml
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
@@ -46,80 +60,96 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
 node-version: '14'
-
       - name: Install dependencies
         run: npm install
-
       - name: Run tests
         run: npm test
-
-      - name: Build project
-        run: npm run build
-
-      - name: Build Docker image
-        run: docker build . -t your-image-name
-
-      - name: Push Docker image
-        run: |
-echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-docker push your-image-name
 ```
 
-### Penjelasan Konfigurasi
-Dalam contoh di atas, kita mengatur jalur CI/CD untuk terminal utama. Jalur ini mencakup langkah-langkah berikut:
-1. **Checkout Kode**: Mengambil kode dari repositori.
-2. **Mengatur Node.js**: Menentukan versi Node.js yang digunakan.
-3. **Menginstal Ketergantungan**: Menginstal semua ketergantungan proyek yang diperlukan.
-4. **Menjalankan Pengujian**: Memastikan bahwa semua pengujian lulus.
-5. **Membangun Proyek**: Membangun proyek menjadi aplikasi yang dapat dijalankan.
-6. **Membangun dan Mendorong Docker Image**: Membuat Docker image dari aplikasi dan mengunggahnya ke repository Docker.
+### 3. Menambah Pengujian
 
-### 3. Pengaturan Credential dan Secrets
-Pastikan untuk menyimpan rahasia Anda dengan aman menggunakan fitur Secrets di GitHub. Anda perlu menambahkan username dan password Docker Anda sebagai rahasia untuk mengakses Docker Hub.
+Pastikan Anda memiliki pengujian terintegrasi dalam proyek Anda. Dalam contoh ini, kita menggunakan `npm test`. Pastikan untuk menulis pengujian yang baik sebelum menghapus kode yang tidak lagi digunakan.
 
-### 4. Pengujian dan Monitoring
-Setelah menyiapkan jalur CI/CD, penting untuk mengujinya. Lihat log hasil untuk setiap build dan pastikan semua langkah berjalan dengan baik.
+### 4. Mengonfigurasi Continuous Delivery
 
-## Best Practices untuk CI/CD
-- **Jaga Jalur Tetap Sederhana**: Pastikan jalur tetap mudah dimengerti. Jangan menambah langkah tidak perlu.
-- **Gunakan Versi Tertentu**: Selalu gunakan versi spesifik dari alat dan dependensi untuk mencegah masalah kompatibilitas.
-- **Berikan Notifikasi**: Pastikan tim Anda diberitahu ketika build gagal atau berhasil.
+Setelah Anda memiliki pipeline CI yang berfungsi, langkah selanjutnya adalah membuat proses Continuous Delivery. Anda perlu menambahkan satu lagi pekerjaan dalam file YAML:
+
+```yaml
+deploy:
+  runs-on: ubuntu-latest
+  steps:
+    - name: SSH to server
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+cd /path/to/your/app
+git pull
+npm install
+npm start
+```
+
+> **Note**: Anda harus menyimpan kredensial SSH Anda sebagai rahasia di GitHub.
+
+## Praktik Terbaik dalam Menerapkan CI/CD
+
+1. **Automasi Sebisa Mungkin**: Pastikan semua langkah dari build hingga deploy otomatis.
+2. **Uji secara Teratur**: Jalankan pengujian unit dan integrasi di setiap perubahan.
+3. **Monitor Pipeline**: Gunakan alat monitoring untuk menjaga agar semua proses berjalan lancar.
+4. **Dapatkan Umpan Balik Cepat**: Setelah deployment, gunakan analitik untuk mendapatkan umpan balik dari pengguna.
 
 ## Kesimpulan
-Mengatur jalur CI/CD bisa tampak menantang, tetapi dengan pendekatan yang tepat, Anda dapat mengotomatiskan proses dan meningkatkan efisiensi tim Anda. Cobalah untuk menerapkan panduan ini pada proyek Anda dan lihat bagaimana CI/CD meningkatkan siklus pengembangan Anda. 
 
-Untuk mendapatkan lebih banyak wawasan dan praktik terbaik di bidang DevOps, pastikan untuk mengikuti blog kami.
+Mengatur pipeline CI/CD sangat penting untuk meningkatkan efisiensi dan kualitas pengembangan perangkat lunak. Dengan mengikuti langkah-langkah di atas, Anda akan dapat mengotomatisasi proses pengembangan dan meningkatkan kecepatan rilis aplikasi Anda.
 
-<!-- lang:en -->
+Jangan ragu untuk bereksperimen dengan berbagai alat dan proses yang sesuai dengan kebutuhan Anda. Untuk lebih lanjut, bergabunglah dengan komunitas DevOps dan terus belajar tentang tren terbaru dalam pengembangan perangkat lunak.
+
+Jika ada pertanyaan, silakan tinggalkan komentar di bawah!
+
+---
+
 # CI/CD Pipeline Setup
 
-CI/CD (Continuous Integration/Continuous Deployment) is an essential practice in modern software development. By automating testing and deployment, CI/CD enables teams to release applications faster and with better quality. In this article, we'll discuss how to set up a CI/CD pipeline using modern tools like GitHub Actions and Docker.
+A CI/CD pipeline is a series of automated processes used to develop, test, and deliver software more rapidly and efficiently. In this article, we will discuss how to set up a CI/CD pipeline step by step, providing practical examples that can be immediately utilized.
 
-## Why is CI/CD Important?
+## What is CI/CD?
 
-CI/CD helps development teams by reducing the time required to test and deploy code. It allows for quicker and safer integration of code changes, minimizing the chances of human error.
+**CI** (Continuous Integration) and **CD** (Continuous Delivery or Continuous Deployment) are practices used in modern software development. CI involves merging code changes into a central repository regularly, while CD is the automation process for delivering those changes into production.
 
-## Steps to Set Up CI/CD Pipeline
+### Why is CI/CD Important?
 
-### 1. Project Preparation
-Before we start setting up the CI/CD pipeline, make sure your project is ready. You should have:
-- A hosted Git repository (GitHub, GitLab, Bitbucket, etc.)
-- A Dockerfile if using Docker
+- **Increased Development Speed**: Automating the build and test processes means developers can deliver software faster.
+- **Reduced Risk of Errors**: Automated testing helps identify issues earlier in the development lifecycle.
+- **Fast Feedback**: Accelerates response time to changes.
 
-### 2. Create CI/CD Configuration File
-To automate the CI/CD process, we need to create a configuration file. Here’s an example configuration for GitHub Actions:
+## Steps to Set Up a CI/CD Pipeline
+
+The following steps will guide you through setting up a CI/CD pipeline:
+
+### 1. Choose a CI/CD Tool
+
+There are various tools available for CI/CD, such as:
+- Jenkins
+- GitLab CI
+- CircleCI
+- Travis CI
+
+**Example Tool**: In this article, we will use GitHub Actions as our CI/CD tool. Here's an example of how we can use GitHub Actions.
+
+### 2. Set Up Your Repository
+
+Make sure you have a repository on GitHub. Create a file `.github/workflows/ci.yml` in your repository. Here’s an example YAML configuration for a CI pipeline:
 
 ```yaml
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
@@ -129,55 +159,59 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
 node-version: '14'
-
       - name: Install dependencies
         run: npm install
-
       - name: Run tests
         run: npm test
-
-      - name: Build project
-        run: npm run build
-
-      - name: Build Docker image
-        run: docker build . -t your-image-name
-
-      - name: Push Docker image
-        run: |
-echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-docker push your-image-name
 ```
 
-### Configuration Explanation
-In the above example, we set up the CI/CD pipeline for the main branch. This pipeline includes the following steps:
-1. **Checkout Code**: Fetching code from the repository.
-2. **Set up Node.js**: Specifying the version of Node.js to use.
-3. **Install Dependencies**: Installing all necessary project dependencies.
-4. **Run Tests**: Ensuring all tests pass.
-5. **Build Project**: Building the project into a runnable application.
-6. **Build and Push Docker Image**: Building a Docker image from the application and pushing it to a Docker repository.
+### 3. Add Testing
 
-### 3. Set up Credentials and Secrets
-Make sure to securely store your credentials using GitHub's Secrets feature. You need to add your Docker username and password as secrets to access Docker Hub.
+Make sure you have integrated tests in your project. In this example, we are using `npm test`. Ensure your tests are well-written before removing any code that is no longer used.
 
-### 4. Testing and Monitoring
-Once your CI/CD pipeline is set up, it's crucial to test it. Check the logs for each build and ensure all steps complete successfully.
+### 4. Configure Continuous Delivery
 
-## Best Practices for CI/CD
-- **Keep the Pipeline Simple**: Ensure the pipeline is easy to understand. Avoid adding unnecessary steps.
-- **Use Specific Versions**: Always use specific versions of tools and dependencies to prevent compatibility issues.
-- **Provide Notifications**: Ensure your team is notified when builds fail or succeed.
+Once you have a working CI pipeline, the next step is to create a Continuous Delivery process. You need to add another job in your YAML file:
+
+```yaml
+deploy:
+  runs-on: ubuntu-latest
+  steps:
+    - name: SSH to server
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+cd /path/to/your/app
+git pull
+npm install
+npm start
+```
+
+> **Note**: You should store your SSH credentials as secrets in GitHub.
+
+## Best Practices for Implementing CI/CD
+
+1. **Automate as Much as Possible**: Ensure all steps from build to deployment are automated.
+2. **Test Regularly**: Run unit and integration tests on every change.
+3. **Monitor the Pipeline**: Use monitoring tools to ensure all processes are running smoothly.
+4. **Get Quick Feedback**: After deployment, use analytics to gain feedback from users.
 
 ## Conclusion
-Setting up a CI/CD pipeline may seem daunting, but with the right approach, you can automate the process and improve your team's efficiency. Try implementing this guide on your project and see how CI/CD enhances your development cycle. 
 
-For more insights and best practices in the DevOps field, be sure to follow our blog.
+Setting up a CI/CD pipeline is crucial for improving efficiency and quality in software development. By following the steps above, you will be able to automate your development processes and increase the speed of your application releases.
+
+Feel free to experiment with different tools and processes that fit your needs. For further learning, join DevOps communities and stay updated on the latest trends in software development.
+
+If you have any questions, please leave a comment below!
+
+<!-- lang:en -->
+null
