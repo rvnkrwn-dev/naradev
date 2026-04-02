@@ -1,244 +1,273 @@
 ---
-title_id: "Pola Penanganan Kesalahan dalam Node.js"
+title_id: "Pola Penanganan Error di Node.js"
 title_en: "Error Handling Patterns in Node.js"
 slug: "error-handling-patterns-in-nodejs"
-date: "2026-03-17T01:23:22.000Z"
-description_id: "Pelajari pola penanganan kesalahan yang efektif dalam Node.js untuk meningkatkan keandalan aplikasi Anda."
+date: "2026-04-02T12:54:29.000Z"
+description_id: "Pelajari pola penanganan error yang efektif dalam Node.js untuk meningkatkan keandalan aplikasi Anda."
 description_en: "Learn effective error handling patterns in Node.js to improve the reliability of your applications."
 tags:
-  - bestpractices
+  - backend
   - errorhandling
   - nodejs
   - nuxt
+  - programming
 status: "published"
 authorId: "usr_ai_backend"
 cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/error-handling-patterns-in-nodejs.png"
 ---
 
 <!-- lang:id -->
-# Pola Penanganan Kesalahan dalam Node.js
+# Pola Penanganan Error di Node.js
 
-Node.js adalah platform yang sangat populer untuk membangun aplikasi backend karena efisiensinya dalam menangani operasi asinkron. Namun, ketika bekerja dengan operasi asinkron, penanganan kesalahan yang efektif menjadi sangat penting. Artikel ini membahas berbagai pola penanganan kesalahan yang dapat Anda implementasikan dalam aplikasi Node.js Anda.
+Node.js adalah runtime JavaScript yang sering digunakan untuk membangun aplikasi backend. Penanganan error yang tepat sangat penting agar aplikasi Anda dapat berjalan dengan lancar dan dapat diandalkan. Dalam artikel ini, kita akan membahas berbagai pola penanganan error di Node.js yang dapat meningkatkan ketahanan aplikasi Anda.
 
-## Mengapa Penanganan Kesalahan Penting
+## Mengapa Penanganan Error itu Penting?
 
-Penanganan kesalahan yang baik sangat penting dalam pengembangan perangkat lunak. Dengan menangani kesalahan dengan tepat, Anda dapat:
-- Meningkatkan pengalaman pengguna dengan memberikan pesan kesalahan yang informatif.
-- Mencegah aplikasi dari crash yang tidak terduga.
-- Memudahkan debugging dan pemecahan masalah.
+Dalam aplikasi yang besar dan kompleks, error dapat muncul kapan saja. Penanganan error yang baik membantu menghindari aplikasi crash, memberikan umpan balik yang jelas kepada pengguna, dan memudahkan proses debugging. 
 
-## Pola Dasar Penanganan Kesalahan
+## Pola Penanganan Error Dasar
 
-### 1. Menggunakan Blok `try...catch`
+### 1. Penggunaan Try-Catch
 
-Blok `try...catch` adalah pola dasar untuk penanganan kesalahan dalam JavaScript. Ini memungkinkan Anda menangkap kesalahan dalam fungsi asinkron.
+Salah satu cara paling langsung untuk menangani error dalam Node.js adalah menggunakan blok `try-catch`. Ini sangat berguna di bagian kode yang mungkin melemparkan error.
 
-Contoh: 
 ```javascript
-async function fetchData() {
-  try {
-    const response = await fetch('https://api.example.com/data');
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+try {
+    // Kode yang mungkin melemparkan error
+    const data = await getData();
+    console.log(data);
+} catch (error) {
+    console.error('Terjadi kesalahan:', error.message);
+}
+```
+
+### 2. Callback dengan Error Pertama
+
+Dalam sistem callback, pola yang umum adalah mengirimkan error sebagai argumen pertama pada callback.
+
+```javascript
+function fetchData(callback) {
+    // Simulasi operasi asynchronous
+    setTimeout(() => {
+        const error = null; // Ganti dengan `new Error('Kesalahan!')` untuk menguji error
+        const data = { id: 1, name: 'Sample' };
+        callback(error, data);
+    }, 1000);
+}
+
+fetchData((error, data) => {
+    if (error) {
+        return console.error('Error:', error.message);
     }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('There was a problem with your fetch operation:', error);
-  }
-}
+    console.log('Data diterima:', data);
+});
 ```
 
-### 2. Menangani Kesalahan dengan Middleware (Untuk Express.js)
+## Asynchronous Error Handling
 
-Ketika menggunakan Express.js, Anda dapat menangani kesalahan dengan middleware. Anda dapat menambahkan middleware khusus untuk menangani kesalahan yang dilemparkan di route.
+### 1. Menggunakan Promises dan Async/Await
 
-Contoh: 
+Dengan penggunaan `Promises`, kita bisa lebih mudah dalam mengelola error menggunakan method `.catch()`. Sedangkan `async/await` membuat kode lebih mudah dibaca.
+
 ```javascript
-const express = require('express');
-const app = express();
+const getUser = async (id) => {
+    try {
+        const user = await fetchUserById(id);
+        return user;
+    } catch (error) {
+        console.error('Error saat mengambil user:', error.message);
+        throw error;
+    }
+};
+```
 
-// Route
-app.get('/data', async (req, res, next) => {
-  try {
-    const data = await fetchData();
-    res.json(data);
-  } catch (error) {
-    next(error); // passing to the error handling middleware
-  }
-});
+### 2. Global Error Handling
 
-// Middleware Penanganan Kesalahan
+Anda juga bisa menangani error secara global dalam aplikasi Express.js menggunakan middleware.
+
+```javascript
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+    console.error(err.stack);
+    res.status(500).send('Terjadi kesalahan!');
 });
 ```
 
-## Pola Lanjutan
+## Pola Penanganan Error Lanjutan
 
-### 1. Menggunakan `Promise` dan `async/await`
+### 1. Custom Error Classes
 
-Saat bekerja dengan `Promise`, sangat penting untuk menangani penolakan. Anda dapat menggunakan `.catch()` pada Promise untuk menangkap kesalahan yang tidak tertangkap.
+Membuat kelas error kustom bisa membantu dalam memisahkan jenis kesalahan dan memberikan informasi yang lebih lengkap.
 
-Contoh: 
 ```javascript
-fetchData()
-  .then(data => console.log(data))
-  .catch(error => console.error('Error fetching data:', error));
-```
-
-### 2. Centralized Error Handling
-
-Implementasi penanganan kesalahan terpusat dapat membantu merampingkan pengelolaan kesalahan di seluruh aplikasi Anda. Anda dapat membuat sebuah utility function untuk mengelola kesalahan di berbagai bagian aplikasi.
-
-Contoh: 
-```javascript
-function handleError(error) {
-  // Log error to a service
-  console.error('Logging error:', error);
-  // You can implement more complex error handling logic if needed
+class NotFoundError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'NotFoundError';
+    }
 }
 
-async function getData() {
-  try {
-    return await fetchData();
-  } catch (error) {
-    handleError(error);
-    throw error; // rethrow if you want to propagate the error
-  }
-}
+const getUserById = async (id) => {
+    const user = await User.findById(id);
+    if (!user) {
+        throw new NotFoundError('User tidak ditemukan');
+    }
+    return user;
+};
 ```
 
-## Praktik Terbaik untuk Penanganan Kesalahan
+### 2. Error Logging
 
-1. **Jangan Mengabaikan Kesalahan**: Selalu tangkap kesalahan dan berikan mekanisme untuk menanganinya.
-2. **Berikan Pesan Kesalahan yang Jelas**: Pesan kesalahan yang jelas membantu pengembang dan pengguna memahami apa yang salah.
-3. **Gunakan Monitoring dan Logging**: Gunakan alat pemantauan untuk menangkap informasi kesalahan dan menganalisis kegagalan.
-4. **Uji Kasus dengan Kesalahan**: Buat pengujian yang mencakup skenario kesalahan untuk memastikan bahwa aplikasi Anda berfungsi dengan baik dalam kondisi kegagalan.
+Menggunakan library seperti `winston` atau `morgan` untuk mencatat kesalahan dapat membantu mendiagnosis masalah yang muncul.
+
+```javascript
+const winston = require('winston');
+
+const logger = winston.createLogger({
+    level: 'error',
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({ filename: 'error.log' })
+    ],
+});
+
+app.use((err, req, res, next) => {
+    logger.error(err.message);
+    res.status(500).send('Terjadi kesalahan');
+});
+```
 
 ## Kesimpulan
 
-Pola penanganan kesalahan yang baik sangat penting untuk membangun aplikasi Node.js yang andal. Dengan menerapkan pola-pola di atas, Anda dapat meningkatkan keandalan dan pengalaman pengguna aplikasi Anda. Mulailah menerapkan praktik terbaik ini dalam proyek Anda hari ini dan lihat bagaimana hal itu meningkatkan kualitas aplikasi Anda!
+Pola penanganan error yang baik dapat meningkatkan keandalan aplikasi Node.js Anda secara signifikan. Dengan menggunakan teknik seperti try-catch, promises, dan logging, Anda dapat menangani error dengan lebih baik. Ingatlah untuk selalu memberikan informasi yang jelas kepada pengguna ketika terjadi kesalahan.
 
-## Ajakan untuk Bertindak
+Untuk mengimplementasikan pola ini dalam aplikasi Anda, mulai dari yang dasar lalu secara bertahap beranjak ke pola yang lebih kompleks. Selamat mencoba!
 
-Jangan ragu untuk berbagi pengalaman Anda tentang penanganan kesalahan di Node.js di kolom komentar! Mari berdiskusi dan saling belajar.
+---
 
 <!-- lang:en -->
 # Error Handling Patterns in Node.js
 
-Node.js is a very popular platform for building backend applications due to its efficiency in handling asynchronous operations. However, when working with asynchronous operations, effective error handling becomes crucial. This article discusses various error handling patterns you can implement in your Node.js applications.
+Node.js is a JavaScript runtime commonly used to build backend applications. Proper error handling is crucial to ensuring that your applications run smoothly and reliably. In this article, we will discuss various error handling patterns in Node.js that can enhance your application's resilience.
 
-## Why Error Handling is Important
+## Why is Error Handling Important?
 
-Good error handling is vital in software development. By handling errors appropriately, you can:
-- Improve user experience by providing informative error messages.
-- Prevent applications from crashing unexpectedly.
-- Facilitate debugging and troubleshooting.
+In large and complex applications, errors can arise at any time. Good error handling helps to prevent application crashes, provides clear feedback to users, and facilitates the debugging process.
 
 ## Basic Error Handling Patterns
 
-### 1. Using `try...catch`
+### 1. Using Try-Catch
 
-The `try...catch` block is a fundamental pattern for error handling in JavaScript. It allows you to catch errors in asynchronous functions.
+One of the most straightforward ways to handle errors in Node.js is by using the `try-catch` block. This is particularly useful for sections of code that might throw errors.
 
-Example: 
 ```javascript
-async function fetchData() {
-  try {
-    const response = await fetch('https://api.example.com/data');
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+try {
+    // Code that may throw an error
+    const data = await getData();
+    console.log(data);
+} catch (error) {
+    console.error('An error occurred:', error.message);
+}
+```
+
+### 2. Callback with Error First
+
+In a callback system, a common pattern is to send the error as the first argument in the callback.
+
+```javascript
+function fetchData(callback) {
+    // Simulating asynchronous operation
+    setTimeout(() => {
+        const error = null; // Change to `new Error('Error!')` to test error
+        const data = { id: 1, name: 'Sample' };
+        callback(error, data);
+    }, 1000);
+}
+
+fetchData((error, data) => {
+    if (error) {
+        return console.error('Error:', error.message);
     }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('There was a problem with your fetch operation:', error);
-  }
-}
+    console.log('Data received:', data);
+});
 ```
 
-### 2. Handling Errors with Middleware (For Express.js)
+## Asynchronous Error Handling
 
-When using Express.js, you can handle errors with middleware. You can add a custom middleware to handle errors thrown in routes.
+### 1. Using Promises and Async/Await
 
-Example: 
+By utilizing `Promises`, handling errors becomes easier using the `.catch()` method. Meanwhile, `async/await` makes your code more readable.
+
 ```javascript
-const express = require('express');
-const app = express();
+const getUser = async (id) => {
+    try {
+        const user = await fetchUserById(id);
+        return user;
+    } catch (error) {
+        console.error('Error while fetching user:', error.message);
+        throw error;
+    }
+};
+```
 
-// Route
-app.get('/data', async (req, res, next) => {
-  try {
-    const data = await fetchData();
-    res.json(data);
-  } catch (error) {
-    next(error); // passing to the error handling middleware
-  }
-});
+### 2. Global Error Handling
 
-// Error Handling Middleware
+You can also handle errors globally in an Express.js application using middleware.
+
+```javascript
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+    console.error(err.stack);
+    res.status(500).send('An error occurred!');
 });
 ```
 
-## Advanced Patterns
+## Advanced Error Handling Patterns
 
-### 1. Using `Promise` and `async/await`
+### 1. Custom Error Classes
 
-When working with `Promise`, it’s crucial to handle rejections. You can use `.catch()` on the Promise to capture uncaught errors.
+Creating custom error classes can help distinguish between different types of errors and provide more detailed information.
 
-Example: 
 ```javascript
-fetchData()
-  .then(data => console.log(data))
-  .catch(error => console.error('Error fetching data:', error));
-```
-
-### 2. Centralized Error Handling
-
-Implementing centralized error handling can help streamline error management throughout your application. You can create a utility function to manage errors across various parts of your application.
-
-Example: 
-```javascript
-function handleError(error) {
-  // Log error to a service
-  console.error('Logging error:', error);
-  // You can implement more complex error handling logic if needed
+class NotFoundError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'NotFoundError';
+    }
 }
 
-async function getData() {
-  try {
-    return await fetchData();
-  } catch (error) {
-    handleError(error);
-    throw error; // rethrow if you want to propagate the error
-  }
-}
+const getUserById = async (id) => {
+    const user = await User.findById(id);
+    if (!user) {
+        throw new NotFoundError('User not found');
+    }
+    return user;
+};
 ```
 
-## Best Practices for Error Handling
+### 2. Error Logging
 
-1. **Don’t Ignore Errors**: Always catch errors and provide a mechanism to handle them.
-2. **Provide Clear Error Messages**: Clear error messages help developers and users understand what went wrong.
-3. **Use Monitoring and Logging**: Utilize monitoring tools to capture error information and analyze failures.
-4. **Test Cases with Errors**: Create tests that cover error scenarios to ensure your application behaves well under failure conditions.
+Using libraries like `winston` or `morgan` for logging errors can help diagnose issues as they arise.
+
+```javascript
+const winston = require('winston');
+
+const logger = winston.createLogger({
+    level: 'error',
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({ filename: 'error.log' })
+    ],
+});
+
+app.use((err, req, res, next) => {
+    logger.error(err.message);
+    res.status(500).send('An error occurred');
+});
+```
 
 ## Conclusion
 
-Good error handling patterns are crucial for building reliable Node.js applications. By implementing the patterns mentioned above, you can enhance the reliability and user experience of your applications. Start applying these best practices in your projects today and see how it improves your application quality!
+Good error handling patterns can significantly enhance the reliability of your Node.js applications. By employing techniques such as try-catch, promises, and logging, you can handle errors more effectively. Always remember to provide clear information to users when an error occurs.
 
-## Call to Action
+To implement these patterns in your application, start with the basics and gradually move on to more complex patterns. Happy coding!
 
-Feel free to share your experiences with error handling in Node.js in the comments section! Let’s discuss and learn from each other.
+---
