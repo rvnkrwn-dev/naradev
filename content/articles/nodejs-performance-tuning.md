@@ -1,10 +1,10 @@
 ---
-title_id: "Penyetelan Performa Node.js"
+title_id: "Tuning Kinerja Node.js"
 title_en: "Node.js Performance Tuning"
 slug: "nodejs-performance-tuning"
-date: "2026-04-01T07:15:23.000Z"
-description_id: "Pelajari cara meningkatkan performa aplikasi Node.js Anda dengan teknik penyetelan yang efektif dan tips praktis."
-description_en: "Learn how to enhance your Node.js application's performance with effective tuning techniques and practical tips."
+date: "2026-04-03T18:37:05.000Z"
+description_id: "Pelajari cara meningkatkan kinerja aplikasi Node.js Anda dengan teknik tuning yang efektif dan alat yang tepat."
+description_en: "Learn how to enhance the performance of your Node.js applications with effective tuning techniques and the right tools."
 tags:
   - nodejs
   - nuxt
@@ -16,249 +16,179 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 ---
 
 <!-- lang:id -->
-# Penyetelan Performa Node.js
+# Tuning Kinerja Node.js
 
-Penerapan Node.js dalam pengembangan backend semakin populer berkat kemampuannya untuk menangani banyak koneksi secara bersamaan. Namun, seiring dengan bertambahnya kompleksitas aplikasi, performa bisa menurun. Artikel ini membahas teknik penyetelan performa Node.js yang dapat meningkatkan responsivitas dan efisiensi aplikasi Anda.
+Node.js adalah platform yang sangat populer untuk pengembangan aplikasi web, tetapi seperti semua teknologi, ia memiliki batasan dalam hal kinerja. Dalam artikel ini, kita akan menjelajahi berbagai teknik dan alat untuk meningkatkan kinerja aplikasi Node.js Anda.
 
-## Memahami Dasar-Dasar Performa Node.js
+## Memahami Kinerja Node.js
 
-Node.js berfungsi berdasarkan model non-blocking I/O yang memungkinkan eksekusi simultan dari operasi I/O. Ini membantu dalam pengelolaan banyak permintaan tanpa memblokir proses lainnya. Namun, terdapat beberapa faktor yang dapat mempengaruhi performa secara keseluruhan.
+Sebelum mulai melakukan tuning, penting untuk memahami beberapa konsep dasar dari kinerja Node.js. Node.js menggunakan model non-blocking I/O, yang memungkinkan aplikasi untuk mengelola banyak koneksi secara bersamaan. Meskipun ini meningkatkan skalabilitas, kode yang tidak efektif masih dapat menyebabkan penurunan kinerja.
 
-### Event Loop dan Performance
+## Teknik Tuning Kinerja:
 
-Salah satu aspek kunci dari Node.js adalah event loop. Untuk meningkatkan performa aplikasi, penting untuk memahami bagaimana event loop bekerja dan bagaimana cara menghindari blocking.
+### 1. Menggunakan Profiling
 
-### Contoh Blocking Code
+Salah satu langkah pertama dalam mengoptimalkan aplikasi Anda adalah dengan melakukan profiling. Dengan alat profiling, Anda dapat memahami bagian mana dari aplikasi Anda yang paling banyak menghabiskan waktu. Anda dapat menggunakan `node --inspect` untuk memanipulasi kode Anda dengan Chrome DevTools.
 
-```javascript
-function blockingOperation() {
-  // Simulating a heavy computation
-  let sum = 0;
-  for (let i = 0; i < 1e9; i++) {
-    sum += i;
-  }
-  return sum;
-}
-
-console.log('Starting heavy computation...');
-const result = blockingOperation();
-console.log('Computation completed with sum: ', result);
+```bash
+node --inspect index.js
 ```
 
-Kodenya di atas akan memblokir event loop, karena prosesnya memakan waktu lama. Sebagai gantinya, kita bisa menggunakan `setImmediate` atau worker threads untuk menangani tugas berat tersebut.
+### 2. Meminimalkan Blocking Code
 
-## Menggunakan Profiling untuk Meningkatkan Performa
-
-Sebelum melakukan penyetelan, penting untuk menganalisis performa aplikasi Anda. Gunakan alat profiling untuk mengidentifikasi bottleneck.
-
-### Alat Profiling yang Disarankan
-
-1. **Node.js built-in profiler**: tools ini dapat digunakan dengan menjalankan Node.js dengan flag `--inspect`
-2. **Clinic.js**: membantu memvisualisasikan masalah performa dan mengidentifikasi potensi bottleneck.
-
-## Optimasi Kode dan I/O
-
-### Mengoptimalkan Penggunaan I/O
-
-Salah satu cara untuk meningkatkan performa adalah dengan mengoptimalkan operasi I/O. Gunakan promise dan async/await untuk memastikan non-blocking.
-
-#### Contoh Operasi Asynchronous
+Kiss the blocking calls goodbye! Pastikan semua operasi I/O dilakukan secara asyncrhonous, sehingga thread utama tidak terblokir. Misalnya:
 
 ```javascript
-const fs = require('fs/promises');
+const fs = require('fs');
 
-async function readFileAsync(file) {
-  try {
-    const data = await fs.readFile(file, 'utf8');
-    console.log(data);
-  } catch (error) {
-    console.error(`Error reading file: ${error}`);
-  }
-}
+// Blocking Code
+const data = fs.readFileSync('data.txt', 'utf8');
+console.log(data);
 
-readFileAsync('example.txt');
-```
-
-## Menerapkan Caching
-
-Caching dapat mengurangi waktu akses ke data yang sama berulang kali. Gunakan modul seperti `node-cache` atau implementasi Redis untuk caching.
-
-### Contoh Menggunakan Redis
-
-```javascript
-const redis = require('redis');
-const client = redis.createClient();
-
-client.on('error', (err) => {
-  console.log(`Error: ${err}`);
+// Non-blocking Code
+fs.readFile('data.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data);
 });
-
-function cacheData(key, value) {
-  client.set(key, value, 'EX', 3600); // Cache value for 1 hour
-}
-
-function fetchData(key) {
-  client.get(key, (error, result) => {
-    if (result) {
-      console.log('Fetched from cache: ', result);
-    } else {
-      console.log('Data not found in cache.');
-    }
-  });
-}
-
-cacheData('user:1', JSON.stringify({ name: 'Bima' }));
-fetchData('user:1');
 ```
 
-## Memanfaatkan Load Balancing
+### 3. Menggunakan Clustering
 
-Ketika aplikasi Anda tumbuh, load balancing menjadi penting untuk mendistribusikan permintaan ke berbagai server atau instance Node.js.
+Node.js secara bawaan berjalan di satu thread. Untuk memaksimalkan kinerja di mesin multi-core, Anda dapat menggunakan clustering. Contoh:
 
-### Contoh Load Balancer dengan Nginx
+```javascript
+const cluster = require('cluster');
+const http = require('http');
 
-```nginx
-http {
-    upstream backend {
-        server localhost:3000;
-        server localhost:3001;
-    }
-
-    server {
-        listen 80;
-        location / {
-  proxy_pass http://backend;
-        }
-    }
+if (cluster.isMaster) {
+  const numCPUs = require('os').cpus().length;
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+} else {
+  http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('Hello World!');
+  }).listen(8000);
 }
 ```
 
-## Kesimpulan dan Rekomendasi
+## Alat Untuk Tuning Kinerja
 
-Penyetelan performa Node.js adalah proses berkelanjutan yang melibatkan profiling, optimasi kode, penggunaan caching, dan penerapan load balancing. Dengan menerapkan teknik-teknik ini, Anda dapat secara signifikan meningkatkan performa aplikasi Anda. Selalu ingat untuk menganalisis bottleneck dan terus bereksperimen untuk menemukan konfigurasi terbaik untuk aplikasi Anda.
+### 1. Node.js Performance Hooks
 
-Untuk informasi lebih lanjut dan artikel menarik lainnya, kunjungi blog kami di Naradev!
+Node.js menawarkan modul Performance Hooks yang memungkinkan Anda untuk melakukan pengukuran performa di dalam aplikasi Anda.
+
+```javascript
+const { performance } = require('perf_hooks');
+const start = performance.now();
+
+// Beberapa kode yang ingin Anda ukur
+
+const end = performance.now();
+console.log(`Execution time: ${end - start} milliseconds`);
+```
+
+### 2. PM2
+
+PM2 adalah pengelola proses untuk Node.js yang mendukung clustering dan monitoring. Ini sangat berguna untuk menjaga aplikasi Anda tetap berjalan dengan baik.
+
+```bash
+npm install pm2 -g
+pm2 start app.js -i max
+```
+
+## Kesimpulan
+
+Dengan menerapkan teknik dan alat yang tepat untuk tuning kinerja Node.js, Anda dapat meningkatkan efisiensi aplikasi Anda secara signifikan. Pastikan untuk terus memantau kinerja dan melakukan perbaikan berkelanjutan. Jangan ragu untuk menjelajahi berbagai alat dan teknik yang ada!
+
+**Jangan lupa subscribe dan kunjungi blog kami untuk artikel lebih lanjut tentang pengembangan backend!**
 
 <!-- lang:en -->
 # Node.js Performance Tuning
 
-The use of Node.js in backend development is becoming increasingly popular due to its ability to handle many connections simultaneously. However, as application complexity increases, performance can suffer. This article discusses performance tuning techniques for Node.js that can enhance the responsiveness and efficiency of your application.
+Node.js is a tremendously popular platform for web application development, but like all technologies, it has its limits in terms of performance. In this article, we’ll explore various techniques and tools to enhance the performance of your Node.js applications.
 
-## Understanding the Basics of Node.js Performance
+## Understanding Node.js Performance
 
-Node.js operates on a non-blocking I/O model which allows for simultaneous execution of I/O operations. This helps manage multiple requests without blocking other processes. However, several factors can affect overall performance.
+Before diving into tuning, it’s important to understand a few fundamental concepts regarding Node.js performance. Node.js utilizes a non-blocking I/O model which allows applications to handle many connections simultaneously. Although this increases scalability, inefficient code can still lead to performance drops.
 
-### Event Loop and Performance
+## Performance Tuning Techniques:
 
-A key aspect of Node.js is the event loop. To improve application performance, it's critical to understand how the event loop operates and how to avoid blocking it.
+### 1. Make Use of Profiling
 
-### Example of Blocking Code
+One of the first steps in optimizing your application is profiling. With profiling tools, you can understand which parts of your application are consuming the most time. You can use `node --inspect` to debug your code with Chrome DevTools.
 
-```javascript
-function blockingOperation() {
-  // Simulating a heavy computation
-  let sum = 0;
-  for (let i = 0; i < 1e9; i++) {
-    sum += i;
-  }
-  return sum;
-}
-
-console.log('Starting heavy computation...');
-const result = blockingOperation();
-console.log('Computation completed with sum: ', result);
+```bash
+node --inspect index.js
 ```
 
-The above code will block the event loop because the process takes a long time. Instead, you can use `setImmediate` or worker threads to handle such heavy tasks.
+### 2. Minimize Blocking Code
 
-## Using Profiling to Improve Performance
-
-Before tuning, it's essential to analyze your application's performance. Use profiling tools to identify bottlenecks.
-
-### Recommended Profiling Tools
-
-1. **Node.js built-in profiler**: This can be used by running Node.js with the `--inspect` flag.
-2. **Clinic.js**: Helps visualize performance issues and identify potential bottlenecks.
-
-## Code Optimization and I/O
-
-### Optimizing I/O Usage
-
-One way to enhance performance is by optimizing I/O operations. Use promises and async/await to ensure non-blocking behavior.
-
-#### Example of Asynchronous Operations
+Kiss the blocking calls goodbye! Ensure all I/O operations are performed asynchronously, so the main thread is not blocked. For instance:
 
 ```javascript
-const fs = require('fs/promises');
+const fs = require('fs');
 
-async function readFileAsync(file) {
-  try {
-    const data = await fs.readFile(file, 'utf8');
-    console.log(data);
-  } catch (error) {
-    console.error(`Error reading file: ${error}`);
-  }
-}
+// Blocking Code
+const data = fs.readFileSync('data.txt', 'utf8');
+console.log(data);
 
-readFileAsync('example.txt');
-```
-
-## Implementing Caching
-
-Caching can reduce access time to the same data repeatedly. Use modules like `node-cache` or Redis implementation for caching.
-
-### Example using Redis
-
-```javascript
-const redis = require('redis');
-const client = redis.createClient();
-
-client.on('error', (err) => {
-  console.log(`Error: ${err}`);
+// Non-blocking Code
+fs.readFile('data.txt', 'utf8', (err, data) => {
+  if (err) throw err;
+  console.log(data);
 });
-
-function cacheData(key, value) {
-  client.set(key, value, 'EX', 3600); // Cache value for 1 hour
-}
-
-function fetchData(key) {
-  client.get(key, (error, result) => {
-    if (result) {
-      console.log('Fetched from cache: ', result);
-    } else {
-      console.log('Data not found in cache.');
-    }
-  });
-}
-
-cacheData('user:1', JSON.stringify({ name: 'Bima' }));
-fetchData('user:1');
 ```
 
-## Leveraging Load Balancing
+### 3. Use Clustering
 
-As your application grows, load balancing becomes essential to distribute requests across multiple servers or Node.js instances.
+Node.js runs on a single thread by default. To maximize performance on multi-core machines, you can utilize clustering. Here's an example:
 
-### Example Load Balancer with Nginx
+```javascript
+const cluster = require('cluster');
+const http = require('http');
 
-```nginx
-http {
-    upstream backend {
-        server localhost:3000;
-        server localhost:3001;
-    }
-
-    server {
-        listen 80;
-        location / {
-  proxy_pass http://backend;
-        }
-    }
+if (cluster.isMaster) {
+  const numCPUs = require('os').cpus().length;
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+} else {
+  http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('Hello World!');
+  }).listen(8000);
 }
 ```
 
-## Conclusion and Recommendations
+## Tools for Performance Tuning
 
-Node.js performance tuning is an ongoing process that involves profiling, code optimization, caching strategies, and load balancing implementation. By applying these techniques, you can significantly enhance your application's performance. Always remember to analyze bottlenecks and keep experimenting to find the best configuration for your application.
+### 1. Node.js Performance Hooks
 
-For more information and interesting articles, visit our blog at Naradev!
+Node.js offers a Performance Hooks module that allows you to measure performance within your application.
+
+```javascript
+const { performance } = require('perf_hooks');
+const start = performance.now();
+
+// Some code that you want to measure
+
+const end = performance.now();
+console.log(`Execution time: ${end - start} milliseconds`);
+```
+
+### 2. PM2
+
+PM2 is a process manager for Node.js that supports clustering and monitoring. It is incredibly useful for keeping your application running smoothly.
+
+```bash
+npm install pm2 -g
+pm2 start app.js -i max
+```
+
+## Conclusion
+
+By applying the right techniques and tools for Node.js performance tuning, you can significantly enhance your application’s efficiency. Always monitor performance, and continue to improve. Don't hesitate to explore the various tools and techniques available!
+
+**Don't forget to subscribe and visit our blog for more articles on backend development!**
