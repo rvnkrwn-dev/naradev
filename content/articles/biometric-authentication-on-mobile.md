@@ -2,15 +2,15 @@
 title_id: "Autentikasi Biometrik pada Mobile"
 title_en: "Biometric Authentication on Mobile"
 slug: "biometric-authentication-on-mobile"
-date: "2026-03-31T18:50:21.000Z"
-description_id: "Pelajari tentang autentikasi biometrik pada aplikasi mobile dan implementasinya."
-description_en: "Learn about biometric authentication in mobile apps and its implementation."
+date: "2026-04-04T12:40:42.000Z"
+description_id: "Pelajari bagaimana autentikasi biometrik meningkatkan keamanan aplikasi mobile Anda."
+description_en: "Learn how biometric authentication enhances the security of your mobile applications."
 tags:
-  - autentikasi
   - biometrik
   - flutter
   - keamanan
   - mobile
+  - react-native
 status: "published"
 authorId: "usr_ai_mobile"
 cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/biometric-authentication-on-mobile.png"
@@ -19,185 +19,131 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 <!-- lang:id -->
 # Autentikasi Biometrik pada Mobile
 
-Di dunia yang semakin terhubung ini, keamanan aplikasi mobile menjadi salah satu hal yang sangat penting. Salah satu metode yang terbukti efektif untuk meningkatkan keamanan adalah dengan menggunakan autentikasi biometrik. Artikel ini akan membahas apa itu autentikasi biometrik, keuntungannya, dan bagaimana cara mengimplementasikannya dalam aplikasi mobile.
+## Pendahuluan
+Dalam era digital saat ini, keamanan aplikasi mobile menjadi prioritas utama bagi pengembang. Salah satu teknologi yang semakin populer untuk meningkatkan keamanan adalah autentikasi biometrik. Pada artikel ini, kita akan membahas berbagai jenis metode autentikasi biometrik, implementasinya dalam aplikasi mobile, serta praktik terbaik dalam penggunaannya.
 
 ## Apa Itu Autentikasi Biometrik?
+Autentikasi biometrik adalah proses verifikasi identitas seseorang berdasarkan karakteristik fisik atau perilaku. Jenis umum dari autentikasi biometrik termasuk:
+- Pengenalan sidik jari
+- Pengenalan wajah
+- Pengenalan suara
+- Iris mata
 
-Autentikasi biometrik adalah metode untuk memverifikasi identitas pengguna berdasarkan karakteristik fisik atau perilaku unik mereka, seperti sidik jari, wajah, atau suara. Dengan autentikasi ini, pengguna dapat mengakses aplikasi mereka dengan cara yang lebih aman dibandingkan dengan kata sandi tradisional.
+### Manfaat Autentikasi Biometrik
+1. **Keamanan Tinggi**: Menggunakan data unik dari pengguna membuatnya lebih sulit untuk dibohongi dibandingkan dengan kata sandi.
+2. **Pengalaman Pengguna yang Lebih Baik**: Pengguna tidak perlu mengingat banyak kata sandi yang rumit.
+3. **Integrasi yang Mudah**: Banyak platform mobile yang menyediakan SDK untuk memudahkan integrasi biometrik.
 
-### Jenis-jenis Autentikasi Biometrik
+## Implementasi Autentikasi Biometrik
+Untuk memperlihatkan bagaimana cara menggunakan autentikasi biometrik dalam aplikasi mobile, kita akan mengembangkan contoh aplikasi sederhana menggunakan React Native dan menggunakan autentikasi sidik jari.
 
-- **Sidik Jari:** menggunakan pemindai sidik jari untuk memverifikasi identitas.
-- **Pengenalan Wajah:** menggunakan teknologi pengenalan wajah untuk memberlakukan akses.
-- **Pengenalan Suara:** menggunakan pola suara yang unik untuk autentikasi pengguna.
-
-## Keuntungan Menggunakan Autentikasi Biometrik
-
-1. **Keamanan yang Lebih Tinggi:** Biometrik sulit untuk dipalsukan.
-2. **Pengalaman Pengguna yang Lebih Baik:** Pengguna tidak perlu mengingat kata sandi.
-3. **Pengurangan Penipuan:** Mengurangi risiko pencurian identitas dan akses yang tidak sah.
-
-## Implementasi Autentikasi Biometrik pada Aplikasi Mobile
-
-Implementasi autentikasi biometrik dalam aplikasi mobile relatif mudah. Di bawah ini adalah langkah-langkah untuk mengimplementasikan autentikasi sidik jari di aplikasi Android menggunakan Kotlin.
-
-### Langkah 1: Persiapan Lingkungan
-
-Pastikan Anda telah menambahkan dependensi berikut pada file `build.gradle`: 
-```gradle
-implementation 'com.google.android.gms:play-services-biometrics:30.0.0'
+### Contoh Kode untuk Autentikasi Sidik Jari
+Untuk memulai, Anda perlu menginstal paket berikut:
+```bash
+npm install react-native-touch-id
 ```
 
-### Langkah 2: Membuat Fungsi Autentikasi
+Setelah itu, Anda dapat menggunakan kode berikut untuk memvalidasi sidik jari pengguna:
+```javascript
+import React from 'react';
+import { View, Text, Button, Alert } from 'react-native';
+import TouchID from 'react-native-touch-id';
 
-Berikut adalah contoh kode sederhana untuk mengautentikasi pengguna menggunakan sidik jari:
-```kotlin
-import androidx.biometric.BiometricPrompt
-import androidx.biometric.BiometricManager
-import androidx.core.content.ContextCompat
+const App = () => {
+    const handleAuthentication = () => {
+        TouchID.authenticate('Autentikasi menggunakan sidik jari')
+  .then(success => {
+      Alert.alert('Sukses', 'Autentikasi berhasil!');
+  })
+  .catch(error => {
+      Alert.alert('Gagal', 'Autentikasi gagal!');
+  });
+    };
 
-fun authenticateUser() {
-    // Cek apakah biometrik tersedia
-    val biometricManager = BiometricManager.from(this)
-    when (biometricManager.canAuthenticate()) {
-        BiometricManager.Authenticators.RESULT_SUCCESS -> {
-  // Lanjut dengan autentikasi
-  val executor = ContextCompat.getMainExecutor(this)
-  val biometricPrompt = BiometricPrompt(this, executor,
-      object : BiometricPrompt.AuthenticationCallback() {
-          override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-              super.onAuthenticationError(errorCode, errString)
-              // Tampilkan pesan error
-          }
-          override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-              super.onAuthenticationSucceeded(result)
-              // Akses diberikan
-          }
-          override fun onAuthenticationFailed() {
-              super.onAuthenticationFailed()
-              // Autentikasi gagal
-          }
-      })
-  val promptInfo = BiometricPrompt.PromptInfo.Builder()
-      .setTitle("Biometric login")
-      .setSubtitle("Log in using your biometric credentials.")
-      .setNegativeButtonText("Use account password")
-      .build()
-  biometricPrompt.authenticate(promptInfo)
-        }
-        else -> {
-  // Biometrik tidak tersedia
-        }
-    }
-}
+    return (
+        <View>
+  <Text>Tekan tombol untuk autentikasi</Text>
+  <Button title='Autentikasi' onPress={handleAuthentication} />
+        </View>
+    );
+};
+
+export default App;
 ```
-### Langkah 3: Menangani Keberhasilan dan Kegagalan Autentikasi
 
-Setelah pengguna berhasil atau gagal saat melakukan autentikasi, Anda harus mengelola hasilnya dengan benar. Ini termasuk memberikan umpan balik kepada pengguna dan menerapkan logika untuk mengatasi berbagai situasi, seperti mencoba kembali autentikasi.
-
-## Tips dan Praktik Terbaik
-
-- **Selalu Sediakan Alternatif:** Berikan opsi untuk masuk menggunakan kata sandi jika autentikasi biometrik gagal.
-- **Cek Kompatibilitas Perangkat:** Tidak semua perangkat mendukung semua jenis biometrik; lakukan pemeriksaan sebelum menerapkannya.
-- **Pertimbangkan Privasi:** Beritahu pengguna bagaimana data biometrik mereka akan digunakan dan disimpan.
+## Praktik Terbaik Autentikasi Biometrik
+1. **Jangan Bergantung Sepenuhnya pada Biometrik**: Selalu berikan alternatif seperti kata sandi jika autentikasi biometrik gagal.
+2. **Enkripsi Data Biometrik**: Pastikan data biometrik dienkripsi agar tidak jatuh ke tangan yang salah.
+3. **Patuhi Regulasi**: Ikuti regulasi dan kebijakan privasi yang berlaku di daerah Anda.
 
 ## Kesimpulan
+Autentikasi biometrik adalah solusi yang efektif untuk meningkatkan keamanan aplikasi mobile. Dengan menerapkan praktik terbaik dan kode yang telah dibahas, Anda dapat memberikan pengalaman keamanan yang lebih baik kepada pengguna Anda.
 
-Autentikasi biometrik adalah langkah maju dalam meningkatkan keamanan aplikasi mobile. Dengan meningkatkan pengalaman pengguna dan mengurangi risiko keamanan, Anda dapat memberikan nilai lebih kepada pengguna aplikasi Anda. Mulailah implemen autentikasi biometrik di aplikasi Anda dan buatlah pengalaman pengguna yang lebih aman dan nyaman.
-
-### Ayo Bereksperimen!
-
-Cobalah untuk mengimplementasikan autentikasi biometrik dalam proyek Anda dan lihat bagaimana hal ini dapat meningkatkan keamanan dan pengalaman pengguna. Jangan ragu untuk saling berbagi pengalaman!
+## Ayo Mulai!  
+Cobalah menerapkan autentikasi biometrik pada aplikasi Anda dan lihat perbedaannya dalam meningkatkan keamanan dan kenyamanan pengguna.
 
 <!-- lang:en -->
 # Biometric Authentication on Mobile
 
-In today's connected world, mobile app security has become a vital concern. One effective method to enhance security is biometric authentication. This article will discuss what biometric authentication is, its advantages, and how to implement it in mobile applications.
+## Introduction
+In today’s digital era, the security of mobile applications is a top priority for developers. One technology rapidly gaining popularity to enhance security is biometric authentication. In this article, we will discuss various types of biometric authentication methods, how to implement them in mobile applications, and best practices when using them.
 
-## What is Biometric Authentication?
+## What Is Biometric Authentication?
+Biometric authentication is the process of verifying a person's identity based on their physical or behavioral characteristics. Common types of biometric authentication include:
+- Fingerprint recognition
+- Facial recognition
+- Voice recognition
+- Iris recognition
 
-Biometric authentication is a method of verifying a user's identity based on unique physical or behavioral characteristics such as fingerprints, face recognition, or voice. With this authentication, users can access their applications more securely compared to traditional passwords.
+### Benefits of Biometric Authentication
+1. **High Security**: Using unique data from users makes it harder to spoof compared to passwords.
+2. **Better User Experience**: Users don’t need to remember complex passwords anymore.
+3. **Easy Integration**: Many mobile platforms provide SDKs to ease biometric integration.
 
-### Types of Biometric Authentication
+## Implementing Biometric Authentication
+To demonstrate how to use biometric authentication in a mobile application, we will develop a simple example application using React Native that utilizes fingerprint authentication.
 
-- **Fingerprint:** uses a fingerprint scanner to verify identity.
-- **Face Recognition:** employs face recognition technology for access control.
-- **Voice Recognition:** makes use of a unique voice pattern for user authentication.
-
-## Advantages of Using Biometric Authentication
-
-1. **Higher Security:** Biometric data is hard to forge.
-2. **Better User Experience:** Users don't have to remember passwords.
-3. **Reduced Fraud:** Lowers the chance of identity theft and unauthorized access.
-
-## Implementing Biometric Authentication in Mobile Applications
-
-Implementing biometric authentication in mobile apps is relatively straightforward. Below are the steps to implement fingerprint authentication in an Android application using Kotlin.
-
-### Step 1: Prepare the Environment
-
-Make sure to add the following dependency to your `build.gradle` file: 
-```gradle
-implementation 'com.google.android.gms:play-services-biometrics:30.0.0'
+### Code Example for Fingerprint Authentication
+First, you need to install the following package:
+```bash
+npm install react-native-touch-id
 ```
 
-### Step 2: Create the Authentication Function
+After that, you can use the following code to validate the user's fingerprint:
+```javascript
+import React from 'react';
+import { View, Text, Button, Alert } from 'react-native';
+import TouchID from 'react-native-touch-id';
 
-Here's a simple code example for authenticating users using fingerprints:
-```kotlin
-import androidx.biometric.BiometricPrompt
-import androidx.biometric.BiometricManager
-import androidx.core.content.ContextCompat
+const App = () => {
+    const handleAuthentication = () => {
+        TouchID.authenticate('Authenticate using fingerprint')
+  .then(success => {
+      Alert.alert('Success', 'Authentication succeeded!');
+  })
+  .catch(error => {
+      Alert.alert('Failed', 'Authentication failed!');
+  });
+    };
 
-fun authenticateUser() {
-    // Check if biometric is available
-    val biometricManager = BiometricManager.from(this)
-    when (biometricManager.canAuthenticate()) {
-        BiometricManager.Authenticators.RESULT_SUCCESS -> {
-  // Proceed with authentication
-  val executor = ContextCompat.getMainExecutor(this)
-  val biometricPrompt = BiometricPrompt(this, executor,
-      object : BiometricPrompt.AuthenticationCallback() {
-          override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-              super.onAuthenticationError(errorCode, errString)
-              // Show error message
-          }
-          override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-              super.onAuthenticationSucceeded(result)
-              // Access granted
-          }
-          override fun onAuthenticationFailed() {
-              super.onAuthenticationFailed()
-              // Authentication failed
-          }
-      })
-  val promptInfo = BiometricPrompt.PromptInfo.Builder()
-      .setTitle("Biometric login")
-      .setSubtitle("Log in using your biometric credentials.")
-      .setNegativeButtonText("Use account password")
-      .build()
-  biometricPrompt.authenticate(promptInfo)
-        }
-        else -> {
-  // Biometric not available
-        }
-    }
-}
+    return (
+        <View>
+  <Text>Press the button to authenticate</Text>
+  <Button title='Authenticate' onPress={handleAuthentication} />
+        </View>
+    );
+};
+
+export default App;
 ```
-### Step 3: Handling Authentication Success and Failure
 
-After a user either successfully authenticates or fails, you should manage the results properly. This includes providing feedback to the user and implementing logic to handle different scenarios like retrying authentication.
-
-## Tips and Best Practices
-
-- **Always Provide Alternatives:** Offer an option to log in using a password if biometric authentication fails.
-- **Check Device Compatibility:** Not all devices support all types of biometrics; perform checks before applying them.
-- **Consider Privacy:** Inform users how their biometric data will be used and stored.
+## Best Practices for Biometric Authentication
+1. **Don't Rely Solely on Biometrics**: Always provide an alternative, such as a password if biometric authentication fails.
+2. **Encrypt Biometric Data**: Ensure that biometric data is encrypted to prevent unauthorized access.
+3. **Follow Regulations**: Adhere to regulations and privacy policies applicable in your area.
 
 ## Conclusion
+Biometric authentication is an effective solution to enhance security in mobile applications. By implementing the best practices and the code discussed, you can provide a better security experience for your users.
 
-Biometric authentication is a forward step in enhancing mobile app security. By improving user experience and minimizing security risks, you can deliver greater value to your app users. Start implementing biometric authentication in your app and create a safer and more comfortable user experience.
-
-### Let’s Experiment!
-
-Try implementing biometric authentication in your projects and see how it can improve security and user experience. Feel free to share your experiences with others!
+## Get Started!
+Try implementing biometric authentication in your application and see the difference it makes in improving user security and convenience.
