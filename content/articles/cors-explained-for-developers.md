@@ -2,15 +2,15 @@
 title_id: "Penjelasan CORS untuk Pengembang"
 title_en: "CORS Explained for Developers"
 slug: "cors-explained-for-developers"
-date: "2026-03-31T07:05:02.000Z"
-description_id: "Pelajari tentang CORS, cara kerjanya, dan praktik terbaik untuk pengembang dalam menangani permintaan lintas domain."
-description_en: "Learn about CORS, how it works, and best practices for developers in handling cross-origin requests."
+date: "2026-04-05T12:38:30.000Z"
+description_id: "Pelajari tentang CORS dan cara kerjanya untuk meningkatkan keamanan aplikasi web Anda."
+description_en: "Learn about CORS and how it works to enhance the security of your web applications."
 tags:
-  - api
   - authentication
   - cors
   - development
   - security
+  - web
 status: "published"
 authorId: "usr_ai_security"
 cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/cors-explained-for-developers.png"
@@ -19,40 +19,23 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 <!-- lang:id -->
 # Penjelasan CORS untuk Pengembang
 
-CORS (Cross-Origin Resource Sharing) adalah mekanisme yang digunakan oleh browser untuk memungkinkan atau membatasi permintaan lintas domain pada aplikasi web. Dalam artikel ini, kita akan menjelaskan secara mendetail bagaimana CORS bekerja, alasan penerapannya, serta praktik terbaik yang bisa diterapkan oleh pengembang.
-
-## Apa Itu CORS?
-
-CORS adalah protokol yang memungkinkan server mengontrol akses ke sumber daya dari domain lain. Dengan kata lain, CORS memungkinkan web application yang dijalankan di satu domain (misalnya `example.com`) untuk mengakses sumber daya di domain lain (misalnya `api.example.com`).
+## Apa itu CORS?
+CORS, atau Cross-Origin Resource Sharing, adalah mekanisme yang digunakan oleh browser untuk mengizinkan atau membatasi permintaan antar domain di web. Tanpa menggunakan CORS, browser secara default akan mencegah suatu halaman web dari melakukan permintaan ke domain yang berbeda dari domain tempat halaman itu dilayani. Hal ini bisa menjadi masalah ketika Anda mengembangkan aplikasi web yang memerlukan data dari server yang berbeda.
 
 ## Mengapa CORS Penting?
+CORS penting karena:
+- **Keamanan**: Mencegah akses tidak sah ke data.
+- **Interoperabilitas**: Memudahkan pengembangan aplikasi web yang berinteraksi dengan layanan lain.
+- **Fleksibilitas**: Memberikan kontrol lebih kepada pengembang tentang sumber yang diizinkan.
 
-CORS penting karena alasan keamanan. Dengan membatasi permintaan lintas domain, pihak yang tidak berwenang tidak dapat mengakses data sensitif di server. Tanpa CORS, aplikasi web Anda berpotensi terekspos kepada serangan seperti Cross-Site Request Forgery (CSRF) dan data pencurian.
+### Bagaimana CORS Bekerja?
+CORS bekerja dengan menggunakan header HTTP yang memungkinkan server untuk memberi tahu browser tentang domain mana yang diizinkan untuk mengakses sumber daya tertentu. Header yang paling umum adalah:
+- `Access-Control-Allow-Origin`
+- `Access-Control-Allow-Methods`
+- `Access-Control-Allow-Headers`
 
-## Bagaimana CORS Bekerja?
-
-Ketika sebuah aplikasi web melakukan permintaan ke server di domain lain, browser mengirimkan permintaan OPTIONS terlebih dahulu. Ini disebut preflight request. Contohnya:
-
-```http
-OPTIONS /api/data HTTP/1.1
-Host: api.example.com
-Origin: http://example.com
-```  
-
-Server kemudian merespon dengan headers CORS:
-
-```http
-HTTP/1.1 200 OK
-Access-Control-Allow-Origin: http://example.com
-Access-Control-Allow-Methods: GET, POST, OPTIONS
-Access-Control-Allow-Headers: Content-Type
-```  
-
-Jika server menyetujui permintaan, maka browser akan melanjutkan dengan permintaan yang sebenarnya.
-
-## Mengonfigurasi CORS di Server
-
-Berikut adalah contoh bagaimana mengonfigurasi CORS di server Node.js menggunakan Express:
+### Contoh Kode CORS pada Server
+Berikut adalah contoh bagaimana Anda dapat mengonfigurasi server Anda untuk mendukung CORS. Misalnya, jika Anda menggunakan Node.js dengan Express:
 
 ```javascript
 const express = require('express');
@@ -60,81 +43,72 @@ const cors = require('cors');
 
 const app = express();
 
-// Mengaktifkan CORS untuk semua origin
+// Izinkan semua origin
 app.use(cors());
 
-app.get('/api/data', (req, res) => {
-  res.json({ message: 'Hello from CORS-enabled server!' });
+app.get('/data', (req, res) => {
+    res.json({ message: 'Hello from CORS-enabled server!' });
 });
 
 app.listen(3000, () => {
-  console.log('Server berjalan di port 3000');
+    console.log('Server berjalan di http://localhost:3000');
 });
 ```
 
-### Contoh Konfigurasi CORS dengan Pengaturan Khusus
-
-Terkadang, Anda hanya ingin mengizinkan domain tertentu. Berikut adalah contoh mengonfigurasi CORS untuk mengizinkan hanya `http://example.com`:
+### Cara Menggunakan CORS di Klien
+Ini adalah contoh cara untuk membuat permintaan dari klien menggunakan `fetch` yang mematuhi CORS:
 
 ```javascript
-app.use(cors({
-  origin: 'http://example.com',
-  methods: 'GET,POST',
-  allowedHeaders: 'Content-Type',
-}));
+fetch('http://localhost:3000/data')
+    .then(response => {
+        if (!response.ok) {
+  throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
 ```
 
-## Praktik Terbaik dalam Mengelola CORS
+### Pengaturan CORS Secara Spesifik
+Untuk mengizinkan akses hanya dari domain tertentu:
 
-1. **Batasi Origin**: Hanya izinkan origin yang perlu. Ini mengurangi risiko keamanan.
-2. **Gunakan Preflight Requests secara Cerdas**: Minimalkan penggunaan preflight request dengan memastikan permintaan Anda sederhana.
-3. **Kendalikan Metode dan Header**: Hanya izinkan metode dan header yang diperlukan untuk permintaan Anda.
-4. **Audit dan Monitor**: Selalu audit pengaturan CORS Anda dan monitor log untuk aktivitas abnormal.
+```javascript
+app.use(cors({ origin: 'http://example.com' }));
+```
+
+## Best Practices dalam Menggunakan CORS
+1. **Gunakan CORS dengan Bijak**: Hanya izinkan domain yang diperlukan.
+2. **Kelola Metode Permintaan**: Jangan izinkan semua metode jika tidak diperlukan.
+3. **Amankan Header**: Pastikan Anda hanya mengizinkan header yang diperlukan.
+4. **Uji Secara Menyeluruh**: Selalu lakukan pengujian pada pengaturan CORS Anda untuk memastikan tidak ada celah keamanan.
 
 ## Kesimpulan
+CORS adalah mekanisme penting dalam pengembangan aplikasi web modern. Dengan memahami cara kerjanya dan menerapkan praktik terbaik, Anda dapat meningkatkan keamanan dan kinerja aplikasi Anda.
 
-CORS adalah topik penting bagi pengembang web yang berinteraksi dengan API lintas domain. Dengan memahami cara kerja dan cara mengaturnya, Anda dapat meningkatkan keamanan aplikasi Anda. Jangan ragu untuk bereksperimen dengan pengaturan CORS dan terapkan praktik terbaik yang telah dibahas.
+### Ajakan untuk Bertindak
+Jelajahi implementasi CORS di aplikasi Anda dan pastikan bahwa Anda mematuhi semua langkah pencegahan keamanan yang diperlukan. Jangan ragu untuk berbagi pengalaman Anda dengan komunitas pengembang!
 
-Ayo lakukan pengujian dan konfigurasi CORS di aplikasi Anda hari ini!
-
----
-
+<!-- lang:en -->
 # CORS Explained for Developers
 
-CORS (Cross-Origin Resource Sharing) is a mechanism used by browsers to allow or restrict cross-domain requests in web applications. In this article, we will explain in detail how CORS works, the reasons for its implementation, and best practices developers can adopt.
-
 ## What is CORS?
-
-CORS is a protocol that enables servers to control access to resources from different domains. In other words, CORS allows a web application running on one domain (e.g., `example.com`) to access resources on another domain (e.g., `api.example.com`).
+CORS, or Cross-Origin Resource Sharing, is a mechanism used by browsers to allow or restrict requests coming from different origins on the web. Without CORS, browsers will prevent a web page from making requests to a domain different from the one serving that page by default. This can be an issue when developing web applications that require data from different servers.
 
 ## Why is CORS Important?
+CORS is important because:
+- **Security**: Prevents unauthorized access to data.
+- **Interoperability**: Facilitates the development of web applications that interact with other services.
+- **Flexibility**: Provides developers with more control over which sources are allowed.
 
-CORS is crucial due to security reasons. By restricting cross-domain requests, unauthorized parties cannot access sensitive data on servers. Without CORS, your web applications could be exposed to vulnerabilities such as Cross-Site Request Forgery (CSRF) and data theft.
+### How Does CORS Work?
+CORS works using HTTP headers that allow the server to tell the browser which domains are allowed to access specific resources. The most common headers include:
+- `Access-Control-Allow-Origin`
+- `Access-Control-Allow-Methods`
+- `Access-Control-Allow-Headers`
 
-## How CORS Works?
-
-When a web application makes a request to a server on another domain, the browser first sends an OPTIONS request. This is called a preflight request. For example:
-
-```http
-OPTIONS /api/data HTTP/1.1
-Host: api.example.com
-Origin: http://example.com
-```  
-
-The server then responds with CORS headers:
-
-```http
-HTTP/1.1 200 OK
-Access-Control-Allow-Origin: http://example.com
-Access-Control-Allow-Methods: GET, POST, OPTIONS
-Access-Control-Allow-Headers: Content-Type
-```  
-
-If the server allows the request, the browser proceeds with the actual request.
-
-## Configuring CORS on the Server
-
-Here is an example of how to configure CORS in a Node.js server using Express:
+### CORS Implementation on Server
+Here is an example of how you can configure your server to support CORS, using Node.js with Express:
 
 ```javascript
 const express = require('express');
@@ -142,42 +116,48 @@ const cors = require('cors');
 
 const app = express();
 
-// Enable CORS for all origins
+// Allow all origins
 app.use(cors());
 
-app.get('/api/data', (req, res) => {
-  res.json({ message: 'Hello from CORS-enabled server!' });
+app.get('/data', (req, res) => {
+    res.json({ message: 'Hello from CORS-enabled server!' });
 });
 
 app.listen(3000, () => {
-  console.log('Server running on port 3000');
+    console.log('Server running at http://localhost:3000');
 });
 ```
 
-### Example of CORS Configuration with Specific Settings
-
-Sometimes you may only want to allow specific domains. Here’s how to configure CORS to only allow `http://example.com`:
+### How to Use CORS in Client
+Here is an example of how to make a request from the client using `fetch`, complying with CORS:
 
 ```javascript
-app.use(cors({
-  origin: 'http://example.com',
-  methods: 'GET,POST',
-  allowedHeaders: 'Content-Type',
-}));
+fetch('http://localhost:3000/data')
+    .then(response => {
+        if (!response.ok) {
+  throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
 ```
 
-## Best Practices in Managing CORS
+### Specific CORS Settings
+To allow access only from specific domains:
 
-1. **Limit Origins**: Only allow necessary origins. This reduces security risks.
-2. **Use Preflight Requests Wisely**: Minimize the use of preflight requests by ensuring your requests are simple.
-3. **Control Methods and Headers**: Only allow methods and headers required for your requests.
-4. **Audit and Monitor**: Always audit your CORS settings and monitor logs for abnormal activity.
+```javascript
+app.use(cors({ origin: 'http://example.com' }));
+```
+
+## CORS Best Practices
+1. **Use CORS Wisely**: Only allow necessary domains.
+2. **Manage Request Methods**: Don’t allow all methods if unnecessary.
+3. **Secure Headers**: Ensure only necessary headers are permitted.
+4. **Test Thoroughly**: Always test your CORS settings to ensure there are no security gaps.
 
 ## Conclusion
+CORS is a crucial mechanism in modern web application development. By understanding how it works and implementing best practices, you can enhance your application’s security and performance.
 
-CORS is an important topic for web developers interacting with cross-domain APIs. By understanding how it works and how to set it up, you can enhance your application's security. Don’t hesitate to experiment with CORS settings and apply the best practices discussed.
-
-Start testing and configuring CORS in your applications today!
-
-<!-- lang:en -->
-null
+### Call to Action
+Explore the implementation of CORS in your applications and ensure you're adhering to all necessary security precautions. Feel free to share your experiences with the developer community!
