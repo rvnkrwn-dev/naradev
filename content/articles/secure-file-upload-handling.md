@@ -1,147 +1,136 @@
 ---
-title_id: "Penanganan Unggahan Berkas yang Aman"
+title_id: "Penanganan Pengunggahan File yang Aman"
 title_en: "Secure File Upload Handling"
 slug: "secure-file-upload-handling"
-date: "2026-03-11T18:44:17.000Z"
-description_id: "Ketahui cara menangani unggahan berkas dengan aman untuk melindungi aplikasi Anda dari ancaman keamanan."
-description_en: "Learn how to securely handle file uploads to protect your applications from security threats."
+date: "2026-04-07T07:09:30.000Z"
+description_id: "Pelajari cara menangani pengunggahan file dengan aman untuk melindungi aplikasi Anda dari ancaman keamanan."
+description_en: "Learn how to handle file uploads securely to protect your application from security threats."
 tags:
-  - aplikasi
   - authentication
-  - file
-  - keamanan
-  - php
+  - files
+  - security
+  - uploads
 status: "published"
 authorId: "usr_ai_security"
 cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/secure-file-upload-handling.png"
 ---
 
 <!-- lang:id -->
-# Penanganan Unggahan Berkas yang Aman
+# Penanganan Pengunggahan File yang Aman
 
-Unggahan berkas adalah fitur penting dalam banyak aplikasi web. Namun, jika tidak ditangani dengan benar, ini bisa menjadi celah keamanan yang serius. Dalam artikel ini, kita akan membahas cara menangani unggahan berkas dengan aman dan praktik terbaik untuk melindungi aplikasi Anda.
+## Pendahuluan
+Dalam dunia digital yang terus berkembang, pengunggahan file menjadi salah satu fitur penting dalam banyak aplikasi. Namun, kemampuan ini sering disalahartikan dan dapat menjadi celah keamanan jika tidak ditangani dengan benar. Artikel ini akan membahas cara-cara untuk menangani pengunggahan file dengan aman, meliputi langkah-langkah dan praktik terbaik yang perlu Anda terapkan.
 
-## Mengapa Keamanan Unggahan Berkas Penting?
+## Risiko Keamanan dalam Pengunggahan File
+Sebelum membahas cara aman untuk menangani pengunggahan file, penting untuk memahami risiko yang terlibat:
+- **Eksekusi kode berbahaya**: File yang diunggah dapat berisi skrip berbahaya yang dapat dieksekusi di server.
+- **Penyimpanan data ilegal**: Pengunggahan file ilegal, seperti konten hak cipta, dapat menimbulkan masalah hukum.
+- **Serangan DoS**: File yang sangat besar dapat menyebabkan server kehabisan sumber daya.
 
-Unggahan berkas yang tidak aman dapat menyebabkan beberapa masalah, termasuk:
-- **Eksekusi kode berbahaya**: Jika pengguna dapat mengunggah skrip atau berkas yang dapat dieksekusi, ini bisa dieksploitasi.
-- **Penyerangan Denial of Service (DoS)**: Berkas besar dapat menyebabkan aplikasi crash atau membuat server kehabisan ruang.
-- **Pelanggaran Data**: Informasi sensitif dapat terekspos jika berkas tidak dilindungi dengan baik.
+## Langkah-Langkah untuk Menangani Pengunggahan File dengan Aman
+### 1. Validasi Tipe File
+Selalu pastikan file yang diunggah sesuai dengan jenis yang diperbolehkan. Anda dapat membatasi file berdasarkan ekstensi dan MIME type.
 
-### Praktik Terbaik untuk Keamanan Unggahan Berkas
+```javascript
+const allowedTypes = ['image/jpeg', 'image/png'];
+function validateFileType(file) {
+    if (!allowedTypes.includes(file.mimetype)) {
+        throw new Error('Tipe file tidak diizinkan.');
+    }
+}
+```
 
-1. **Validasi Tipe Berkas**  
-   Pastikan untuk memvalidasi tipe berkas yang diunggah. Hanya izinkan jenis berkas yang diperlukan.
-   ```php
-   $allowed_types = ['image/jpeg', 'image/png'];
-   if (in_array($_FILES['uploaded_file']['type'], $allowed_types)) {
-       // Proses unggahan
-   } else {
-       echo 'Tipe berkas tidak diizinkan!';
-   }
-   ```
+### 2. Batasi Ukuran File
+Hindari pengunggahan file yang terlalu besar dengan membatasi ukuran maksimum file yang dapat diunggah.
 
-2. **Batas Ukuran Berkas**  
-   Tetapkan batas ukuran untuk berkas yang diunggah. Hal ini dapat membatasi risiko serangan DoS.
-   ```php
-   $max_size = 2 * 1024 * 1024; // 2 MB
-   if ($_FILES['uploaded_file']['size'] > $max_size) {
-       echo 'Berkas terlalu besar!';
-   }
-   ```
+```javascript
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+if (file.size > MAX_FILE_SIZE) {
+    throw new Error('Ukuran file terlalu besar.');
+}
+```
 
-3. **Mengganti Nama Berkas**  
-   Ubah nama berkas sebelum menyimpannya untuk menghindari konflik dengan berkas yang sudah ada dan mencegah eksekusi berkas berbahaya.
-   ```php
-   $new_file_name = uniqid() . '-' . basename($_FILES['uploaded_file']['name']);
-   move_uploaded_file($_FILES['uploaded_file']['tmp_name'], 'uploads/' . $new_file_name);
-   ```
+### 3. Gunakan Penyimpanan yang Aman
+Alih-alih menyimpan file di direktori publik, simpan di lokasi yang tidak dapat diakses secara langsung. Anda juga harus menggunakan nama file acak untuk mencegah akses tidak sah.
 
-4. **Simpan di Lokasi Aman**  
-   Pastikan untuk menyimpan berkas di lokasi yang tidak dapat diakses secara langsung dari web. Perlukan folder `uploads` dengan file `.htaccess` untuk menolak akses langsung.
+```javascript
+const path = require('path');
+const fs = require('fs');
 
-5. **Gunakan Antivirus**  
-   Lakukan pemindaian antivirus pada berkas yang diunggah sebelum menyimpannya.
-   ```php
-   // Integrasikan dengan API pemindaian virus
-   $result = scanFile($_FILES['uploaded_file']['tmp_name']);
-   if (!$result['is_safe']) {
-       echo 'Berkas berbahaya ditemukan!';
-   }
-   ```
+function storeFile(file) {
+    const randomName = `file_${Date.now()}${path.extname(file.originalname)}`;
+    const storagePath = path.join(__dirname, 'uploads', randomName);
+    fs.writeFileSync(storagePath, file.buffer);
+}
+```
 
-6. **Audit dan Logging**  
-   Simpan log aktivitas unggahan berkas termasuk informasi pengguna dan waktu. Ini membantu dalam audit di masa mendatang.
+### 4. Scan Malware
+Sebelum menyimpan file, penting untuk melakukan pemindaian antivirus untuk mencegah malware diunggah. Beberapa layanan dapat digunakan untuk tujuan ini.
+
+## Praktik Terbaik dalam Penanganan Pengunggahan File
+- **Lakukan audit secara berkala**: Tinjau dan evaluasi kode pengunggahan file Anda secara berkala.
+- **Kendalikan akses**: Hanya izinkan pengguna yang berwenang untuk mengunggah file.
+- **Gunakan HTTPS**: Pastikan semua pengunggahan file dilakukan di atas HTTPS untuk melindungi data selama transmisi.
 
 ## Kesimpulan
-
-Menangani unggahan berkas yang aman sangat penting untuk melindungi aplikasi web Anda dari ancaman keamanan. Dengan menerapkan praktik terbaik yang telah dibahas di atas, Anda dapat meminimalkan risiko dan menjaga data pengguna aman. Ayo terapkan langkah-langkah ini pada aplikasi Anda dan pastikan unggahan berkas dilakukan dengan aman!
-
-## Call-To-Action
-
-Apakah Anda ingin belajar lebih lanjut tentang keamanan aplikasi web? Bergabunglah dengan newsletter kami dan dapatkan tips terbaru di dunia cybersecurity!
+Keamanan dalam pengunggahan file adalah aspek penting dalam pengembangan aplikasi. Dengan mengikuti langkah-langkah dan praktik terbaik yang dibahas dalam artikel ini, Anda dapat membantu melindungi aplikasi Anda dari ancaman yang mungkin muncul. Jika Anda ingin memperdalam lebih lanjut atau memiliki pertanyaan, jangan ragu untuk menghubungi kami.
 
 <!-- lang:en -->
 # Secure File Upload Handling
 
-File uploads are an essential feature in many web applications. However, if not handled correctly, they can become a serious security vulnerability. In this article, we will discuss how to securely handle file uploads and best practices to protect your application.
+## Introduction
+In the ever-evolving digital landscape, file uploads have become an essential feature in many applications. However, this capability is often misconstrued and can create security vulnerabilities if not handled correctly. This article will delve into secure file upload handling techniques, including essential steps and best practices that you should apply.
 
-## Why is File Upload Security Important?
+## Security Risks of File Uploading
+Before discussing safe ways to handle file uploads, it's crucial to understand the risks involved:
+- **Malicious code execution**: Uploaded files may contain harmful scripts that could be executed on the server.
+- **Illegal data storage**: Uploading illegal files, such as copyrighted content, may lead to legal issues.
+- **Denial of Service attacks**: Oversized files can exhaust server resources.
 
-Unsecured file uploads can lead to several issues, including:
-- **Malicious code execution**: If users can upload scripts or executable files, these can be exploited.
-- **Denial of Service (DoS) attacks**: Large files can crash applications or exhaust server storage.
-- **Data breaches**: Sensitive information can be exposed if files are not properly protected.
+## Steps for Secure File Upload Handling
+### 1. Validate File Types
+Always ensure that uploaded files are of allowed types. You can restrict files based on extensions and MIME type.
 
-### Best Practices for File Upload Security
+```javascript
+const allowedTypes = ['image/jpeg', 'image/png'];
+function validateFileType(file) {
+    if (!allowedTypes.includes(file.mimetype)) {
+        throw new Error('File type not allowed.');
+    }
+}
+```
 
-1. **Validate File Types**  
-   Ensure that only specific file types are allowed for upload. 
-   ```php
-   $allowed_types = ['image/jpeg', 'image/png'];
-   if (in_array($_FILES['uploaded_file']['type'], $allowed_types)) {
-       // Proceed with upload
-   } else {
-       echo 'Invalid file type!';
-   }
-   ```
+### 2. Limit File Size
+Prevent oversized file uploads by enforcing a maximum file size limit.
 
-2. **Size Limitations**  
-   Set size limits for uploaded files. This helps mitigate the risk of DoS attacks.
-   ```php
-   $max_size = 2 * 1024 * 1024; // 2 MB
-   if ($_FILES['uploaded_file']['size'] > $max_size) {
-       echo 'File too large!';
-   }
-   ```
+```javascript
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+if (file.size > MAX_FILE_SIZE) {
+    throw new Error('File size too large.');
+}
+```
 
-3. **Rename Files**  
-   Change file names before saving them to avoid conflicts with existing files and prevent execution of malicious files.
-   ```php
-   $new_file_name = uniqid() . '-' . basename($_FILES['uploaded_file']['name']);
-   move_uploaded_file($_FILES['uploaded_file']['tmp_name'], 'uploads/' . $new_file_name);
-   ```
+### 3. Use Secure Storage
+Instead of storing files in a public directory, save them in a location that is not directly accessible. You should also use random file names to prevent unauthorized access.
 
-4. **Store in a Safe Location**  
-   Ensure that files are stored in a location that is not directly accessible from the web. Use an `uploads` folder with an `.htaccess` file to deny direct access.
+```javascript
+const path = require('path');
+const fs = require('fs');
 
-5. **Use Antivirus Scanning**  
-   Scan uploaded files for viruses before saving.
-   ```php
-   // Integrate with antivirus scanning API
-   $result = scanFile($_FILES['uploaded_file']['tmp_name']);
-   if (!$result['is_safe']) {
-       echo 'Malicious file detected!';
-   }
-   ```
+function storeFile(file) {
+    const randomName = `file_${Date.now()}${path.extname(file.originalname)}`;
+    const storagePath = path.join(__dirname, 'uploads', randomName);
+    fs.writeFileSync(storagePath, file.buffer);
+}
+```
 
-6. **Audit and Logging**  
-   Keep logs of upload activities, including user information and timestamps. This helps in future audits.
+### 4. Scan for Malware
+Before saving the file, running an antivirus scan is crucial to prevent uploaded malware. There are several services available for this purpose.
+
+## Best Practices in File Upload Handling
+- **Conduct regular audits**: Review and evaluate your file upload code periodically.
+- **Control access**: Only allow authorized users to upload files.
+- **Use HTTPS**: Ensure all file uploads are performed over HTTPS to protect data during transmission.
 
 ## Conclusion
-
-Handling file uploads securely is crucial to protect your web application from security threats. By implementing the best practices discussed above, you can minimize risks and keep user data safe. Let's apply these measures to your application and ensure file uploads are done securely!
-
-## Call-To-Action
-
-Would you like to learn more about web application security? Join our newsletter and get the latest tips in the cybersecurity field!
+Security in file uploading is a vital aspect of application development. By following the steps and best practices discussed in this article, you can help protect your application from potential threats. If you wish to delve deeper or have questions, feel free to reach out to us.
