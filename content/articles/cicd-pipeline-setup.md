@@ -1,10 +1,10 @@
 ---
-title_id: "Pengaturan Pipeline CI/CD"
+title_id: "Pengaturan Jalur CI/CD"
 title_en: "CI/CD Pipeline Setup"
 slug: "cicd-pipeline-setup"
-date: "2026-03-29T18:34:53.000Z"
-description_id: "Pelajari cara mengatur pipeline CI/CD untuk meningkatkan otomatisasi dan efisiensi pengembangan perangkat lunak."
-description_en: "Learn how to set up a CI/CD pipeline to enhance automation and efficiency in software development."
+date: "2026-04-10T01:32:13.000Z"
+description_id: "Pelajari cara mengatur jalur CI/CD untuk otomatisasi pengembangan dan pengiriman perangkat lunak."
+description_en: "Learn how to set up a CI/CD pipeline for automating software development and delivery."
 tags:
   - automation
   - cd
@@ -17,40 +17,33 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 ---
 
 <!-- lang:id -->
-# Pengaturan Pipeline CI/CD
+# Pengaturan Jalur CI/CD
 
-Pipeline CI/CD adalah rangkaian proses otomatis yang digunakan untuk mengembangkan, menguji, dan mengirimkan perangkat lunak dengan lebih cepat dan efisien. Pada artikel ini, kita akan membahas cara mengatur pipeline CI/CD, langkah demi langkah, serta memberikan contoh praktis yang dapat langsung diterapkan.
+Jalur CI/CD (Continuous Integration / Continuous Deployment) adalah bagian penting dari proses pengembangan perangkat lunak modern. Dengan mengimplementasikan CI/CD, tim pengembang dapat mengotomatisasi proses pengujian dan pengiriman, yang memungkinkan pembaruan yang lebih cepat dan lebih aman. Pada artikel ini, kita akan membahas langkah demi langkah cara mengatur jalur CI/CD menggunakan alat populer seperti GitHub Actions dan Jenkins.
 
-## Apa itu CI/CD?
+## Apa Itu CI/CD?
+CI/CD mengacu pada rangkaian praktik yang berfokus pada pengujian otomatis dan pengiriman perangkat lunak. 
 
-**CI** (Continuous Integration) dan **CD** (Continuous Delivery atau Continuous Deployment) adalah praktik yang digunakan dalam pengembangan perangkat lunak modern. CI melibatkan mengintegrasikan perubahan kode ke dalam repositori pusat secara teratur, sementara CD adalah proses otomatisasi untuk mengirimkan perubahan itu ke produksi.
+### Continuous Integration (CI)
+Dengan CI, developer secara rutin menggabungkan kode baru ke dalam repositori bersama. Setiap kali kode dikombinasikan, tes otomatis dijalankan untuk memastikan tidak ada bug yang muncul.
 
-### Mengapa CI/CD Penting?
+### Continuous Deployment (CD)
+CD melanjutkan proses dengan mengotomatiskan pengiriman perubahan ke lingkungan produksi setelah tes berhasil. Ini memungkinkan developer untuk merilis fitur baru ke pengguna dengan cepat.
 
-- **Meningkatkan Kecepatan Pengembangan**: Mengotomatiskan proses build dan pengujian artinya pengembang dapat lebih cepat melakukan pengiriman.
-- **Mengurangi Risiko Kesalahan**: Dengan menguji secara otomatis, kita dapat mendeteksi masalah lebih awal.
-- **Feedback yang Cepat**: Mempercepat waktu respons terhadap perubahan yang dilakukan.
+## Alat yang Diperlukan
+Beberapa alat yang umum digunakan untuk pengaturan CI/CD meliputi:
+- **GitHub Actions**: Integrasi langsung dengan GitHub untuk menjalankan otomatisasi.
+- **Jenkins**: Server otomatisasi open-source yang kuat dan umum digunakan.
 
-## Langkah-langkah Mengatur Pipeline CI/CD
+## Langkah-Langkah Pengaturan CI/CD
+### 1. Siapkan Repositori
+Buat repositori di GitHub untuk proyek Anda. Setelah itu, tambahkan kode sumber dan file konfigurasi yang diperlukan.
 
-Berikut adalah langkah-langkah dalam mengatur pipeline CI/CD:
-
-### 1. Memilih Alat CI/CD
-
-Ada berbagai alat yang bisa digunakan untuk CI/CD, seperti:
-- Jenkins
-- GitLab CI
-- CircleCI
-- Travis CI
-
-**Contoh Alat**: Dalam artikel ini, kita akan menggunakan GitHub Actions sebagai alat CI/CD. Berikut adalah contoh bagaimana kita bisa menggunakan GitHub Actions.
-
-### 2. Menyiapkan Repositori
-
-Pastikan Anda memiliki repositori di GitHub. Buat file `.github/workflows/ci.yml` di dalam repositori Anda. Berikut adalah contoh konfigurasi YAML untuk pipeline CI:
+### 2. Menggunakan GitHub Actions
+Untuk menggunakan GitHub Actions, buat file konfigurasi di dalam folder `.github/workflows`. Berikut adalah contoh file konfigurasi sederhana untuk aplikasi Node.js:
 
 ```yaml
-name: CI
+name: Node.js CI
 
 on:
   push:
@@ -60,96 +53,91 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-node-version: '14'
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        run: npm test
-```
-
-### 3. Menambah Pengujian
-
-Pastikan Anda memiliki pengujian terintegrasi dalam proyek Anda. Dalam contoh ini, kita menggunakan `npm test`. Pastikan untuk menulis pengujian yang baik sebelum menghapus kode yang tidak lagi digunakan.
-
-### 4. Mengonfigurasi Continuous Delivery
-
-Setelah Anda memiliki pipeline CI yang berfungsi, langkah selanjutnya adalah membuat proses Continuous Delivery. Anda perlu menambahkan satu lagi pekerjaan dalam file YAML:
-
-```yaml
-deploy:
-  runs-on: ubuntu-latest
-  steps:
-    - name: SSH to server
-      uses: appleboy/ssh-action@v0.1.5
+    - uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-cd /path/to/your/app
-git pull
-npm install
-npm start
+        node-version: '14'
+    - name: Install dependencies
+      run: npm install
+    - name: Run tests
+      run: npm test
 ```
 
-> **Note**: Anda harus menyimpan kredensial SSH Anda sebagai rahasia di GitHub.
+### 3. Menggunakan Jenkins
+Jika Anda memilih Jenkins, Anda perlu menginstal Jenkins dan mengonfigurasinya. Buat proyek baru dan, di bagian *Build Triggers*, pilih *Poll SCM* untuk menjalankan build setiap kali ada perubahan dalam repositori. Berikut adalah contoh Jenkinsfile:
 
-## Praktik Terbaik dalam Menerapkan CI/CD
+```groovy
+pipeline {
+    agent any
 
-1. **Automasi Sebisa Mungkin**: Pastikan semua langkah dari build hingga deploy otomatis.
-2. **Uji secara Teratur**: Jalankan pengujian unit dan integrasi di setiap perubahan.
-3. **Monitor Pipeline**: Gunakan alat monitoring untuk menjaga agar semua proses berjalan lancar.
-4. **Dapatkan Umpan Balik Cepat**: Setelah deployment, gunakan analitik untuk mendapatkan umpan balik dari pengguna.
+    stages {
+        stage('Build') {
+  steps {
+      sh 'npm install'
+  }
+        }
+        stage('Test') {
+  steps {
+      sh 'npm test'
+  }
+        }
+        stage('Deploy') {
+  steps {
+      sh 'echo Deploying to production...'
+      // Tambahkan langkah untuk menyebarkan aplikasi
+  }
+        }
+    }
+}
+```
+
+### 4. Pengujian Otomatis
+Pastikan Anda memiliki tes otomatis yang baik sebelum proses pengiriman. Ini menjaga kualitas kode.
+
+### 5. Monitor dan Iterasi
+Setelah CI/CD selesai, monitoring adalah kunci. Gunakan alat seperti Prometheus atau Grafana untuk memantau aplikasi Anda setelah pengiriman.
+
+## Tips dan Praktik Terbaik
+- **Lakukan pengujian menyeluruh**: Pastikan semua fungsi diuji.
+- **Gunakan lingkungan staging**: Uji di lingkungan serupa dengan produksi sebelum beralih.
+- **Bangun versi lihat dan rollback**: Hal ini membantu dalam situasi masalah.
 
 ## Kesimpulan
+Dengan mengatur CI/CD pipeline, Anda dapat meningkatkan efisiensi pengembangan perangkat lunak dan mengurangi risiko timbulnya bug. Sekaranglah saatnya Anda mulai mengimplementasikan CI/CD dalam proyek Anda!
 
-Mengatur pipeline CI/CD sangat penting untuk meningkatkan efisiensi dan kualitas pengembangan perangkat lunak. Dengan mengikuti langkah-langkah di atas, Anda akan dapat mengotomatisasi proses pengembangan dan meningkatkan kecepatan rilis aplikasi Anda.
+Jangan ragu untuk berbagi pengalaman dan pertanyaan Anda tentang pengaturan CI/CD di kolom komentar!
 
-Jangan ragu untuk bereksperimen dengan berbagai alat dan proses yang sesuai dengan kebutuhan Anda. Untuk lebih lanjut, bergabunglah dengan komunitas DevOps dan terus belajar tentang tren terbaru dalam pengembangan perangkat lunak.
-
-Jika ada pertanyaan, silakan tinggalkan komentar di bawah!
-
----
-
+<!-- lang:en -->
 # CI/CD Pipeline Setup
 
-A CI/CD pipeline is a series of automated processes used to develop, test, and deliver software more rapidly and efficiently. In this article, we will discuss how to set up a CI/CD pipeline step by step, providing practical examples that can be immediately utilized.
+A CI/CD (Continuous Integration/Continuous Deployment) pipeline is a crucial part of modern software development processes. By implementing CI/CD, development teams can automate testing and delivery processes, enabling faster and safer updates. This article will guide you step-by-step on how to set up a CI/CD pipeline using popular tools like GitHub Actions and Jenkins.
 
 ## What is CI/CD?
+CI/CD refers to a set of practices that focus on automated testing and software delivery.
 
-**CI** (Continuous Integration) and **CD** (Continuous Delivery or Continuous Deployment) are practices used in modern software development. CI involves merging code changes into a central repository regularly, while CD is the automation process for delivering those changes into production.
+### Continuous Integration (CI)
+With CI, developers regularly merge new code into a shared repository. Each time code is merged, automated tests run to ensure that no bugs are introduced.
 
-### Why is CI/CD Important?
+### Continuous Deployment (CD)
+CD takes the process further by automating the deployment of changes to the production environment once tests are successful. This allows developers to quickly release new features to users.
 
-- **Increased Development Speed**: Automating the build and test processes means developers can deliver software faster.
-- **Reduced Risk of Errors**: Automated testing helps identify issues earlier in the development lifecycle.
-- **Fast Feedback**: Accelerates response time to changes.
+## Tools Needed
+Some common tools for CI/CD setup include:
+- **GitHub Actions**: Direct integration with GitHub for running automation.
+- **Jenkins**: A powerful and widely used open-source automation server.
 
-## Steps to Set Up a CI/CD Pipeline
+## Steps to Set Up CI/CD
+### 1. Prepare the Repository
+Create a repository on GitHub for your project. After that, add the source code and necessary configuration files.
 
-The following steps will guide you through setting up a CI/CD pipeline:
-
-### 1. Choose a CI/CD Tool
-
-There are various tools available for CI/CD, such as:
-- Jenkins
-- GitLab CI
-- CircleCI
-- Travis CI
-
-**Example Tool**: In this article, we will use GitHub Actions as our CI/CD tool. Here's an example of how we can use GitHub Actions.
-
-### 2. Set Up Your Repository
-
-Make sure you have a repository on GitHub. Create a file `.github/workflows/ci.yml` in your repository. Here’s an example YAML configuration for a CI pipeline:
+### 2. Using GitHub Actions
+To use GitHub Actions, create a configuration file in the `.github/workflows` folder. Here's a simple configuration file example for a Node.js application:
 
 ```yaml
-name: CI
+name: Node.js CI
 
 on:
   push:
@@ -159,59 +147,59 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-node-version: '14'
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        run: npm test
-```
-
-### 3. Add Testing
-
-Make sure you have integrated tests in your project. In this example, we are using `npm test`. Ensure your tests are well-written before removing any code that is no longer used.
-
-### 4. Configure Continuous Delivery
-
-Once you have a working CI pipeline, the next step is to create a Continuous Delivery process. You need to add another job in your YAML file:
-
-```yaml
-deploy:
-  runs-on: ubuntu-latest
-  steps:
-    - name: SSH to server
-      uses: appleboy/ssh-action@v0.1.5
+    - uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-cd /path/to/your/app
-git pull
-npm install
-npm start
+        node-version: '14'
+    - name: Install dependencies
+      run: npm install
+    - name: Run tests
+      run: npm test
 ```
 
-> **Note**: You should store your SSH credentials as secrets in GitHub.
+### 3. Using Jenkins
+If you choose Jenkins, you need to install Jenkins and configure it. Create a new project and in the *Build Triggers* section, select *Poll SCM* to run builds whenever changes are made in the repository. Here's an example of a Jenkinsfile:
 
-## Best Practices for Implementing CI/CD
+```groovy
+pipeline {
+    agent any
 
-1. **Automate as Much as Possible**: Ensure all steps from build to deployment are automated.
-2. **Test Regularly**: Run unit and integration tests on every change.
-3. **Monitor the Pipeline**: Use monitoring tools to ensure all processes are running smoothly.
-4. **Get Quick Feedback**: After deployment, use analytics to gain feedback from users.
+    stages {
+        stage('Build') {
+  steps {
+      sh 'npm install'
+  }
+        }
+        stage('Test') {
+  steps {
+      sh 'npm test'
+  }
+        }
+        stage('Deploy') {
+  steps {
+      sh 'echo Deploying to production...'
+      // Add commands to deploy your application
+  }
+        }
+    }
+}
+```
+
+### 4. Automated Testing
+Ensure you have a solid set of automated tests in place before the deployment process. This helps maintain code quality.
+
+### 5. Monitor and Iterate
+Once your CI/CD is set up, monitoring is key. Utilize tools like Prometheus or Grafana to monitor your application post-deployment.
+
+## Tips and Best Practices
+- **Thorough Testing**: Ensure all features are tested before deployment.
+- **Use Staging Environments**: Test in a staging environment similar to production before going live.
+- **Build Versions and Rollback**: Helps in case of any issues.
 
 ## Conclusion
+By setting up a CI/CD pipeline, you can enhance software development efficiency and reduce the risk of bugs. Now is the time for you to start implementing CI/CD in your projects!
 
-Setting up a CI/CD pipeline is crucial for improving efficiency and quality in software development. By following the steps above, you will be able to automate your development processes and increase the speed of your application releases.
-
-Feel free to experiment with different tools and processes that fit your needs. For further learning, join DevOps communities and stay updated on the latest trends in software development.
-
-If you have any questions, please leave a comment below!
-
-<!-- lang:en -->
-null
+Feel free to share your experiences and questions about setting up CI/CD in the comments!
