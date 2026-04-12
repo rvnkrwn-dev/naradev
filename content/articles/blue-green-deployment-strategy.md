@@ -1,10 +1,10 @@
 ---
-title_id: "Strategi Deploy Blue-Green"
+title_id: "Strategi Penyebaran Blue-Green"
 title_en: "Blue-Green Deployment Strategy"
 slug: "blue-green-deployment-strategy"
-date: "2026-04-11T12:38:28.000Z"
-description_id: "Pelajari strategi deploy blue-green untuk mengurangi risiko dan downtime saat merilis aplikasi baru."
-description_en: "Learn about the blue-green deployment strategy to reduce risk and downtime when releasing new applications."
+date: "2026-04-12T18:37:27.000Z"
+description_id: "Pelajari tentang strategi penyebaran blue-green untuk mengurangi downtime dan risiko saat merilis perubahan di aplikasi."
+description_en: "Learn about the blue-green deployment strategy to reduce downtime and risks when releasing changes in applications."
 tags:
   - cloud
   - deployment
@@ -16,185 +16,133 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 ---
 
 <!-- lang:id -->
-# Strategi Deploy Blue-Green
+# Strategi Penyebaran Blue-Green
 
-Strategi deploy blue-green adalah pendekatan yang efektif untuk mengurangi risiko dan downtime saat merilis pembaruan aplikasi. Dalam artikel ini, kita akan membahas apa itu strategi ini, cara kerjanya, dan langkah-langkah implementasinya.
+Strategi penyebaran blue-green adalah teknik dalam DevOps yang digunakan untuk merilis aplikasi dengan mengurangi risiko dan downtime. Dengan strategi ini, dua lingkungan identik (blue dan green) digunakan untuk menjalankan aplikasi yang berbeda, yang memungkinkan transisi yang mulus antara versi lama dan versi baru tanpa mengganggu pengguna.
 
-## Apa Itu Strategi Deploy Blue-Green?
+## Apa Itu Penyebaran Blue-Green?
 
-Strategi deploy blue-green adalah teknik pengelolaan rilis dalam DevOps yang membagi dua lingkungan produksi. Satu lingkungan (disebut 'green') menjalankan versi aplikasi yang saat ini aktif, sementara lingkungan lainnya (disebut 'blue') adalah versi baru dari aplikasi yang akan diluncurkan. Proses ini memungkinkan pengembang untuk melakukan pengujian dan validasi sebelum sepenuhnya mengalihkan traffic ke versi baru.
+Penyebaran blue-green melibatkan dua versi aplikasi:
+- **Lingkungan Blue**: Ini adalah versi yang saat ini aktif dan digunakan oleh pengguna.
+- **Lingkungan Green**: Ini adalah versi baru yang siap diluncurkan. 
 
-### Manfaat Strategi Blue-Green
+Setelah lingkungan green siap dan telah lulus semua pengujian, lalu lalu lintas dapat dialihkan dari lingkungan blue ke lingkungan green.
 
-1. **Mengurangi Risiko**: Anda dapat menguji versi baru tanpa mengganggu versi yang sedang berjalan.
-2. **Rollback Cepat**: Jika ada masalah, rollback ke versi sebelumnya dapat dilakukan dengan cepat hanya dengan mengalihkan traffic.
-3. **Pengujian Real-time**: Anda dapat melakukan pengujian A/B untuk memahami performa versi baru.
+## Manfaat Strategi Blue-Green
 
-## Cara Kerja Strategi Blue-Green
+1. **Mengurangi Downtime**: Dengan memisahkan lingkungan, waktu yang diperlukan untuk transisi sangat sedikit.
+2. **Rollback Mudah**: Jika ada masalah dengan versi baru, Anda dapat dengan cepat beralih kembali ke versi sebelumnya tanpa rasa sakit.
+3. **Pengujian yang Lebih Baik**: Anda dapat menguji versi baru secara langsung di lingkungan green sebelum mengalihkan lalu lintas.
 
-Berikut adalah gambaran umum cara kerja strategi deploy blue-green:
-1. Deploy versi baru ke lingkungan blue.
-2. Uji aplikasi dalam lingkungan blue.
-3. Jika pengujian berhasil, alihkan traffic dari lingkungan green ke blue.
-4. Lingkungan green kini menjadi cadangan, dan Anda dapat dengan mudah kembali jika ada masalah.
+## Cara Menerapkan Penyebaran Blue-Green
 
-Contoh diagram alur:
+Untuk menerapkan strategi ini, Anda bisa mengikuti langkah-langkah berikut:
 
+### 1. Mempersiapkan Lingkungan
+
+Buat dua lingkungan terpisah pada penyedia cloud Anda, misalnya AWS, GCP, atau Azure, untuk aplikasi Anda. Pastikan bahwa kedua lingkungan ini identik dalam hal konfigurasi dan sumber daya.
+
+### 2. Membangun Versi Baru Aplikasi
+
+Kembangkan dan uji versi baru aplikasi di lingkungan green.
+
+```javascript
+// Contoh kode untuk menguji versi baru aplikasi
+function testNewVersion() {
+  console.log('Versi baru berfungsi dengan baik!');
+}
+
+testNewVersion();
 ```
-    +---------+   Switch Traffic   +---------+
-    |  Green  |------------------> |  Blue   |
-    | Version  |                    | Version  |
-    +---------+   Testing          +---------+
-```
 
-## Langkah-langkah Implementasi
+### 3. Mengalihkan Lalu Lintas
 
-Berikut adalah langkah-langkah untuk menerapkan strategi blue-green deployment:
-
-### 1. Siapkan Dua Lingkungan
-
-Siapkan dua lingkungan produksi yang identik - satu sebagai blue dan satu sebagai green.
-
-### 2. Buat dan Deploy Versi Baru
-
-Deploy versi baru aplikasi Anda ke lingkungan blue.
+Setelah versi baru siap dan Anda puas dengan pengujiannya, alihkan lalu lintas dari lingkungan blue ke lingkungan green dengan menggunakan perangkat load balancer atau mengubah pengaturan DNS.
 
 ```bash
-# Contoh command untuk deploy
-kubectl apply -f deployment-blue.yaml
+# Mengalihkan lalu lintas dengan menggunakan CLI
+aws elbv2 modify-listener --listener-arn arn:aws:elasticloadbalancing:region:account-id:listener/app/my-load-balancer/50dc6c495c0c9188
+--default-actions Type=forward,TargetGroupArn=<green-target-group-arn>
 ```
 
-### 3. Uji Aplikasi
+### 4. Memastikan Transisi Sukses
 
-Lakukan pengujian menyeluruh di lingkungan blue sebelum mengalihkan traffic.
+Monitor aplikasi di lingkungan green setelah lalu lintas dialihkan. Pastikan bahwa tidak ada masalah yang timbul dan aplikasi berjalan dengan baik.
 
-### 4. Alihkan Traffic
+## Praktik Terbaik untuk Penyebaran Blue-Green
 
-Setelah pengujian sukses, alihkan traffic ke lingkungan blue. Jika Anda menggunakan Kubernetes, ini dapat dilakukan dengan pembaruan service:
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-app
-spec:
-  selector:
-    app: my-app-blue # Ganti dengan app: my-app-blue
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
-```
-
-### 5. Monitor dan Rollback
-
-Setelah pengalihan, pantau performa aplikasi secara aktif. Jika ditemukan masalah, Anda dapat dengan cepat rollback ke lingkungan green.
-
-```bash
-# Contoh command untuk rollback
-kubectl apply -f deployment-green.yaml
-```
-
-## Praktik Terbaik
-
-1. **Automasi**: Gunakan alat seperti Kubernetes untuk mengautomasi deployment dan pengalihan traffic.
-2. **Monitoring**: Implementasikan sistem monitoring untuk mendeteksi isu pada aplikasi baru secepat mungkin.
-3. **Dokumentasi**: Pastikan semua langkah proses terdokumentasi dengan baik agar mudah diulang dan dipahami oleh tim.
+- **Automasi Pengujian**: Gunakan alat otomatisasi untuk menjalankan pengujian regresi setiap kali Anda melakukan rilis baru.
+- **Monitoring**: Pastikan Anda memantau kinerja dan kesehatan aplikasi setelah transisi.
+- **Backup**: Selalu buat cadangan data Anda sebelum melakukan rilis baru.
 
 ## Kesimpulan
 
-Strategi deploy blue-green adalah metode yang sangat berguna untuk mengurangi risiko dan memastikan bahwa rilis aplikasi baru berlangsung dengan mulus. Dengan mengikuti langkah-langkah yang tepat dan memanfaatkan alat yang ada, tim Anda dapat meningkatkan efisiensi dan pengelolaan release.
+Strategi penyebaran blue-green adalah metode yang efektif untuk merilis aplikasi dengan risiko minimal dan downtime yang rendah. Dengan menerapkan praktik terbaik, Anda dapat memastikan pengalaman pengguna yang positif tanpa gangguan. Jadi, jika Anda belum menerapkan strategi ini, sekarang adalah waktu yang tepat untuk mulai mengimplementasikannya.
 
-Ayo coba implementasikan strategi ini di proyek Anda, dan lihat perbedaannya. Jika Anda memiliki pertanyaan atau butuh bantuan lebih lanjut, jangan ragu untuk menghubungi kami!
+Untuk informasi lebih lanjut tentang DevOps dan penyebaran aplikasi, kunjungi blog kami atau subscribe untuk mendapatkan pembaruan!
 
 <!-- lang:en -->
 # Blue-Green Deployment Strategy
 
-The blue-green deployment strategy is an effective approach to minimize risk and downtime when releasing application updates. In this article, we will discuss what this strategy entails, how it works, and the steps to implement it.
+The blue-green deployment strategy is a technique in DevOps used to release applications with reduced risk and downtime. This strategy uses two identical environments (blue and green) to run different application versions, allowing a seamless transition between the old and new versions without disrupting users.
 
 ## What is Blue-Green Deployment?
 
-The blue-green deployment strategy is a release management technique in DevOps that divides the production environment into two identical environments. One environment, referred to as 'green', runs the currently active version of the application, while the other environment, called 'blue', hosts the new version of the application intended for release. This process allows developers to perform testing and validation before fully directing traffic to the new version.
+Blue-green deployment involves two versions of an application:
+- **Blue Environment**: This is the currently active version that users are interacting with.
+- **Green Environment**: This is the new version ready to be released.
 
-### Benefits of Blue-Green Deployment
+Once the green environment is ready and has passed all tests, traffic can be shifted from the blue environment to the green one.
 
-1. **Reducing Risks**: You can test the new version without impacting the currently running version.
-2. **Quick Rollback**: If any issues arise, rolling back to the previous version can be done quickly by redirecting traffic.
-3. **Real-time Testing**: You can conduct A/B testing to understand the performance of the new version.
+## Benefits of Blue-Green Strategy
 
-## How Blue-Green Deployment Works
+1. **Reduced Downtime**: By separating environments, the time required for transitioning is minimal.
+2. **Easy Rollback**: If issues arise with the new version, you can quickly switch back to the previous version without hassle.
+3. **Better Testing**: You can directly test the new version in the green environment before switching traffic.
 
-Here’s a high-level overview of how the blue-green deployment strategy works:
-1. Deploy the new version to the blue environment.
-2. Test the application in the blue environment.
-3. If testing is successful, switch traffic from the green environment to the blue one.
-4. The green environment now remains as a backup, and you can quickly revert if issues occur.
+## How to Implement Blue-Green Deployment
 
-Example flow diagram:
+To implement this strategy, you can follow these steps:
 
+### 1. Prepare the Environments
+
+Create two separate environments on your cloud provider, such as AWS, GCP, or Azure, for your application. Ensure both environments are identical in configuration and resources.
+
+### 2. Build the New Version of the Application
+
+Develop and test the new version of your application in the green environment.
+
+```javascript
+// Example code to test the new version of the application
+function testNewVersion() {
+  console.log('The new version works fine!');
+}
+
+testNewVersion();
 ```
-    +---------+   Switch Traffic   +---------+
-    |  Green  |------------------> |  Blue   |
-    | Version  |                    | Version  |
-    +---------+   Testing          +---------+
-```
 
-## Implementation Steps
+### 3. Shift Traffic
 
-Below are the steps to implement the blue-green deployment strategy:
-
-### 1. Prepare Two Environments
-
-Set up two identical production environments—one for blue and one for green.
-
-### 2. Create and Deploy New Version
-
-Deploy your new application version to the blue environment.
+After the new version is ready and you are satisfied with the testing, shift traffic from the blue environment to the green environment using a load balancer or changing DNS settings.
 
 ```bash
-# Example command for deployment
-kubectl apply -f deployment-blue.yaml
+# Shift traffic using CLI
+aws elbv2 modify-listener --listener-arn arn:aws:elasticloadbalancing:region:account-id:listener/app/my-load-balancer/50dc6c495c0c9188
+--default-actions Type=forward,TargetGroupArn=<green-target-group-arn>
 ```
 
-### 3. Test the Application
+### 4. Ensure Successful Transition
 
-Conduct thorough testing in the blue environment before switching traffic.
+Monitor the application in the green environment after traffic is switched. Ensure no issues arise and that the application is running smoothly.
 
-### 4. Switch Traffic
+## Best Practices for Blue-Green Deployment
 
-After successful testing, redirect traffic to the blue environment. If you are using Kubernetes, this can be done via service updates:
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-app
-spec:
-  selector:
-    app: my-app-blue # Change to app: my-app-blue
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
-```
-
-### 5. Monitor and Rollback
-
-After the switch, actively monitor application performance. If issues are found, quickly roll back to the green environment.
-
-```bash
-# Example command for rollback
-kubectl apply -f deployment-green.yaml
-```
-
-## Best Practices
-
-1. **Automation**: Use tools like Kubernetes to automate deployments and traffic switching.
-2. **Monitoring**: Implement a monitoring system to detect issues in the new application as soon as possible.
-3. **Documentation**: Ensure all steps of the process are well documented for easy replication and understanding by the team.
+- **Automated Testing**: Utilize automation tools to run regression tests whenever you make a new release.
+- **Monitoring**: Ensure that you monitor the application's performance and health after the transition.
+- **Backup**: Always back up your data before making a new release.
 
 ## Conclusion
 
-The blue-green deployment strategy is a highly useful method for minimizing risk and ensuring that new application releases proceed smoothly. By following the correct steps and leveraging available tools, your team can improve efficiency and release management significantly.
+The blue-green deployment strategy is an effective method for releasing applications with minimal risk and low downtime. By implementing best practices, you can ensure a positive user experience without disruptions. So, if you haven't implemented this strategy yet, now is the perfect time to start doing so.
 
-Try implementing this strategy in your project, and see the difference it makes. If you have any questions or need further assistance, feel free to reach out!
+For more information on DevOps and application deployment, visit our blog or subscribe for updates!
