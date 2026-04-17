@@ -2,15 +2,15 @@
 title_id: "Autentikasi Biometrik pada Mobile"
 title_en: "Biometric Authentication on Mobile"
 slug: "biometric-authentication-on-mobile"
-date: "2026-04-11T18:35:00.000Z"
-description_id: "Pelajari tentang autentikasi biometrik pada aplikasi mobile dan bagaimana cara mengimplementasikannya."
-description_en: "Learn about biometric authentication in mobile apps and how to implement it effectively."
+date: "2026-04-17T07:24:28.000Z"
+description_id: "Pelajari tentang autentikasi biometrik pada aplikasi mobile dan cara mengimplementasikannya."
+description_en: "Learn about biometric authentication in mobile apps and how to implement it."
 tags:
-  - aplikasi
-  - autentikasi
-  - biometrik
+  - authentication
+  - biometric
   - flutter
-  - keamanan
+  - mobile
+  - react-native
 status: "published"
 authorId: "usr_ai_mobile"
 cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/biometric-authentication-on-mobile.png"
@@ -19,171 +19,219 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 <!-- lang:id -->
 # Autentikasi Biometrik pada Mobile
 
-Autentikasi biometrik telah menjadi salah satu metode yang paling aman dan populer untuk melindungi aplikasi mobile. Dengan meningkatnya kekhawatiran terhadap keamanan data pribadi, sistem autentikasi biometrik menawarkan cara yang efisien dan user-friendly untuk memastikan identitas pengguna. Dalam artikel ini, kita akan membahas konsep dasar autentikasi biometrik, jenis-jenisnya, dan bagaimana cara mengimplementasikannya pada aplikasi mobile.
+Autentikasi biometrik semakin populer sebagai metode keamanan dalam aplikasi mobile. Dengan menggunakan fitur-fitur seperti pemindaian sidik jari atau pengenalan wajah, pengguna dapat dengan mudah dan aman mengakses aplikasi mereka. Dalam artikel ini, kita akan membahas apa itu autentikasi biometrik, keuntungannya, serta bagaimana cara mengimplementasikannya dalam aplikasi mobile.
 
 ## Apa itu Autentikasi Biometrik?
 
-Autentikasi biometrik adalah metode yang menggunakan karakteristik fisik atau perilaku seseorang untuk memverifikasi identitas mereka. Dengan menggunakan data biometrik, aplikasi mobile dapat memastikan bahwa hanya pengguna yang sah yang dapat mengakses informasi sensitif.
+Autentikasi biometrik adalah metode verifikasi identitas yang menggunakan karakteristik fisik atau perilaku individu. Ini termasuk: 
+- **Sidik Jari**
+- **Pengenalan Wajah**
+- **Pengenalan Suara**
 
-## Jenis-jenis Autentikasi Biometrik
+Metode-metode ini menawarkan tingkat keamanan yang lebih tinggi dibandingkan dengan password tradisional, yang mudah dilupakan atau diretas.
 
-### 1. Pengenalan Wajah
+## Keuntungan Autentikasi Biometrik
 
-Pengenalan wajah menggunakan algoritma untuk mengidentifikasi dan mengonfirmasi identitas seseorang berdasarkan fitur wajah.
+### 1. Keamanan Tinggi
+Autentikasi biometrik sulit untuk dipalsukan, sehingga lebih aman dibandingkan dengan password.
 
-### 2. Pemindai Sidik Jari
+### 2. Pengalaman Pengguna yang Lebih Baik
+Pengguna tidak perlu mengingat password yang rumit, sehingga proses login menjadi lebih cepat.
 
-Pemindai sidik jari adalah teknologi yang memanfaatkan pola unik dari sidik jari seseorang untuk autentikasi.
+### 3. Mencegah Akses Tidak Sah
+Dengan penggunaan biometrik, peluang untuk akses tidak sah dapat diminimalisir.
 
-### 3. Pengenalan Suara
+## Cara Implementasi Autentikasi Biometrik
 
-Penggunaan suara untuk autentikasi menjadi semakin populer, di mana sistem dapat mengenali suara dan pola bicara pengguna.
+Di bawah ini adalah langkah-langkah untuk mengimplementasikan autentikasi biometrik pada aplikasi mobile:
 
-## Mengapa Menggunakan Autentikasi Biometrik?
+### 1. Menggunakan BiometricPrompt pada Android
 
-1. **Keamanan Tinggi**: Data biometrik jauh lebih sulit untuk dipalsukan dibandingkan dengan kata sandi.
-2. **Kemudahan Penggunaan**: Pengguna tidak perlu mengingat kata sandi yang kompleks.
-3. **Kecepatan**: Proses autentikasi sering kali lebih cepat dibandingkan metode lain.
+Berikut adalah contoh menggunakan `BiometricPrompt` di Android:
 
-## Cara Mengimplementasikan Autentikasi Biometrik
+```java
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 
-Di bagian ini, kita akan melihat bagaimana cara menggunakan autentikasi biometrik pada aplikasi mobile menggunakan framework Android.
+// Inisialisasi executor 
+Executor executor = ContextCompat.getMainExecutor(context);
+BiometricPrompt biometricPrompt = new BiometricPrompt(activity, executor,
+        new BiometricPrompt.AuthenticationCallback() {
+  @Override
+  public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+      super.onAuthenticationError(errorCode, errString);
+      // Menangani error
+  }
 
-### Contoh Implementasi Menggunakan Android Biometric API
+  @Override
+  public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+      super.onAuthenticationSucceeded(result);
+      // Autentikasi sukses
+  }
 
-Kita akan menggunakan BiometricPrompt API yang disediakan oleh Android untuk melakukan autentikasi pengguna.
+  @Override
+  public void onAuthenticationFailed() {
+      super.onAuthenticationFailed();
+      // Autentikasi gagal
+  }
+        });
 
-```kotlin
-// Tambahkan izin dalam AndroidManifest.xml
-<uses-permission android:name="android.permission.USE_BIOMETRIC" />
+// Setup prompt info
+BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+        .setTitle("Masuk dengan Biometrik")
+        .setSubtitle("Gunakan sidik jari atau wajah Anda")
+        .setNegativeButtonText("Batal")
+        .build();
 
-// Kode untuk menginisialisasi biometric prompt
-val executor = ContextCompat.getMainExecutor(this)
-val biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
-    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-        super.onAuthenticationError(errorCode, errString)
-        // Tampilkan kesalahan
-    }
-
-    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-        super.onAuthenticationSucceeded(result)
-        // Autentikasi berhasil
-    }
-
-    override fun onAuthenticationFailed() {
-        super.onAuthenticationFailed()
-        // Autentikasi gagal
-    }
-})
-
-val promptInfo = BiometricPrompt.PromptInfo.Builder()
-    .setTitle("Biometric login")
-    .setSubtitle("Log in using your biometric credential")
-    .setNegativeButtonText("Use account password")
-    .build()
-
-// Menampilkan biometric prompt
-biometricPrompt.authenticate(promptInfo)
+// Tampilkan prompt
+biometricPrompt.authenticate(promptInfo);
 ```
 
-Pastikan Anda telah menyiapkan perangkat dan pengaturan yang benar untuk dapat menggunakan biometrik.
+### 2. Menggunakan Local Authentication pada iOS
 
-## Tantangan dalam Autentikasi Biometrik
+Contoh implementasi autentikasi biometrik di iOS menggunakan Local Authentication:
 
-Meski menawarkan banyak keuntungan, ada juga tantangan yang harus diperhatikan:
+```swift
+import LocalAuthentication
 
-1. **Privasi**: Pengguna mungkin merasa khawatir tentang data biometrik yang dapat disalahgunakan.
-2. **Keterbatasan Hardware**: Tidak semua perangkat mobile memiliki kemampuan biometrik yang sama.
-3. **Keandalan**: Dalam beberapa situasi, autentikasi biometrik mungkin gagal (misalnya, sidik jari basah).
+let context = LAContext()
+var error: NSError?
+
+if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+    let reason = "Masukkan sidik jari atau wajah Anda untuk mengakses aplikasi."
+
+    context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
+        DispatchQueue.main.async {
+  if success {
+      // Autentikasi sukses
+  } else {
+      // Autentikasi gagal
+  }
+        }
+    }
+} else {
+    // Biometrik tidak tersedia
+}
+```
+
+## Best Practices
+
+1. **Beri Informasi yang Jelas kepada Pengguna**: Pastikan pengguna memahami mengapa Anda menggunakan biometrik dan cara kerjanya.
+2. **Fallback Method**: Selalu sediakan alternatif seperti password untuk pengguna yang tidak dapat menggunakan biometrik.
+3. **Keamanan Data**: Pastikan data biometrik disimpan dengan aman dan tidak langsung disimpan di server.
 
 ## Kesimpulan
 
-Autentikasi biometrik adalah solusi keamanan yang menjanjikan untuk aplikasi mobile, menawarkan kenyamanan, kecepatan, dan keamanan tinggi. Dengan implementasi yang tepat, Anda dapat memberikan pengalaman pengguna yang lebih baik yang memenuhi standar keamanan modern. Mulailah integrasi autentikasi biometrik ke dalam aplikasi Anda untuk mendapatkan keuntungan dari teknologi ini.
+Autentikasi biometrik menawarkan cara yang efektif dan aman untuk menjaga data pengguna dalam aplikasi mobile. Dengan memahami cara menerapkan dan memanfaatkan fitur ini, Anda dapat meningkatkan keamanan dan pengalaman pengguna aplikasi Anda. Jika Anda belum menerapkan autentikasi biometrik dalam aplikasi Anda, sekaranglah saatnya untuk melakukannya!
 
-Untuk informasi lebih lanjut tentang pengembangan aplikasi mobile, kunjungi blog kami dan ikuti perkembangan terbaru di dunia teknologi.
+Untuk mendapatkan lebih banyak artikel menarik dan tutorial dalam pengembangan aplikasi mobile, jangan lupa untuk mengikuti blog kami!
 
 <!-- lang:en -->
 # Biometric Authentication on Mobile
 
-Biometric authentication has become one of the most secure and popular methods for protecting mobile applications. With rising concerns about personal data security, biometric authentication systems offer an efficient and user-friendly way to ensure user identity. In this article, we will discuss the basic concepts of biometric authentication, its types, and how to implement it in mobile applications.
+Biometric authentication is gaining popularity as a security method in mobile applications. By using features like fingerprint scanning or facial recognition, users can easily and securely access their apps. In this article, we will discuss what biometric authentication is, its advantages, and how to implement it in mobile applications.
 
 ## What is Biometric Authentication?
 
-Biometric authentication is a method that uses physical or behavioral characteristics of an individual to verify their identity. By utilizing biometric data, mobile applications can ensure that only authorized users can access sensitive information.
+Biometric authentication is a verification method that uses physical or behavioral characteristics of individuals. This includes: 
+- **Fingerprint**
+- **Facial Recognition**
+- **Voice Recognition**
 
-## Types of Biometric Authentication
+These methods provide a higher level of security compared to traditional passwords, which can be easily forgotten or hacked.
 
-### 1. Facial Recognition
+## Advantages of Biometric Authentication
 
-Facial recognition uses algorithms to identify and confirm an individual's identity based on unique facial features.
+### 1. High Security
+Biometric authentication is difficult to forge, making it more secure than passwords.
 
-### 2. Fingerprint Scanning
+### 2. Better User Experience
+Users do not need to remember complicated passwords, resulting in a quicker login process.
 
-Fingerprint scanning is a technology that leverages the unique patterns of a person's fingerprint for authentication.
-
-### 3. Voice Recognition
-
-Voice authentication is becoming increasingly popular, where systems can recognize a user’s voice and speech patterns.
-
-## Why Use Biometric Authentication?
-
-1. **High Security**: Biometric data is much harder to forge than passwords.
-2. **Ease of Use**: Users do not need to remember complex passwords.
-3. **Speed**: The authentication process is often faster compared to other methods.
+### 3. Prevents Unauthorized Access
+By using biometrics, the chances of unauthorized access can be minimized.
 
 ## How to Implement Biometric Authentication
 
-In this section, we will look at how to use biometric authentication in mobile applications utilizing Android's framework.
+Below are the steps to implement biometric authentication in mobile applications:
 
-### Example Implementation Using Android Biometric API
+### 1. Using BiometricPrompt on Android
 
-We will utilize the BiometricPrompt API provided by Android to perform user authentication.
+Here’s an example using `BiometricPrompt` in Android:
 
-```kotlin
-// Add permission in AndroidManifest.xml
-<uses-permission android:name="android.permission.USE_BIOMETRIC" />
+```java
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 
-// Code to initialize biometric prompt
-val executor = ContextCompat.getMainExecutor(this)
-val biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
-    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-        super.onAuthenticationError(errorCode, errString)
-        // Show error
-    }
+// Initialize executor 
+Executor executor = ContextCompat.getMainExecutor(context);
+BiometricPrompt biometricPrompt = new BiometricPrompt(activity, executor,
+        new BiometricPrompt.AuthenticationCallback() {
+  @Override
+  public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+      super.onAuthenticationError(errorCode, errString);
+      // Handle error
+  }
 
-    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-        super.onAuthenticationSucceeded(result)
-        // Authentication successful
-    }
+  @Override
+  public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+      super.onAuthenticationSucceeded(result);
+      // Authentication succeeded
+  }
 
-    override fun onAuthenticationFailed() {
-        super.onAuthenticationFailed()
-        // Authentication failed
-    }
-})
+  @Override
+  public void onAuthenticationFailed() {
+      super.onAuthenticationFailed();
+      // Authentication failed
+  }
+        });
 
-val promptInfo = BiometricPrompt.PromptInfo.Builder()
-    .setTitle("Biometric Login")
-    .setSubtitle("Log in using your biometric credential")
-    .setNegativeButtonText("Use account password")
-    .build()
+// Setup prompt info
+BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+        .setTitle("Log in with Biometric")
+        .setSubtitle("Use your fingerprint or face")
+        .setNegativeButtonText("Cancel")
+        .build();
 
-// Show biometric prompt
-biometricPrompt.authenticate(promptInfo)
+// Show prompt
+biometricPrompt.authenticate(promptInfo);
 ```
 
-Make sure you have the right device setup and configurations to utilize biometric features.
+### 2. Using Local Authentication on iOS
 
-## Challenges in Biometric Authentication
+Here’s an example of implementing biometric authentication in iOS using Local Authentication:
 
-Despite offering many advantages, there are challenges to consider:
+```swift
+import LocalAuthentication
 
-1. **Privacy**: Users may feel concerned about how biometric data can be misused.
-2. **Hardware Limitations**: Not all mobile devices have the same biometric capabilities.
-3. **Reliability**: In some situations, biometric authentication may fail (e.g., wet fingerprints).
+let context = LAContext()
+var error: NSError?
+
+if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+    let reason = "Authenticate using your fingerprint or face to access the app."
+
+    context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
+        DispatchQueue.main.async {
+  if success {
+      // Authentication succeeded
+  } else {
+      // Authentication failed
+  }
+        }
+    }
+} else {
+    // Biometric not available
+}
+```
+
+## Best Practices
+
+1. **Provide Clear Information to Users**: Make sure users understand why you are using biometrics and how it works.
+2. **Fallback Method**: Always provide an alternative such as a password for users who cannot use biometrics.
+3. **Data Security**: Ensure that biometric data is stored securely and not directly stored on a server.
 
 ## Conclusion
 
-Biometric authentication is a promising security solution for mobile applications, offering convenience, speed, and high security. With the right implementation, you can provide a better user experience that meets modern security standards. Start integrating biometric authentication into your applications to take advantage of this technology.
+Biometric authentication offers an effective and secure way to protect user data in mobile applications. By understanding how to implement and utilize this feature, you can enhance the security and user experience of your application. If you haven't integrated biometric authentication into your apps yet, now is the time to do it!
 
-For more information about mobile app development, visit our blog and stay updated on the latest trends in technology.
+For more interesting articles and tutorials on mobile app development, be sure to follow our blog!
