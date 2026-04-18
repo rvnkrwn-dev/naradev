@@ -1,10 +1,10 @@
 ---
-title_id: "Optimisasi Kinerja Frontend"
+title_id: "Optimalisasi Kinerja Frontend"
 title_en: "Frontend Performance Optimization"
 slug: "frontend-performance-optimization"
-date: "2026-03-28T18:34:33.000Z"
-description_id: "Pelajari cara meningkatkan kinerja frontend dengan teknik dan praktik terbaik optimisasi."
-description_en: "Learn how to enhance frontend performance with optimization techniques and best practices."
+date: "2026-04-18T06:59:46.000Z"
+description_id: "Pelajari cara mengoptimalkan kinerja frontend untuk aplikasi web yang lebih cepat dan responsif."
+description_en: "Learn how to optimize frontend performance for faster, more responsive web applications."
 tags:
   - css
   - frontend
@@ -17,63 +17,33 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 ---
 
 <!-- lang:id -->
-# Optimisasi Kinerja Frontend
+# Optimalisasi Kinerja Frontend
 
-Kinerja frontend adalah faktor penting dalam pengalaman pengguna yang baik. Dalam artikel ini, kita akan membahas berbagai teknik dan praktik terbaik untuk mengoptimalkan kinerja aplikasi web Anda.
+Kinerja frontend sangat penting untuk pengalaman pengguna yang baik. Dalam artikel ini, kita akan membahas cara-cara efektif untuk mengoptimalkan kinerja frontend aplikasi web Anda. Melalui berbagai teknik dan praktik terbaik, Anda dapat memastikan aplikasi Anda cepat, responsif, dan memuaskan pengguna.
 
 ## Mengapa Kinerja Frontend Penting?
-Kinerja frontend yang cepat tidak hanya meningkatkan pengalaman pengguna tetapi juga dapat lebih baik dalam peringkat mesin pencari. Hal ini terutama penting dalam konteks mobile, di mana pengguna mengharapkan aplikasi yang responsif dan cepat.
 
-## Teknik Optimisasi Kinerja
+Ketika pengguna mengunjungi situs web Anda, kecepatan menjadi salah satu faktor utama yang menentukan apakah mereka akan tetap tinggal atau pergi. Studi menunjukkan bahwa bahkan penundaan beberapa detik dapat menyebabkan kehilangan signifikan dalam konversi. Oleh karena itu, penting untuk terus menerus memantau dan meningkatkan kinerja frontend Anda.
 
-### 1. Minimalkan Permintaan HTTP
-Setiap elemen di halaman web Anda—gambar, CSS, JavaScript—membuat permintaan HTTP. Mengurangi jumlah permintaan ini cukup krusial.
+## Teknik Optimalisasi Kinerja
 
-#### Contoh:
-Gunakan CSS sprites untuk menggabungkan gambar:
-```css
-.sprite {
-  background-image: url('sprites.png');
-  background-repeat: no-repeat;
+### 1. Minify dan Bundle Resource
+
+Salah satu cara paling sederhana untuk meningkatkan kecepatan muat adalah dengan minify dan bundle file CSS dan JavaScript Anda.
+
+```javascript
+// Contoh menggunakan Terser untuk minify JavaScript
+const Terser = require('terser');
+
+async function minifyCode(code) {
+  const result = await Terser.minify(code);
+  return result.code;
 }
 ```
-Anda juga bisa menggabungkan file CSS dan JavaScript untuk mengurangi permintaan.
 
 ### 2. Gunakan Lazy Loading
-Lazy loading adalah teknik di mana konten tidak dimuat hingga diperlukan. Ini sangat berguna untuk gambar dan video.
 
-#### Contoh di React:
-```javascript
-const LazyImage = React.lazy(() => import('./ImageComponent'));
-function App() {
-  return (
-    <React.Suspense fallback={<div>Loading...</div>}>
-      <LazyImage />
-    </React.Suspense>
-  );
-}
-```
-
-### 3. Kompresi Gambar
-Gambar besar dapat memperlambat waktu muat. Pastikan untuk mengompresi gambar sebelum diunggah.
-
-#### Contoh alat:
-- [TinyPNG](https://tinypng.com/)
-- [ImageOptim](https://imageoptim.com/)
-
-### 4. Gunakan CDN (Content Delivery Network)
-CDN membantu menyajikan konten dari lokasi terdekat ke pengguna, mengurangi latensi.
-
-#### Contoh penyedia CDN:
-- Cloudflare
-- Amazon CloudFront
-
-### 5. Optimisasi CSS dan JavaScript
-CSS dan JavaScript yang tidak digunakan dapat memperlambat aplikasi Anda. Hapus yang tidak perlu dan pertimbangkan untuk memuat JavaScript di bagian bawah halaman.
-
-#### Contoh memuat JavaScript:
-```html
-<script src=
+Lazy loading adalah teknik yang hanya memuat gambar atau video saat perlu. Ini mengurangi beban awal pada sumber daya yang tidak perlu dimuat oleh pengguna. Anda bisa menggunakan atribut `loading=
 
 <!-- lang:en -->
 null
