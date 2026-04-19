@@ -1,15 +1,15 @@
 ---
-title_id: "Enkripsi Data di At Rest dan di Transit"
+title_id: "Enkripsi Data Saat Diam dan Dalam Transmisi"
 title_en: "Data Encryption at Rest and in Transit"
 slug: "data-encryption-at-rest-and-in-transit"
-date: "2026-04-16T13:12:59.000Z"
-description_id: "Pelajari pentingnya enkripsi data di at rest dan di transit serta praktik terbaik untuk melindungi data Anda."
-description_en: "Learn the importance of data encryption at rest and in transit, along with best practices to protect your data."
+date: "2026-04-19T01:57:51.000Z"
+description_id: "Pelajari tentang enkripsi data saat diam dan dalam transmisi serta praktik terbaik untuk melindungi data Anda."
+description_en: "Learn about data encryption at rest and in transit, and best practices to protect your data."
 tags:
   - authentication
-  - bestpractices
   - data
-  - encryption
+  - enkripsi
+  - keamanan
   - security
 status: "published"
 authorId: "usr_ai_security"
@@ -17,146 +17,173 @@ cover: "https://raw.githubusercontent.com/rvnkrwn-dev/naradev/dev/public/covers/
 ---
 
 <!-- lang:id -->
-# Enkripsi Data di At Rest dan di Transit
+# Enkripsi Data Saat Diam dan Dalam Transmisi
 
-## Pendahuluan
-Dalam era digital saat ini, melindungi data menjadi lebih penting dari sebelumnya. Dengan semakin banyaknya ancaman terhadap keamanan data, enkripsi menjadi alat yang sangat penting untuk melindungi informasi, baik saat data disimpan (at rest) maupun saat data sedang dalam pengiriman (in transit). Artikel ini akan menjelaskan secara mendetail tentang enkripsi data dan mengapa itu penting untuk keamanan data Anda.
+Dalam dunia yang semakin digital, perlindungan data menjadi hal yang sangat penting. Enkripsi adalah salah satu metode yang paling efektif untuk melindungi data, baik saat diam (at rest) maupun saat transmisi (in transit). Artikel ini akan membahas secara mendalam mengenai kedua jenis enkripsi ini, serta praktik terbaik untuk menerapkannya.
 
-## Apa Itu Enkripsi?
-Enkripsi adalah proses mengubah data dari bentuk yang dapat dibaca menjadi bentuk yang tidak dapat dibaca oleh orang-orang yang tidak berwenang. Ini dilakukan dengan menggunakan algoritma tertentu dan kunci enkripsi. Ketika data dienkripsi, hanya mereka yang memiliki kunci dapat mengembalikannya ke bentuk aslinya.
+## Apa itu Enkripsi Data?
 
-## Enkripsi di At Rest
-### Apa Itu Enkripsi di At Rest?
-Enkripsi di at rest adalah proses mengamankan data yang disimpan. Ini memastikan bahwa jika seseorang berhasil mengakses disk fisik atau server yang menyimpan data, mereka tidak dapat membaca informasi tersebut tanpa kunci enkripsi yang sesuai.
+Enkripsi adalah proses mengubah data menjadi kode untuk mencegah akses tidak sah. Proses ini mengamankan informasi penting dengan cara menjaga kerahasiaan data.
 
-### Mengapa Enkripsi di At Rest Penting?
-Enkripsi di at rest penting karena:
-1. **Melindungi Data Sensitif**: Dengan banyaknya data sensitif seperti informasi identitas pribadi yang disimpan, enkripsi membantu mencegah akses tidak sah.
-2. **Kepatuhan Terhadap Regulasi**: Banyak peraturan seperti GDPR mensyaratkan perlindungan data, dan enkripsi adalah salah satu cara untuk mematuhi regulasi ini.
+## Enkripsi Data Saat Diam (At Rest)
 
-### Contoh Enkripsi di At Rest
-Berikut adalah contoh cara mengimplementasikan enkripsi di at rest menggunakan Python dengan menggunakan pustaka `cryptography`:
+Data yang disimpan dalam basis data, server, atau perangkat penyimpanan lainnya disebut sebagai "data saat diam". Keamanan data ini sangat penting karena data tersebut rentan terhadap pencurian jika perangkat tidak dijaga dengan baik.
 
-```python
-from cryptography.fernet import Fernet
+### Jenis-jenis Enkripsi yang Digunakan untuk Data Saat Diam
 
-# Membuat kunci enkripsi
-key = Fernet.generate_key()
-fernet = Fernet(key)
+1. **AES (Advanced Encryption Standard)**: Algoritma enkripsi simetris yang banyak digunakan untuk mengamankan data.
+2. **RSA (Rivest-Shamir-Adleman)**: Algoritma enkripsi asimetris yang sering digunakan untuk mengamankan data sensitif.
 
-# Data yang akan dienkripsi
-data = b'Teks rahasia yang harus dienkripsi'
+### Contoh Penerapan Enkripsi Data Saat Diam
 
-# Enkripsi data
-encrypted_data = fernet.encrypt(data)
-
-# Menampilkan data terenkripsi
-print(encrypted_data)
-```
-
-## Enkripsi di Transit
-### Apa Itu Enkripsi di Transit?
-Enkripsi di transit adalah proses melindungi data saat sedang dikirim dari satu lokasi ke lokasi lain, seperti antara server dan klien.
-
-### Mengapa Enkripsi di Transit Penting?
-Enkripsi di transit sangat penting karena:
-1. **Menghindari Serangan Man-in-the-Middle**: Tanpa enkripsi, informasi bisa diambil oleh pihak ketiga saat dalam perjalanan.
-2. **Menjaga Kerahasiaan Data**: Data yang dikirim melalui internet dapat dengan mudah diintip, dan dengan enkripsi, informasi tetap aman.
-
-### Contoh Enkripsi di Transit
-Berikut adalah cara menggunakan HTTPS untuk memastikan enkripsi di transit. HTTPS menggunakan TLS (Transport Layer Security) untuk mengenkripsi komunikasi antara klien dan server.
+Berikut adalah contoh menggunakan algoritma AES untuk mengenkripsi data dalam Node.js:
 
 ```javascript
-const https = require('https');
+const crypto = require('crypto');
+const algorithm = 'aes-256-cbc';
+const key = crypto.randomBytes(32);
+const iv = crypto.randomBytes(16);
 
-https.createServer({
-  key: fs.readFileSync('path/to/private.key'),
-  cert: fs.readFileSync('path/to/certificate.crt')
-}, (req, res) => {
-  res.writeHead(200);
-  res.end('Hello secure world!');
-}).listen(443);
+function encrypt(text) {
+    let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return { iv: iv.toString('hex'), encryptedData: encrypted };
+}
+
+const data = 'Ini adalah data yang perlu dienkripsi.';
+const encryptedData = encrypt(data);
+console.log(encryptedData);
+```
+
+## Enkripsi Data Dalam Transmisi (In Transit)
+
+Data yang dikirim dari satu lokasi ke lokasi lain, seperti melalui jaringan atau internet, disebut sebagai "data dalam transmisi". Proteksi terhadap data ini sangat penting untuk mencegah intersepsi oleh pihak ketiga.
+
+### Protokol Enkripsi untuk Data Dalam Transmisi
+
+1. **TLS (Transport Layer Security)**: Protokol yang digunakan untuk mengamankan komunikasi antara browser dan server web.
+2. **SSL (Secure Socket Layer)**: Protokol lebih tua yang juga digunakan untuk mengamankan data dalam komunikasi jaringan.
+
+### Contoh Implementasi Enkripsi TLS
+
+Di bawah ini adalah contoh menggunakan HTTPS (yang berdasarkan TLS) pada aplikasi web:
+
+```javascript
+const express = require('express');
+const https = require('https');
+const fs = require('fs');
+
+const options = {
+  key: fs.readFileSync('privatekey.pem'),
+  cert: fs.readFileSync('certificate.pem')
+};
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Halaman aman dengan HTTPS');
+});
+
+https.createServer(options, app).listen(443, () => {
+  console.log('Server berjalan di port 443');
+});
 ```
 
 ## Praktik Terbaik untuk Enkripsi Data
-1. **Gunakan Algoritma Terpercaya**: Pastikan untuk menggunakan algoritma yang telah terbukti aman, seperti AES untuk enkripsi.
-2. **Kelola Kunci Enkripsi dengan Aman**: Jangan pernah mengabaikan keamanan kunci enkripsi Anda. Gunakan manajemen kunci yang aman.
-3. **Rutin Tinjau dan Perbarui**: Tinjau secara berkala kebijakan enkripsi Anda dan perbarui sesuai kebutuhan dengan perkembangan ancaman.
+
+1. **Gunakan Algoritma Terstandarisasi**: Selalu gunakan algoritma enkripsi yang telah teruji dan direkomendasikan oleh organisasi standar seperti NIST.
+2. **Perbarui Kunci Secara Berkala**: Melakukan rotasi kunci secara berkala untuk mencegah potensi kerentanan.
+3. **Audit dan Pantau Data Anda**: Secara rutin melakukan audit terhadap sistem untuk memastikan enkripsi diterapkan dan berfungsi dengan baik.
 
 ## Kesimpulan
-Enkripsi data di at rest dan di transit merupakan langkah krusial dalam menjaga privasi dan keamanan data Anda. Dengan mengikuti praktik terbaik dan menggunakan alat yang tepat, Anda dapat melindungi informasi sensitif dari berbagai ancaman. Segera terapkan enkripsi dalam aplikasi Anda untuk memastikan data Anda tetap aman.
 
-Jika Anda memiliki pertanyaan lebih lanjut tentang enkripsi atau perlindungan data, jangan ragu untuk menghubungi tim kami di Naradev. Kami siap membantu Anda!
+Enkripsi data saat diam dan dalam transmisi adalah komponen vital dalam menjaga keamanan informasi. Dengan mengikuti praktik terbaik yang telah dibahas, Anda dapat memastikan bahwa data sensitif Anda terproteksi dengan baik. Mari tingkatkan keamanan data kita melalui enkripsi yang efektif!
+
+Jika Anda ingin mengetahui lebih banyak tentang topik ini, jangan ragu untuk mengikuti blog kami.
 
 <!-- lang:en -->
 # Data Encryption at Rest and in Transit
 
-## Introduction
-In today’s digital age, protecting data is more important than ever. With the rising number of threats to data security, encryption has become an essential tool for safeguarding information, both at rest and in transit. This article will delve deeply into the concept of data encryption and why it is vital for your data security.
+In an increasingly digital world, data protection is of utmost importance. Encryption is one of the most effective methods to safeguard data, both at rest and in transit. This article will delve into both types of encryption and best practices for implementing them.
 
-## What is Encryption?
-Encryption is the process of converting data from a readable format into an unreadable format for unauthorized individuals. This is done using specific algorithms and encryption keys. When data is encrypted, only those with the proper key can revert it back to its original form.
+## What is Data Encryption?
 
-## Encryption at Rest
-### What is Encryption at Rest?
-Encryption at rest refers to the process of securing data that is stored. It ensures that if someone gains access to the physical disk or server holding the data, they cannot read the information without the appropriate encryption key.
+Encryption is the process of transforming data into code to prevent unauthorized access. This process safeguards sensitive information by maintaining data confidentiality.
 
-### Why is Encryption at Rest Important?
-Encryption at rest is important because it:
-1. **Protects Sensitive Data**: With vast amounts of sensitive data such as personally identifiable information being stored, encryption helps prevent unauthorized access.
-2. **Compliance with Regulations**: Many regulations such as GDPR require data protection, and encryption is one way to comply with these regulations.
+## Data Encryption at Rest
 
-### Example of Encryption at Rest
-Below is an example of how to implement encryption at rest using Python with the `cryptography` library:
+Data stored in databases, servers, or other storage devices is referred to as "data at rest." Securing this data is crucial because it is vulnerable to theft if the device is not adequately secured.
 
-```python
-from cryptography.fernet import Fernet
+### Types of Encryption Used for Data at Rest
 
-# Generate an encryption key
-key = Fernet.generate_key()
-fernet = Fernet(key)
+1. **AES (Advanced Encryption Standard)**: A symmetric encryption algorithm widely used to secure data.
+2. **RSA (Rivest-Shamir-Adleman)**: An asymmetric encryption algorithm commonly used to protect sensitive data.
 
-# Data to encrypt
-data = b'This is secret text that needs to be encrypted'
+### Example of Data Encryption at Rest
 
-# Encrypt the data
-encrypted_data = fernet.encrypt(data)
-
-# Display the encrypted data
-print(encrypted_data)
-```
-
-## Encryption in Transit
-### What is Encryption in Transit?
-Encryption in transit refers to the process of protecting data while it is being sent from one location to another, such as between a server and client.
-
-### Why is Encryption in Transit Important?
-Encryption in transit is crucial because it:
-1. **Prevents Man-in-the-Middle Attacks**: Without encryption, information can be intercepted by third parties while in transit.
-2. **Maintains Data Confidentiality**: Data sent over the internet can easily be monitored, and encryption keeps the information secure.
-
-### Example of Encryption in Transit
-Here’s how to use HTTPS to ensure encryption in transit. HTTPS utilizes TLS (Transport Layer Security) to encrypt communications between client and server.
+Here is an example of using the AES algorithm to encrypt data in Node.js:
 
 ```javascript
+const crypto = require('crypto');
+const algorithm = 'aes-256-cbc';
+const key = crypto.randomBytes(32);
+const iv = crypto.randomBytes(16);
+
+function encrypt(text) {
+    let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return { iv: iv.toString('hex'), encryptedData: encrypted };
+}
+
+const data = 'This is the data that needs to be encrypted.';
+const encryptedData = encrypt(data);
+console.log(encryptedData);
+```
+
+## Data Encryption in Transit
+
+Data that is sent from one location to another, such as over a network or the internet, is called "data in transit." Protection of this data is vital to prevent interception by third parties.
+
+### Encryption Protocols for Data in Transit
+
+1. **TLS (Transport Layer Security)**: A protocol used to secure communication between a browser and web server.
+2. **SSL (Secure Socket Layer)**: An older protocol also used to secure data in network communications.
+
+### Example of TLS Encryption Implementation
+
+Below is an example of using HTTPS (which is based on TLS) in a web application:
+
+```javascript
+const express = require('express');
 const https = require('https');
 const fs = require('fs');
 
-https.createServer({
-  key: fs.readFileSync('path/to/private.key'),
-  cert: fs.readFileSync('path/to/certificate.crt')
-}, (req, res) => {
-  res.writeHead(200);
-  res.end('Hello secure world!');
-}).listen(443);
+const options = {
+  key: fs.readFileSync('privatekey.pem'),
+  cert: fs.readFileSync('certificate.pem')
+};
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Secure page with HTTPS');
+});
+
+https.createServer(options, app).listen(443, () => {
+  console.log('Server running on port 443');
+});
 ```
 
 ## Best Practices for Data Encryption
-1. **Use Trusted Algorithms**: Always ensure to use proven secure algorithms, such as AES for encryption.
-2. **Manage Encryption Keys Securely**: Never overlook the security of your encryption keys. Utilize secure key management.
-3. **Regularly Review and Update**: Periodically review your encryption policies and update as necessary with evolving threats.
+
+1. **Use Standardized Algorithms**: Always use encryption algorithms that have been tested and recommended by standards organizations such as NIST.
+2. **Rotate Keys Regularly**: Perform key rotation regularly to prevent potential vulnerabilities.
+3. **Audit and Monitor Your Data**: Regularly audit your systems to ensure that encryption is implemented and functioning correctly.
 
 ## Conclusion
-Data encryption at rest and in transit is a crucial step in maintaining the privacy and security of your data. By following best practices and utilizing the right tools, you can protect sensitive information against a variety of threats. Implement encryption in your applications today to ensure your data remains secure.
 
-If you have further questions about encryption or data protection, feel free to reach out to our team at Naradev. We are here to assist you!
+Data encryption at rest and in transit is a vital component of safeguarding information. By following the best practices discussed, you can ensure that your sensitive data is well-protected. Let’s enhance our data security through effective encryption!
+
+If you want to learn more about this topic, feel free to follow our blog.
